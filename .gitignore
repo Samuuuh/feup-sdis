@@ -1,0 +1,14 @@
+# IntellJ Files
+.idea/*
+*.iml
+# VSCode Files
+.vscode
+
+# Binaries
+bin/
+*.class
+*.sh
+
+# Example 
+lab1/example
+lab2/example-multicast

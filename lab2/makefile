@@ -1,0 +1,37 @@
+VPATH = ./src
+OPATH = ./
+
+CC = javac 
+CFLAGS = -g -d $(OPATH)
+
+# Use "del" for windows. "rm" for linux. 
+ifeq ($(OS),Windows_NT)
+	RM:= del
+else
+	RM:= rm  
+endif
+
+CLIENT:= MultiClient.java 
+SERVER:= MultiServer.java  MultiServerThread.java ServerThread.java
+COMMON:=     
+TARGETS:= $(CLIENT) $(SERVER) $(COMMON)
+
+all: $(TARGETS)
+	@$(CC) $(CFLAGS) $^
+	@echo "All files generated successfully!" 
+
+client: $(CLIENT) $(COMMON)
+	@$(CC) $(CFLAGS) $^ 
+	@echo "Client generated successfully!" 
+
+server: $(SERVER) $(COMMON)
+	@$(CC) $(CFLAGS) $^
+	@echo "Server generated successfully!"  
+
+.PHONY: clean 
+clean: 
+	@$(RM) $(OPATH)/*.class 
+	@echo "All .class files were removed" 
+
+
+
