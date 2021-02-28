@@ -7,7 +7,6 @@
 # Binaries
 bin/
 *.class
-*.sh
 
 # Example 
 lab1/example

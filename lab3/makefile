@@ -1,4 +1,4 @@
-VPATH = ./src
+VPATH = ./example
 OPATH = ./
 
 CC = javac 
@@ -11,8 +11,8 @@ else
 	RM:= rm  
 endif
 
-CLIENT:= MultiClient.java 
-SERVER:= MultiServer.java  MultiServerThread.java ServerThread.java
+CLIENT:= Client.java
+SERVER:= Hello.java Server.java 
 COMMON:=     
 TARGETS:= $(CLIENT) $(SERVER) $(COMMON)
 
