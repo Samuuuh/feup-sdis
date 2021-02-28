@@ -30,7 +30,7 @@ server: $(SERVER) $(COMMON)
 
 .PHONY: clean 
 clean: 
-	@$(RM) $(OPATH)/*.class 
+	@$(RM) *.class 
 	@echo "All .class files were removed" 
 
 

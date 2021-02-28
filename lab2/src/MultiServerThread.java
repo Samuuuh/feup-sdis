@@ -15,7 +15,7 @@ public class MultiServerThread extends ServerThread {
             System.out.println("Wrong number of arguments:: java Server <srvc_port> <mcast_addr> <mcast_port> "); 
             System.exit(-1); 
         }
-
+        
         multicastIp = args[1]; 
         multicastPort = Integer.parseInt(args[2]);
         
