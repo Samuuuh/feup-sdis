@@ -28,7 +28,8 @@ public class MultiClient {
         }
 
         DatagramSocket socket = new DatagramSocket();
-
+        // TODO: Obtain the ip of the server by receiving the packet trasmited by the multicast. 
+        
         sendPacket(socket, request, host, port);
         String response = receivePacket(socket);
         

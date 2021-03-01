@@ -26,10 +26,11 @@ public class MultiServerThread extends ServerThread {
         byte[] buf = new byte[256];
 
         while (true) {
-            try {
+            try { 
                 InetAddress group = InetAddress.getByName(multicastIp);
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, multicastPort); // 4446 -> porta multicaste
-
+                // TODO: criar thread que enviar o ip do server para o multicast. 
+                
                  // send it
                 String requestMessage = receivePacket(packet);
                 displayRequest(requestMessage);
