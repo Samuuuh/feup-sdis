@@ -7,31 +7,8 @@ public class ServerThread extends Thread {
     protected static HashMap<String, String> dnsTable = new HashMap<String, String>();
     protected Integer port;
 
-    public ServerThread(String[] args) throws IOException {
-        if (args.length < 1) {
-            System.out.println("Wrong number of arguments, usage :: java Server <port number>");
-            System.exit(-1);
-        }
-
-        int port = Integer.parseInt(args[0]);
+    public ServerThread(int port) throws IOException {
         socket = new DatagramSocket(port);
-    }
-
-    public void run() {
-        byte[] buf = new byte[256];
-        DatagramPacket packet = new DatagramPacket(buf, buf.length);
-
-        while (true) {
-            try {
-                String requestMessage = receivePacket(packet);
-                displayRequest(requestMessage);
-                String response = processRequest(requestMessage);
-                sendPacket(response, packet);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public String processRequest(String messageString) {
@@ -68,12 +45,12 @@ public class ServerThread extends Thread {
         }
     }
 
-    public void sendPacket(String response, DatagramPacket packet) throws IOException {
+    public void sendPacket(String response) throws IOException {
         InetAddress address = packet.getAddress();
         int port = packet.getPort();
 
         byte[] buf = response.getBytes();
-        packet = new DatagramPacket(buf, buf.length, address, port);
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
 
         socket.send(packet);
     }

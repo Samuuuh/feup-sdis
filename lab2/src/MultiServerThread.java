@@ -9,17 +9,11 @@ public class MultiServerThread extends ServerThread {
     protected Integer multicastPort; 
     private long TIMEOUT = 1000;
 
-    public MultiServerThread(String[] args) throws IOException{
-        super(args);   
-        if (args.length < 3){
-            System.out.println("Wrong number of arguments:: java Server <srvc_port> <mcast_addr> <mcast_port> "); 
-            System.exit(-1); 
-        }
-        
-        multicastIp = args[1]; 
-        multicastPort = Integer.parseInt(args[2]);
-        
-        System.out.println(args[1]);
+    public MultiServerThread(int port, String multicastIp, int multicastPort) throws IOException{
+        super(port);   
+
+        this.multicastIp = multicastIp;
+        this.multiCastPort = multiCastPort;
     }
 
     public void run() {
@@ -35,7 +29,7 @@ public class MultiServerThread extends ServerThread {
                 String requestMessage = receivePacket(packet);
                 displayRequest(requestMessage);
                 String response = processRequest(requestMessage);
-                sendPacket(response, packet);
+                sendPacket(response);
 
                 try {
                     sleep(TIMEOUT);
