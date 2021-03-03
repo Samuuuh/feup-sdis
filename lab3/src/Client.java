@@ -1,4 +1,4 @@
-package src.hello;
+package build.lab3;
 
 import java.io.*;
 import java.net.*;
@@ -9,20 +9,21 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
  
 public class Client {
-    public static void main(String[] args) throws IOException {
-        if (args.length <= 3) {
-             System.out.println("Usage:\n java Client <host_name> <remote_object_name> <oper> <opnd>*\n");
-             return;
-        }
+      // Just needs the host and the remote object name. 
+      public static void main(String[] args) throws IOException { 
 
         if ((args[2].equals("LOOKUP")) && (args.length != 4)) {
             System.out.println("Usage:\n java Client <host_name> <remote_object_name> <oper> <opnd>*\n");
             return;
         }
 
-        if ((args[2].equals("REGISTER")) && (args.length != 5))  {
+        else if ((args[2].equals("REGISTER")) && (args.length != 5))  {
             System.out.println("Usage:\n java Client <host_name> <remote_object_name> <oper> <opnd>*\n");
             return;
+        } 
+        else {
+             System.out.println("Usage:\n java Client <host_name> <remote_object_name> <oper> <opnd>*\n"); 
+             return; 
         }
 
         int host = Integer.parseInt(args[0]);
@@ -35,8 +36,8 @@ public class Client {
         
         try {
             Registry registry = LocateRegistry.getRegistry(host);
-            Hello stub = (Hello) registry.lookup(remote_object_name);
-            String response = stub.sayHello(request);
+            Handler stub = (Handler) registry.lookup(remote_object_name);
+            String response = stub.handleRequest(request);
             System.out.println("response: " + response); 
         } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());
