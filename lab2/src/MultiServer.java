@@ -14,6 +14,6 @@ public class MultiServer {
         int multicastPort = Integer.parseInt(args[2]);
 
         new MultiServerThread(port, multicastIp, multicastPort).start();
-        new MultiPeriodThread(port, multicastIp, multicastPort).start(); 
+        //new MultiPeriodThread(port, multicastIp, multicastPort).start(); 
     }
 }

@@ -6,14 +6,14 @@ import javax.print.event.PrintJobListener;
 
 public class MultiServerThread extends ServerThread {
     protected String multicastIp; 
-    protected Integer multicastPort; 
+    protected int multicastPort; 
     private long TIMEOUT = 1000;
 
     public MultiServerThread(int port, String multicastIp, int multicastPort) throws IOException{
         super(port);   
 
         this.multicastIp = multicastIp;
-        this.multiCastPort = multiCastPort;
+        this.multicastPort = multicastPort;
     }
 
     public void run() {
@@ -29,7 +29,7 @@ public class MultiServerThread extends ServerThread {
                 String requestMessage = receivePacket(packet);
                 displayRequest(requestMessage);
                 String response = processRequest(requestMessage);
-                sendPacket(response);
+                sendPacket(response, packet);
 
                 try {
                     sleep(TIMEOUT);

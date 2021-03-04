@@ -3,9 +3,9 @@ import java.net.*;
 import java.util.*;
 
 public class ServerThread extends Thread {
-    protected  static DatagramSocket socket = null;
+    protected static DatagramSocket socket = null;
     protected static HashMap<String, String> dnsTable = new HashMap<String, String>();
-    protected Integer port;
+    protected int port;
 
     public ServerThread(int port) throws IOException {
         socket = new DatagramSocket(port);
@@ -45,13 +45,13 @@ public class ServerThread extends Thread {
         }
     }
 
-    public void sendPacket(String response) throws IOException {
+     public static void sendPacket(String response, DatagramPacket packet) throws IOException {
         InetAddress address = packet.getAddress();
         int port = packet.getPort();
 
         byte[] buf = response.getBytes();
-        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
-
+        packet = new DatagramPacket(buf, buf.length, address, port);
+        
         socket.send(packet);
     }
 

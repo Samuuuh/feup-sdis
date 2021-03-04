@@ -3,10 +3,13 @@ import java.net.*;
 import java.util.*;
 
 
-public class MultiPeriodThread extends ServerThread{
+public class MultiPeriodThread extends ServerThread {
     private String multiCastAddress; 
-    private String multiCastPort; 
-    public MultiPeriodThread(int port, String multiCastAddress , String multiCastPort) throws IOException{
+    private int multiCastPort; 
+
+    public MultiPeriodThread(int port, String multiCastAddress, int multiCastPort) throws IOException{
+        super(port);
+
         this.multiCastAddress = multiCastAddress; 
         this.multiCastPort = multiCastPort; 
         run(); 
@@ -15,8 +18,9 @@ public class MultiPeriodThread extends ServerThread{
     public void run(){
         String message = "teste";
         int TIMEOUT = 5000;
+
         while(true){
-            sendPacket(message);  /*String, DatagramPacket*/ 
+            //sendPacket(message);  /*String, DatagramPacket*/ 
             try {
                 sleep(TIMEOUT);
             } catch (InterruptedException e) {}

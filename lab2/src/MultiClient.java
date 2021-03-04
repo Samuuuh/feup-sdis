@@ -20,7 +20,7 @@ public class MultiClient {
         }
 
         String multiCastAddr = args[0];
-        Integer multiCastPort = Integer.parseInt(args[1]);
+        int multiCastPort = Integer.parseInt(args[1]);
 
         String request = args[2].toUpperCase() + " ";
         for(int i = 3; i < args.length; i++) {
@@ -31,25 +31,19 @@ public class MultiClient {
         InetAddress address = InetAddress.getByName(multiCastAddr);
         socket.joinGroup(address);
 
+        String receivePacket = receivePacket(socket); 
+        System.out.println(receivePacket); 
 
-        String address = receivePacket(socket); 
-        System.out.println(address); 
-        /*
-        sendPacket(socket, request, multiCastAddr, multiCastPort);
-        String response = receivePacket(socket);
-        
-        System.out.println("Client: " + request.trim() + " : " + response); 
-        */
         socket.leaveGroup(address);
         socket.close();
     }
 
 
-    private static void sendPacket(DatagramSocket socket, String request, String multiCastAddr, Integer multiCastPort) throws IOException {
+    private static void sendPacket(DatagramSocket socket, String request, InetAddress multiCastAddr, int multiCastPort) throws IOException {
         byte[] buf = request.getBytes();
         /* InetAddress address = InetAddress.getByName(multiCastAddr); */ 
 
-        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, multiCastPort);
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, multiCastAddr, multiCastPort);
         socket.send(packet);
     }
 
