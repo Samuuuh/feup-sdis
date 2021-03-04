@@ -1,3 +1,5 @@
-Interface Services {
-    void backup(); 
+package sdis.proj; 
+
+interface Services {
+    String backup(); 
 }
