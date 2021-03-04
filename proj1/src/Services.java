@@ -1,5 +1,8 @@
 package sdis.proj; 
 
-interface Services {
-    void backup(); 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+
+interface Services extends Remote{
+    String backup(); 
 }

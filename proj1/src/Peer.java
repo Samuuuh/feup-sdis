@@ -8,7 +8,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-import sdis.proj.Utils;
 
 public class Peer implements Services {
 
@@ -26,7 +25,8 @@ public class Peer implements Services {
             Peer obj = new Peer();
             Services stub = (Services) UnicastRemoteObject.exportObject(obj, 0);
             Registry registry = LocateRegistry.createRegistry(port); 
-            registry.rebind("backup", stub); 
+            registry.rebind("Services", stub);  
+
         } catch (Exception e) {
             System.out.println("ERROR: Error while");
         }
@@ -37,7 +37,7 @@ public class Peer implements Services {
         System.out.println("helo");
     }
 
-    public void backup() {
-        System.out.println("hi");
+    public String backup() {
+        return "Hello World";
     }
 }

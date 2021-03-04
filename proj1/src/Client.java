@@ -1,8 +1,14 @@
-package sdis.project; 
+package sdis.proj; 
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
+import java.rmi.registry.Registry;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.server.UnicastRemoteObject;
+import java.rmi.RemoteException;
+import java.rmi.NotBoundException;
  
 public class Client {
     public static void main(String[] args) throws IOException {
@@ -15,12 +21,19 @@ public class Client {
         Client client = new Client(args);
     }
 
-    private String peerAccessPoint;
+    private int peerAccessPoint;
     private String operation;
+    private Registry registry;
 
     private Client(String[] args) {
-        this.peerAccessPoint = args[0];
+        this.peerAccessPoint = Integer.parseInt(args[0]);
         this.operation = args[1];
+        try {
+            this.registry = LocateRegistry.getRegistry(this.peerAccessPoint);
+        } catch (RemoteException e) {
+            System.err.println("Client exception: " + e.toString());
+            e.printStackTrace();
+        }
 
         if(this.operation.equals("BACKUP")) {
             if (args.length != 4) {
@@ -30,7 +43,13 @@ public class Client {
 
             String file = args[2];
             String replication_degree = args[3];
-            backup(file, replication_degree);
+            try {
+                backup(file, replication_degree);
+            } catch (RemoteException | NotBoundException e) {
+                System.err.println("Client exception: " + e.toString());
+                e.printStackTrace();
+            }
+            
         } else if (this.operation.equals("RESTORE")) {
             if (args.length != 3) {
                 System.out.println("Usage:\n java Client <peer_ap> RESTORE <file>\n");
@@ -68,8 +87,9 @@ public class Client {
         }
     }
 
-    private void backup(String file, String replication_degree) {
-        System.out.println("its backup boiiiiiis");
+    private void backup(String file, String replication_degree) throws RemoteException, NotBoundException {
+        Services stub = (Services) this.registry.lookup("Services");
+        String response = stub.backup();
     }   
 
     private void restore(String file) {
