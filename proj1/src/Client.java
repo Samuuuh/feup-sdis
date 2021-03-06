@@ -90,6 +90,8 @@ public class Client {
     private void backup(String file, String replication_degree) throws RemoteException, NotBoundException {
         Services stub = (Services) this.registry.lookup("Services");
         String response = stub.backup();
+
+        System.out.println(response);
     }   
 
     private void restore(String file) {
