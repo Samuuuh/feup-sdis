@@ -1,10 +1,12 @@
+package factory;
+
 class MessageParser {
     public static void main(String args[]) {  
         String message = "PUTCHUNK";
         Chunk cho = new Chunk(0, 3);
-        FileManager p = new FileManager("fileName");    
-
-        MessageParser mes = new MessageParser(message, p, cho);
+        MessageFactory p = new MessageFactory("fileName");    
+        MessageParser mes = new MessageParser(message, p, cho); // Cria
+        
         System.out.println(p.getFileId());
         System.out.println(mes.createHeader());
 
@@ -37,7 +39,7 @@ class MessageParser {
         this.replicationDeg = "To parse";
     }
 
-    public MessageParser(String messageType, FileManager file, Chunk chunk) {
+    public MessageParser(String messageType, MessageFactory file, Chunk chunk) {
         this.version = "1.0";
         this.messageType = messageType;
         this.senderId = "SenderId";

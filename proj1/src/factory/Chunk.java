@@ -1,3 +1,5 @@
+package factory;
+
 class Chunk {
     private int num;
     private int replicationDeg;
