@@ -1,5 +1,6 @@
 package file;
 
+import file.Chunk;
 import main.Definitions;
 
 import java.io.File;
@@ -24,32 +25,37 @@ public class FileHandler {
     }
 
     // TODO: Change it to chunks.
-    public static byte[][] splitFile(byte[] fileContent) {
+    public static Chunk[] splitFile(byte[] fileContent) {
 
-        int fileSize = fileContent.length;
+        byte[] data;
+
         // Includes the last chunk be it zero or not.
-        int numSplits = (int) Math.ceil((float) fileSize / Definitions.CHUNK_MAX_SIZE);
+        int numSplits = (int) Math.ceil((float) fileContent.length / Definitions.CHUNK_MAX_SIZE);
         int lastChunkPos = numSplits - 1;
-        // Size of the last chunk.
-        int remainSize = fileSize % Definitions.CHUNK_MAX_SIZE;
         int bytePos = 0;
 
-        int emptyChunk = 0; // If an empty empty chunk is necessary, it's value will be 1.
+        int remainSize = fileContent.length % Definitions.CHUNK_MAX_SIZE;   // Size of the last chunk.
+        int emptyChunk = 0;
         if (remainSize == 0)
             emptyChunk = 1;
 
-        byte[][] chunksContent = new byte[numSplits + emptyChunk][];
+        Chunk[] chunks = new Chunk[numSplits + emptyChunk];
 
         // Does not compute the last chunk.
-        for (int i = 0; i < lastChunkPos; i++)
-            chunksContent[i] = Arrays.copyOfRange(fileContent, bytePos, bytePos + Definitions.CHUNK_MAX_SIZE);
+        for (int i = 0; i < lastChunkPos; i++){
+            data = Arrays.copyOfRange(fileContent, bytePos, bytePos + Definitions.CHUNK_MAX_SIZE);
+            chunks[i] = new Chunk(i, data);
+            bytePos += Definitions.CHUNK_MAX_SIZE;
+        }
 
         // Last chunk computation.
         if (remainSize == 0)
-            chunksContent[lastChunkPos] = new byte[0];
-        else
-            chunksContent[lastChunkPos] = Arrays.copyOfRange(fileContent, bytePos, bytePos + remainSize);
+            chunks[lastChunkPos] = new Chunk(lastChunkPos, new byte[0]);
+        else {
+            data= Arrays.copyOfRange(fileContent, bytePos, bytePos + remainSize);
+            chunks[lastChunkPos] = new Chunk(lastChunkPos, data);
+        }
 
-        return chunksContent;
+        return chunks;
     }
 }

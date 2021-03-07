@@ -44,6 +44,7 @@ public class Peer implements Services {
         try {
             Peer obj = new Peer();
             Services stub = (Services) UnicastRemoteObject.exportObject(obj, 0);
+
             // TODO: perguntar ao professor qual vai ser esta porta?
             Registry registry = LocateRegistry.createRegistry(1888);
             registry.rebind("Services", stub);    

@@ -1,5 +1,5 @@
 package factory;
-import main.Definitions; 
+import file.Chunk;
 
 import java.io.UnsupportedEncodingException;
 
