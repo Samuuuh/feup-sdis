@@ -1,12 +1,8 @@
 package main;
 
 import java.io.*;
-import java.net.*;
-import java.util.*;
-
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
 import java.rmi.NotBoundException;
  
@@ -25,9 +21,10 @@ public class Client {
         Client client = new Client(args);
     }
 
-    private Client(String[] args) {
+    private Client(String[] args) throws IOException {
         this.peerAccessPoint = Integer.parseInt(args[0]);
         this.operation = args[1];
+
         try {
             this.registry = LocateRegistry.getRegistry(this.peerAccessPoint);
         } catch (RemoteException e) {
@@ -44,6 +41,7 @@ public class Client {
             String file = args[2];
             String replication_degree = args[3];
             try {
+                System.out.println("Calling backup");
                 backup(file, replication_degree);
             } catch (RemoteException | NotBoundException e) {
                 System.err.println("Client exception: " + e.toString());
@@ -87,9 +85,9 @@ public class Client {
         }
     }
 
-    private void backup(String file, String replication_degree) throws RemoteException, NotBoundException {
+    private void backup(String file, String replication_degree) throws IOException, NotBoundException {
         Services stub = (Services) this.registry.lookup("Services");
-        String response = Services.backup();
+        String response = stub.backup();
 
         System.out.println(response);
     }   

@@ -1,6 +1,6 @@
 package channel;
 
-//import factory.MessageParser;
+import factory.MessageParser;
 import main.Definitions;
 
 import java.io.IOException;
@@ -15,7 +15,7 @@ public class Channel extends Thread {
     protected final int mcast_port;
     protected final InetAddress group;
     protected final MulticastSocket mcast_socket;
-    //protected MessageParser messageParser;
+    protected MessageParser messageParser;
 
     public Channel(int mcast_port, String mcast_addr) throws IOException {
         this.mcast_port = mcast_port;
@@ -39,15 +39,14 @@ public class Channel extends Thread {
     @Override
     public void run() {
         byte[] buf = new byte[Definitions.CHUNK_MAX_SIZE];
+
         while (true) {
             try {
                 // Receive packet from multicast port.
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
                 mcast_socket.receive(packet);
                 // Parse the message.
-                //messageParser = new MessageParser(packet.getData());
-                System.out.println("hello");
-
+                messageParser = new MessageParser(packet.getData());
 
             } catch (IOException e) {
                 e.printStackTrace();
