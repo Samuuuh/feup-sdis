@@ -1,7 +1,9 @@
 package main;
 
-import channel.BackupChannel; 
-import main.Definitions; 
+import channel.BackupChannel;
+import factory.BackupMessageFactory;
+import file.FileHandler;
+
 import java.io.*;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -9,6 +11,7 @@ import java.net.MulticastSocket;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+
 
 
 public class Peer implements Services {
@@ -25,7 +28,6 @@ public class Peer implements Services {
     public static void main(String[] args) throws IOException {
 
         // TODO: generates ID.
-
         if (args.length != 3) {
             System.out.println("Usage:\n java Peer mcast_port mcast_addr port");
             return;
@@ -50,22 +52,34 @@ public class Peer implements Services {
             e.printStackTrace();
         }
 
+        System.out.println("Server is running");
+
     }
 
-    public String backup() throws IOException {
+    public String backup(String filePath, int replicationDeg) throws IOException {
+        // TODO: to delete.
         System.out.println("Backup called");
-        String message = "VERSION TYPE ID FILE CHUNKNO REPDEG \r\n buguezinha";
 
-        // TODO: this must be a thread.
-        sendPacket(message); 
+        try {
+            byte[] fileContent = FileHandler.readFile(filePath);
+
+            // TODO: Separate in chuncks.
+            byte[] message = new BackupMessageFactory(filePath, "1234", replicationDeg).createMessage();
+            String stringMessage = new String(message);
+
+            // TODO: this must be a thread.
+            sendPacket(stringMessage);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         
-        return "Hello world";
+        return "Backup has ended";
     }
 
     public static void sendPacket(String response) throws IOException {
         MulticastSocket socket = new MulticastSocket(mcast_port);
         InetAddress group = InetAddress.getByName(mcast_addr);
-        byte[] buf = new byte[Definitions.CHUNK_MAX_SIZE];
+        byte[] buf = response.getBytes();
         DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
 
         socket.send(packet);

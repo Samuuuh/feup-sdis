@@ -17,6 +17,8 @@ public class BackupMessageFactory extends MessageFactory{
         byte[] header = generateHeader();
         byte[] fileContent = FileHandler.readFile(filePath);
 
+
+        // TODO: how to handle this.
         byte[] both = Arrays.copyOf(header, header.length + fileContent.length);
         System.arraycopy(fileContent, 0, both, header.length, fileContent.length);
         chunkNo++;

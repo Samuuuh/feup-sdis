@@ -22,6 +22,7 @@ public class FileHandler {
         }
         return null;
     }
+
     // TODO: Change it to chunks.
     public static byte[][] splitFile(byte[] fileContent) {
 

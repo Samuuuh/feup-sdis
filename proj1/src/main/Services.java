@@ -5,5 +5,5 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface Services extends Remote{
-    String backup() throws IOException;
+    String backup(String filePath, int replicationDeg) throws IOException;
 }

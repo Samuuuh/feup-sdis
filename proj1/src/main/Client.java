@@ -39,6 +39,7 @@ public class Client {
             }
 
             String file = args[2];
+            // TODO: check if it's really a int.
             String replication_degree = args[3];
             try {
                 System.out.println("Calling backup");
@@ -85,9 +86,10 @@ public class Client {
         }
     }
 
-    private void backup(String file, String replication_degree) throws IOException, NotBoundException {
+    private void backup(String filePath, String replication_degree) throws IOException, NotBoundException {
         Services stub = (Services) this.registry.lookup("Services");
-        String response = stub.backup();
+        int replication = Integer.parseInt(replication_degree);
+        String response = stub.backup(filePath, replication);
 
         System.out.println(response);
     }   
