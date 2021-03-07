@@ -1,17 +1,12 @@
 package channel;
+import main.Definitions;
 
-public class BackupChannel {
+import java.io.IOException;
 
-    public BackupChannel(){
+public class BackupChannel extends Channel {
 
+    public BackupChannel(int mcast_port, String mcast_addr) throws IOException {
+        super(mcast_port, mcast_addr);
     }
 
-    public void sendMessage(){
-
-    }
-
-    // Receives the messages and sends them to a handler.
-    public void run(){
-
-    }
 }

@@ -1,14 +1,14 @@
 package factory;
 
 class Chunk {
-    private int num;
+    private int num;                // Number of the chunck.
     private int replicationDeg;
-    private String data;
+    private byte[] data;
 
-    public Chunk(int num, int replicationDeg) {
+    public Chunk(int num, int replicationDeg, byte[] data) {
         this.num = num;
         this.replicationDeg = replicationDeg;
-        this.data = "None";
+        this.data = data;
     }
 
     public int getChunkNo() {
@@ -19,7 +19,7 @@ class Chunk {
         return replicationDeg;
     }
 
-    public String getChunkData() {
+    public byte[] getChunkData() {
         return data;
     }
 }
