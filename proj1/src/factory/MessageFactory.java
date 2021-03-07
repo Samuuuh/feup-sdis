@@ -1,13 +1,16 @@
+package factory;
+import main.Definitions;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.util.Arrays;
 
-import build.proj1.Definitions;
 
 public class MessageFactory {
     public static void main(){
-        
+
     }
+
     public static byte[] readFile(String filePath) throws IOException {
         File file = new File(filePath);
 

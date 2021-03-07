@@ -1,11 +1,8 @@
-package build.proj;
+package main;
 
 import java.io.*;
-import java.net.*;
-import java.util.*;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 
@@ -18,7 +15,7 @@ public class Peer implements Services {
             return;
         } 
 
-        Integer port = Integer.parseInt(args[0]);
+        int port = Integer.parseInt(args[0]);
 
         // Bind Services. 
         try {
@@ -37,6 +34,7 @@ public class Peer implements Services {
     public Peer() { }
 
     public String backup() {
-        return "Hello World";
+        System.out.println("### Backup protocol initialized");
+        return "Hello world";
     }
 }

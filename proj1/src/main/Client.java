@@ -1,4 +1,4 @@
-package build.proj; 
+package main;
 
 import java.io.*;
 import java.net.*;
@@ -11,6 +11,10 @@ import java.rmi.RemoteException;
 import java.rmi.NotBoundException;
  
 public class Client {
+    private int peerAccessPoint;
+    private String operation;
+    private Registry registry;
+
     public static void main(String[] args) throws IOException {
        if (args.length < 2) {
              System.out.println("Usage:\n java Client <peer_ap> <sub_protocol> <opnd_1> <opnd_2>\n" +
@@ -20,10 +24,6 @@ public class Client {
 
         Client client = new Client(args);
     }
-
-    private int peerAccessPoint;
-    private String operation;
-    private Registry registry;
 
     private Client(String[] args) {
         this.peerAccessPoint = Integer.parseInt(args[0]);
