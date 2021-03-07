@@ -65,7 +65,6 @@ public class MessageParser {/*
         }
     }
 
-
     public MessageParser(String header) {
         this.headerString = header.replaceAll("\\s+"," ");
         String[] partHeader = this.headerString.split(" ");
@@ -91,6 +90,7 @@ public class MessageParser {/*
         this.chunkNo = String.valueOf(chunk.getChunkNo());
         this.replicationDeg = String.valueOf(chunk.getReplicationDeg());
     }
+
 
     public String createHeader() {
         headerString = this.version + " " + this.senderId + " " + this.fileId + " " + this.chunkNo  + " " + this.replicationDeg + "\r\n";

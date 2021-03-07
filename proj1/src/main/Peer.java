@@ -16,12 +16,15 @@ public class Peer implements Services {
     public static int mcast_port; 
     public static String mcast_addr;
     public static int port ;
-    
+
+
     public static void initChannel(int mcast_port, String mcast_addr) throws IOException {
         new BackupChannel(mcast_port, mcast_addr).start();
     }
 
     public static void main(String[] args) throws IOException {
+
+        // TODO: generates ID.
 
         if (args.length != 3) {
             System.out.println("Usage:\n java Peer mcast_port mcast_addr port");
@@ -39,10 +42,9 @@ public class Peer implements Services {
         try {
             Peer obj = new Peer();
             Services stub = (Services) UnicastRemoteObject.exportObject(obj, 0);
+            // TODO: perguntar ao professor qual vai ser esta porta?
             Registry registry = LocateRegistry.createRegistry(1888);
             registry.rebind("Services", stub);    
-
-            System.out.println("Server is running");  
         } catch (Exception e) {
             System.out.println("ERROR: Error while trying to bind stub"); 
             e.printStackTrace();
@@ -53,6 +55,8 @@ public class Peer implements Services {
     public String backup() throws IOException {
         System.out.println("Backup called");
         String message = "VERSION TYPE ID FILE CHUNKNO REPDEG \r\n buguezinha";
+
+        // TODO: this must be a thread.
         sendPacket(message); 
         
         return "Hello world";
