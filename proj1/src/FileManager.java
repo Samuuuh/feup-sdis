@@ -3,10 +3,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException; 
 import java.math.BigInteger;  
 
-class Parser {
+class FileManager {
     public static void main(String args[]) 
     {  
-        Parser p = new Parser("fileName");
+        FileManager p = new FileManager("fileName");
 
         System.out.println(p.getFileId());
     }  
@@ -14,7 +14,7 @@ class Parser {
     private String fileName;
     private String fileId;
 
-    public Parser(String fileName) {
+    public FileManager(String fileName) {
         this.fileName = fileName;
         this.fileId = null;
     }
