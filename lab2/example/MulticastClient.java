@@ -11,19 +11,19 @@ public class MulticastClient {
  
         DatagramPacket packet;
      
-            // get a few quotes
-    for (int i = 0; i < 5; i++) {
+        // get a few quotes
+        for (int i = 0; i < 5; i++) {
+    
+            byte[] buf = new byte[256];
+                packet = new DatagramPacket(buf, buf.length);
+                socket.receive(packet);
+    
+                String received = new String(packet.getData(), 0, packet.getLength());
+                System.out.println("Quote of the Moment: " + received);
+        }
  
-        byte[] buf = new byte[256];
-            packet = new DatagramPacket(buf, buf.length);
-            socket.receive(packet);
- 
-            String received = new String(packet.getData(), 0, packet.getLength());
-            System.out.println("Quote of the Moment: " + received);
-    }
- 
-    socket.leaveGroup(address);
-    socket.close();
+        socket.leaveGroup(address);
+        socket.close();
     }
  
 }

@@ -27,23 +27,41 @@ public class MultiClient {
             request += args[i] + " ";
         }
 
-        MulticastSocket socket = new MulticastSocket(multiCastPort);
-        InetAddress address = InetAddress.getByName(multiCastAddr);
-        socket.joinGroup(address);
+        MulticastSocket multiSocket = new MulticastSocket(4446);
+        InetAddress address = InetAddress.getByName("230.0.0.1");
 
-        String receivePacket = receivePacket(socket); 
+        multiSocket.joinGroup(address);
+
+        // Do it once or more hehe
+        String receivePacket = receivePacket(multiSocket); 
         System.out.println(receivePacket); 
 
-        socket.leaveGroup(address);
+        multiSocket.leaveGroup(address);
+        multiSocket.close();
+
+        String[] serverInfo = receivePacket.split(" ");
+        System.out.println(serverInfo[0]);
+        System.out.println(serverInfo[1]);
+
+        String serverIp = serverInfo[0];
+        int serverPort = Integer.parseInt(serverInfo[1]);
+        // Send Request - Done with RMI
+        DatagramSocket socket = new DatagramSocket();
+
+        sendPacket(socket, request, serverIp, serverPort);
+        String response = receivePacket(socket);
+        
+        System.out.println("Client: " + request.trim() + " : " + response);
         socket.close();
+    
+       
     }
 
-
-    private static void sendPacket(DatagramSocket socket, String request, InetAddress multiCastAddr, int multiCastPort) throws IOException {
+    private static void sendPacket(DatagramSocket socket, String request, String host, int port) throws IOException {
         byte[] buf = request.getBytes();
-        /* InetAddress address = InetAddress.getByName(multiCastAddr); */ 
+        InetAddress address = InetAddress.getByName(host); 
 
-        DatagramPacket packet = new DatagramPacket(buf, buf.length, multiCastAddr, multiCastPort);
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
         socket.send(packet);
     }
 
