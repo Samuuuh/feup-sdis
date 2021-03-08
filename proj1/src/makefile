@@ -4,7 +4,7 @@ CC = javac
 
 find_dir = $(wildcard $(dir)/*.java)
 find_class = $(wildcard $(dir)/*.class)
-PACKAGES := main file factory channel
+PACKAGES := main file factory channel subProtocol
 CLASSES = $(foreach dir, $(PACKAGES), $(find_class))
 FILES = $(foreach dir, $(PACKAGES), $(find_dir))
 

@@ -1,13 +1,11 @@
 package main;
 
 import channel.BackupChannel;
-import factory.BackupMessageFactory;
+import subProtocol.BackupSubProtocol;
+import file.Chunk;
 import file.FileHandler;
 
 import java.io.*;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
@@ -63,13 +61,10 @@ public class Peer implements Services {
 
         try {
             byte[] fileContent = FileHandler.readFile(filePath);
+            Chunk[] chunks = FileHandler.splitFile(fileContent);
 
-            // TODO: Separate in chuncks.
-            byte[] message = new BackupMessageFactory(filePath, "1234", replicationDeg).createMessage();
-            String stringMessage = new String(message);
+            new BackupSubProtocol(filePath, "fileId", "senderId", replicationDeg, chunks).start();
 
-            // TODO: this must be a thread.
-            sendPacket(stringMessage);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -77,12 +72,5 @@ public class Peer implements Services {
         return "Backup has ended";
     }
 
-    public static void sendPacket(String response) throws IOException {
-        MulticastSocket socket = new MulticastSocket(mcast_port);
-        InetAddress group = InetAddress.getByName(mcast_addr);
-        byte[] buf = response.getBytes();
-        DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
 
-        socket.send(packet);
-    }
 }

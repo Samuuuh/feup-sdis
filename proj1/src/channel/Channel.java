@@ -42,10 +42,8 @@ public class Channel extends Thread {
 
         while (true) {
             try {
-                // Receive packet from multicast port.
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
                 mcast_socket.receive(packet);
-                // Parse the message.
                 messageParser = new MessageParser(packet.getData());
 
             } catch (IOException e) {
