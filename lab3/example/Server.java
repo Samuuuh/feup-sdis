@@ -6,7 +6,6 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
         
 public class Server implements Hello {
-        
     public Server() {}
 
     public String sayHello() {
