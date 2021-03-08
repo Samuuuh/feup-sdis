@@ -7,6 +7,7 @@ public class BackupChannel extends Channel {
 
     public BackupChannel(int mcast_port, String mcast_addr) throws IOException {
         super(mcast_port, mcast_addr);
+        // TODO: Como escolhemos os computadores que vão fazer backup?
     }
 
 }

@@ -11,12 +11,11 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 
 
-
 public class Peer implements Services {
 
-    public static int mcast_port; 
+    public static int mcast_port;
     public static String mcast_addr;
-    public static int port ;
+    public static int port;
 
 
     public static void initChannel(int mcast_port, String mcast_addr) throws IOException {
@@ -29,13 +28,13 @@ public class Peer implements Services {
         if (args.length != 3) {
             System.out.println("Usage:\n java Peer mcast_port mcast_addr port");
             return;
-        }  
+        }
 
-        mcast_port = Integer.parseInt(args[0]); 
+        mcast_port = Integer.parseInt(args[0]);
         mcast_addr = args[1];
         port = Integer.parseInt(args[2]);
 
-        initChannel(mcast_port, mcast_addr);  
+        initChannel(mcast_port, mcast_addr);
 
 
         // Bind Services. 
@@ -45,9 +44,9 @@ public class Peer implements Services {
 
             // TODO: perguntar ao professor qual vai ser esta porta?
             Registry registry = LocateRegistry.createRegistry(1888);
-            registry.rebind("Services", stub);    
+            registry.rebind("Services", stub);
         } catch (Exception e) {
-            System.out.println("ERROR: Error while trying to bind stub"); 
+            System.out.println("ERROR: Error while trying to bind stub");
             e.printStackTrace();
         }
 
@@ -64,11 +63,10 @@ public class Peer implements Services {
             Chunk[] chunks = FileHandler.splitFile(fileContent);
 
             new BackupSubProtocol(filePath, "fileId", "senderId", replicationDeg, chunks).start();
-
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         return "Backup has ended";
     }
 

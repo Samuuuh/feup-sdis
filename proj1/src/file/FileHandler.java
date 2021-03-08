@@ -24,7 +24,7 @@ public class FileHandler {
         return null;
     }
 
-    // TODO: Change it to chunks.
+    // TODO: the num of splits must be long?
     public static Chunk[] splitFile(byte[] fileContent) {
 
         byte[] data;

@@ -34,7 +34,6 @@ public class Channel extends Thread {
         socket.send(packet);
     }
 
-
     // Receives the messages and sends them to a handler.
     @Override
     public void run() {
@@ -42,10 +41,10 @@ public class Channel extends Thread {
 
         while (true) {
             try {
+                // TODO: quando for enviada a mensagem multicast, o peer não vai receber mensagem dele mesmo? 
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
                 mcast_socket.receive(packet);
                 messageParser = new MessageParser(packet.getData());
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
