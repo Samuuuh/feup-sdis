@@ -10,7 +10,7 @@ import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 
-
+// TODO: esperar resposta de um ficheiro específico.
 public class Peer implements Services {
 
     public static int mcast_port;
@@ -25,8 +25,8 @@ public class Peer implements Services {
     public static void main(String[] args) throws IOException {
 
         // TODO: generates ID.
-        if (args.length != 3) {
-            System.out.println("Usage:\n java Peer mcast_port mcast_addr port");
+        if (args.length != 4) {
+            System.out.println("Usage:\n java Peer mcast_port mcast_addr port peer_access_point");
             return;
         }
 
@@ -43,7 +43,9 @@ public class Peer implements Services {
             Services stub = (Services) UnicastRemoteObject.exportObject(obj, 0);
 
             // TODO: perguntar ao professor qual vai ser esta porta?
+            // O peer não cria o registo. Fazemos um programa java separado. Importante.
             Registry registry = LocateRegistry.createRegistry(1888);
+            // This must contain the peer access point.
             registry.rebind("Services", stub);
         } catch (Exception e) {
             System.out.println("ERROR: Error while trying to bind stub");

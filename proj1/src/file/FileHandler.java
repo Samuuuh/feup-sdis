@@ -25,6 +25,7 @@ public class FileHandler {
     }
 
     // TODO: the num of splits must be long?
+    // uint.
     public static Chunk[] splitFile(byte[] fileContent) {
 
         byte[] data;

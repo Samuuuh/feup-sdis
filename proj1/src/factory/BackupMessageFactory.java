@@ -28,8 +28,10 @@ public class BackupMessageFactory extends MessageFactory{
     @Override
     protected byte[] generateHeader() {
         // TODO : to fix the version. How to store the version of a file?
+        // É a versao do protocolo do projeto. Tem que ser passado como parametro.
         String version = "1.0";
         // TODO: will the replication degree be the same for all the headers for a file?
+        // Sim.
         String header = version + " " + Definitions.PUTCHUNK + " " + senderId + " " + fileId + " " +  chunk.getChunkNo() + " " + repDeg + "\r\n";
         return header.getBytes();
     }

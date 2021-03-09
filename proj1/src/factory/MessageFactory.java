@@ -35,12 +35,13 @@ abstract class MessageFactory {
 
     protected abstract byte[] generateHeader();
 
+
     public String getFileId() {
         if (this.fileId == null) {
             return hash();
         } else return fileId;
     }
-
+    // TODO: com segundos pode ser considerado um ficheiro diferente. Dar fix.
     private String hash() {
         // Probably add the last time file was modified and other metadata.
         long seconds = System.currentTimeMillis() / 1000L;
