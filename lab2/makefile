@@ -12,7 +12,7 @@ else
 endif
 
 CLIENT:= MultiClient.java 
-SERVER:= MultiServer.java  MultiServerThread.java ServerThread.java
+SERVER:= MultiServer.java  MultiServerThread.java ServerThread.java MultiPeriodThread.java
 COMMON:=     
 TARGETS:= $(CLIENT) $(SERVER) $(COMMON)
 
