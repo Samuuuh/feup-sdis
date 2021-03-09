@@ -87,7 +87,7 @@ public class Client {
     }
 
     private void backup(String filePath, String replication_degree) throws IOException, NotBoundException {
-        Services stub = (Services) this.registry.lookup("Services");
+        Services stub = (Services) this.registry.lookup("1");
         int replication = Integer.parseInt(replication_degree);
         String response = stub.backup(filePath, replication);
 

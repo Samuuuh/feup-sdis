@@ -50,7 +50,7 @@ public class FileHandler {
         }
 
         // Last chunk computation.
-        if (remainSize == 0)
+        if (emptyChunk == 1)
             chunks[lastChunkPos] = new Chunk(lastChunkPos, new byte[0]);
         else {
             data= Arrays.copyOfRange(fileContent, bytePos, bytePos + remainSize);
