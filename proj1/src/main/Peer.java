@@ -45,14 +45,14 @@ public class Peer implements Services {
         Services stub = (Services) UnicastRemoteObject.exportObject(obj, 0);
 
         try {
-            Registry registry = LocateRegistry.getRegistry(Definitions.PORT);
+            Registry registry = LocateRegistry.getRegistry(Definitions.REGISTER_PORT);
             registry.rebind(String.valueOf(peer_no), stub);
 
         } catch (Exception e) {
             System.out.println("ERROR: Error while trying to bind stub");
             System.err.println("Registry does not exist. Creating a new one...");
 
-            Registry registry = LocateRegistry.createRegistry(Definitions.PORT);
+            Registry registry = LocateRegistry.createRegistry(Definitions.REGISTER_PORT);
             registry.rebind(String.valueOf(peer_no), stub);
         }
 
@@ -61,6 +61,7 @@ public class Peer implements Services {
 
     public String backup(String filePath, int replicationDeg) throws IOException {
         // TODO: to delete.
+        /*
         System.out.println("Backup called");
 
         try {
@@ -72,6 +73,8 @@ public class Peer implements Services {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+         */
 
         return "Backup has ended";
     }

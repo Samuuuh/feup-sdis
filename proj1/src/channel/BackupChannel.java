@@ -5,6 +5,9 @@ import java.io.IOException;
 
 public class BackupChannel extends Channel {
 
+    /**
+     * Receives the answers from the peers which the requests to backup were made.
+     */
     public BackupChannel(int mcast_port, String mcast_addr) throws IOException {
         super(mcast_port, mcast_addr);
         // TODO: Como escolhemos os computadores que vao fazer backup?
