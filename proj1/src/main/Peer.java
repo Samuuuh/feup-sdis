@@ -61,7 +61,7 @@ public class Peer implements Services {
 
     public String backup(String filePath, int replicationDeg) throws IOException {
         // TODO: to delete.
-        /*
+
         System.out.println("Backup called");
 
         try {
@@ -74,7 +74,7 @@ public class Peer implements Services {
             e.printStackTrace();
         }
 
-         */
+
 
         return "Backup has ended";
     }

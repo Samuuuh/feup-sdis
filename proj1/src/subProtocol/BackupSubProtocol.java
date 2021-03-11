@@ -9,7 +9,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -33,30 +33,23 @@ public class BackupSubProtocol extends SubProtocol {
         this.chunks = chunks;
     }
 
+    @Override
     public void run() {
-
         try {
             MulticastSocket socket = new MulticastSocket();
 
+            System.out.println("Sending message in Backup Sub");
 
-            byte[] message = new BackupMessageFactory(filePath, senderId, replicationDeg, this.chunks[0]).createMessage();
-            sendMessage(socket, message); /// ??
+            byte[] message =new BackupMessageFactory(filePath, senderId, replicationDeg, this.chunks[0]).createMessage();
+            sendMessage(socket, message);
 
-            String received = receiveMessage(socket);
-            displayRequest(received);
+            //String received = receiveMessage(socket);
+            //displayRequest(received);
         } catch (IOException var2) {
             var2.printStackTrace();
         }
     }
 
-    private static String receiveMessage(DatagramSocket socket) throws IOException{
-        byte[] buf = new byte[256];
-        DatagramPacket packet = new DatagramPacket(buf, buf.length);
-        socket.receive(packet);
-
-        byte[] messageBytes = packet.getData();
-        return new String(messageBytes);
-    }
 
     private static void sendMessage(DatagramSocket socket, byte[] message) throws IOException {
         InetAddress address = InetAddress.getByName(Peer.mcast_addr);
@@ -68,6 +61,4 @@ public class BackupSubProtocol extends SubProtocol {
     private static void displayRequest(String requestMessage){
         System.out.println("Server: " + requestMessage);
     }
-
-
 }
