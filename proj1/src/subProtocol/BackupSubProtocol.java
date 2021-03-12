@@ -41,7 +41,7 @@ public class BackupSubProtocol extends SubProtocol {
             System.out.println("Sending message in Backup Sub");
 
             byte[] message =new BackupMessageFactory(filePath, senderId, replicationDeg, this.chunks[0]).createMessage();
-            // sendMessage(socket, message);
+            sendMessage(socket, message);
 
             //String received = receiveMessage(socket);
             //displayRequest(received);

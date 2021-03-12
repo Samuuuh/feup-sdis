@@ -3,21 +3,7 @@ import file.Chunk;
 
 import java.io.UnsupportedEncodingException;
 
-public class MessageParser {/*
-    public static void main(String args[]) {  
-        String message = "PUTCHUNK";
-        Chunk cho = new Chunk(0, 3, new byte[Definitions.CHUNK_MAX_SIZE]);
-        MessageFactory p = new MessageFactory("fileName");    
-        MessageParser mes = new MessageParser(message, p, cho); // Cria
-        
-        System.out.println(p.getFileId());
-        System.out.println(mes.createHeader());
-
-
-        MessageParser mes1 = new MessageParser("1.0 SenderId ae00a84b73400bc980fa8fbe400342ac9397c3a3f1ae746803ebbc38df3b6e37 0 3");
-
-        System.out.println(mes1.createHeader());
-    }  */
+public class MessageParser {
 
     // Header
     private String version;

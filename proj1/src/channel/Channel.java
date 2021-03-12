@@ -51,7 +51,7 @@ public class Channel extends Thread {
         }
     }
 
-    private static String receivePacket(MulticastSocket socket, DatagramPacket packet) throws IOException{
+    protected static String receivePacket(MulticastSocket socket, DatagramPacket packet) throws IOException{
         socket.receive(packet);
         byte[] messageBytes = packet.getData();
 

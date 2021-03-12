@@ -1,11 +1,12 @@
 package channel;
+import factory.MessageParser;
 import file.Chunk;
 import main.Definitions;
 import subProtocol.BackupSubProtocol;
 import java.net.DatagramPacket;
-import factory.MessageParser;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class BackupChannel extends Channel {
 
@@ -27,20 +28,24 @@ public class BackupChannel extends Channel {
     public void run() {
         byte[] buf = new byte[Definitions.CHUNK_MAX_SIZE];
 
-        while (true) {
+        //while (true) {
             try {
                 // TODO: quando for enviada a mensagem multicast, o peer nao vai receber mensagem dele mesmo questionmark
                 // Se o sender Id for igual nao fazemos nada.
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
-                //messageParsed = new MessageParser(packet.getData());
-                System.out.println(new String(buf));
-                putChunk();
+                receivePacket(mcast_socket, packet);
+                System.out.println(packet.getLength());
+                System.out.println("end");
+                /*if (packet.getData().length > 0){
+                    messageParsed = new MessageParser(packet.getData());
+                    putChunk();
+                }*/
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-        }
+        //}
     }
 
 
@@ -49,10 +54,10 @@ public class BackupChannel extends Channel {
         String fileId = "";
         String senderId = "";
         int replicationDeg = 0;
-        Chunk[] chunks = new Chunk[0];
+        // Chunk[] chunks = new Chunk[0];
 
         System.out.println("Chegou aqui cariou");
-        BackupSubProtocol asd = new BackupSubProtocol(filePath, fileId, senderId, replicationDeg, chunks);
+        // BackupSubProtocol asd = new BackupSubProtocol(filePath, fileId, senderId, replicationDeg, chunks);
         //asd.start();
     }
 
