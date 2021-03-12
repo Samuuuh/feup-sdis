@@ -15,7 +15,8 @@ public abstract class SubProtocol extends Thread {
         MulticastSocket socket = new MulticastSocket(Peer.mcast_port);
         InetAddress group = InetAddress.getByName(Peer.mcast_addr);
         DatagramPacket packet = new DatagramPacket(message, message.length, group, Peer.mcast_port);
+        System.out.println(new String(message));
 
-        socket.send(packet);
+        // socket.send(packet);
     }
 }

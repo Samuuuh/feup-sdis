@@ -5,7 +5,6 @@ import main.Definitions;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
@@ -37,8 +36,12 @@ public class Channel extends Thread {
             try {
                 // TODO: quando for enviada a mensagem multicast, o peer nao vai receber mensagem dele mesmo questionmark
                 // Se o sender Id for igual nao fazemos nada.
+
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
-                messageParsed = new MessageParser(packet.getData());
+                String receivePacket = receivePacket(mcast_socket, packet);
+                System.out.println(receivePacket);
+
+                //messageParsed = new MessageParser(packet.getData());
 
             // TODO: mudar erros
             } catch (Exception e) {
@@ -46,6 +49,13 @@ public class Channel extends Thread {
             }
 
         }
+    }
+
+    private static String receivePacket(MulticastSocket socket, DatagramPacket packet) throws IOException{
+        socket.receive(packet);
+        byte[] messageBytes = packet.getData();
+
+        return new String(messageBytes);
     }
 
     /**

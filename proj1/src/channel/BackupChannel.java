@@ -32,8 +32,8 @@ public class BackupChannel extends Channel {
                 // TODO: quando for enviada a mensagem multicast, o peer nao vai receber mensagem dele mesmo questionmark
                 // Se o sender Id for igual nao fazemos nada.
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
-                messageParsed = new MessageParser(packet.getData());
-
+                //messageParsed = new MessageParser(packet.getData());
+                System.out.println(new String(buf));
                 putChunk();
 
             } catch (Exception e) {
