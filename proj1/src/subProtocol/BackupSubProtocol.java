@@ -2,6 +2,7 @@ package subProtocol;
 
 import factory.BackupMessageFactory;
 import file.Chunk;
+import main.Definitions;
 import main.Peer;
 
 import java.io.IOException;
@@ -20,14 +21,13 @@ import java.nio.charset.StandardCharsets;
  */
 public class BackupSubProtocol extends SubProtocol {
     private String filePath;
-    private String fileId;
     private String senderId;
     private int replicationDeg;
     Chunk[] chunks;
 
     public BackupSubProtocol(String filePath, String fileId, String senderId, int replicationDeg, Chunk[] chunks) {
+        super("1.0", Definitions.PUTCHUNK, fileId, chunks[0].getChunkNo());
         this.filePath = filePath;
-        this.fileId = fileId;
         this.senderId = senderId;
         this.replicationDeg = replicationDeg;
         this.chunks = chunks;
@@ -40,7 +40,7 @@ public class BackupSubProtocol extends SubProtocol {
             System.out.println("BackupSubProtoc\t:: Sending multicast requests...");
             MulticastSocket socket = new MulticastSocket();
 
-            byte[] message =new BackupMessageFactory(filePath, senderId, replicationDeg, this.chunks[0]).createMessage();
+            byte[] message =new BackupMessageFactory(filePath, replicationDeg, this.chunks[0]).createMessage();
             sendMessage(socket, message);
 
             System.out.println("BackupSubProtoc\t:: Message sent!");
@@ -50,14 +50,6 @@ public class BackupSubProtocol extends SubProtocol {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-
-    private static void sendMessage(DatagramSocket socket, byte[] message) throws IOException {
-        InetAddress address = InetAddress.getByName(Peer.mcast_addr);
-
-        DatagramPacket packet = new DatagramPacket(message, message.length, address, Peer.mcast_port);
-        socket.send(packet);
     }
 
     private static void displayRequest(String requestMessage){

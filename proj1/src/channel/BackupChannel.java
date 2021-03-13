@@ -40,7 +40,8 @@ public class BackupChannel extends Channel {
 
                 // Treats the message.
                 if (messageParsed.getMessageType().equals(Definitions.PUTCHUNK))
-                    putChunk(messageParsed);
+                    putChunk(messageParsed) ;
+
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -53,11 +54,11 @@ public class BackupChannel extends Channel {
     void putChunk(MessageParser messageParsed) {
         System.out.println("BackupChannel\t:: Treating PUTCHUNK...");
 
-        Boolean success = saveFile(messageParsed);
-        if (success) {
-
+        if (saveFile(messageParsed)) {
+            // Send ok message
         }
         else {
+            // Send bad file.
             System.out.println("BackupChannel\t:: Error saving file");
         }
         // TODO: Send message of success or error.

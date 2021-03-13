@@ -1,74 +1,27 @@
 package factory;
 
+
+import main.Peer;
+
 import java.io.*;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.math.BigInteger;
-
-abstract class MessageFactory {
-    protected String fileName;
+abstract public class MessageFactory {
     protected String fileId;
     protected String type;
     protected String senderId;
-    protected String filePath;
-    protected int repDeg;
 
-    public MessageFactory(String filePath, String type, String senderId, int repDeg) {
-
-        String[] splitFilePath = filePath.split("/");
-        fileName = splitFilePath[splitFilePath.length-1];
-
-        this.filePath = filePath;
+    public MessageFactory(String type, String fileId) {
         this.type = type;
-        this.senderId = senderId;
-        this.repDeg = repDeg;
-        this.fileId = null;
-    }
-
-    protected abstract byte[] createMessage() throws IOException;
-
-    protected abstract byte[] generateHeader();
-
-
-    public String getFileId() {
-        if (this.fileId == null) {
-            return hash();
-        } else return fileId;
+        this.fileId = fileId;
     }
 
 
-    protected String hash() {
-        // Probably add the last time file was modified and other metadata.
-        File file = new File(this.filePath);
-        String identifier = file.getName() + "/" + file.length() + "/" + file.lastModified();
+    protected byte[] generateHeader() {
+        // TODO : to fix the version. How to store the version of a file?
 
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(identifier.getBytes(StandardCharsets.UTF_8));
-
-            // Convert byte array into signum representation.
-            BigInteger number = new BigInteger(1, hash);
-
-            // Convert message digest into hex value  
-            StringBuilder hashedString = new StringBuilder(number.toString(16));
-
-            // Pad with leading zeros.
-            while (hashedString.length() < 32) {
-                hashedString.insert(0, '0');
-            }
-
-            this.fileId = hashedString.toString();
-            return this.fileId;
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-
-        return "-1";
+        String version = "1.0";
+        String header = version + " " + type + " " + Peer.peer_no + " " + fileId + "\r\n";
+        System.out.println("HEADER " + header);
+        return header.getBytes();
     }
-
-
-
-
 }
