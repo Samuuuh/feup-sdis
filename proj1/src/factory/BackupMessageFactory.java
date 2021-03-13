@@ -33,7 +33,7 @@ public class BackupMessageFactory extends MessageFactory{
         // Sim.
 
         String version = "1.0";
-        String header = version + " " + Definitions.PUTCHUNK + " " + senderId + " " + "fileId" + " " +  chunk.getChunkNo() + " " + repDeg + "\r\n";
+        String header = version + " " + Definitions.PUTCHUNK + " " + senderId + " " + hash() + " " +  chunk.getChunkNo() + " " + repDeg + "\r\n";
         System.out.println("HEADER " + header);
         return header.getBytes();
     }

@@ -2,9 +2,14 @@ package channel;
 import factory.MessageParser;
 import main.Definitions;
 import main.Peer;
+
+import java.io.File;
 import java.net.DatagramPacket;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class BackupChannel extends Channel {
 
@@ -34,7 +39,7 @@ public class BackupChannel extends Channel {
 
                 // Treats the message.
                 if (messageParsed.getMessageType().equals(Definitions.PUTCHUNK))
-                    putChunk();
+                    putChunk(messageParsed);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -44,16 +49,31 @@ public class BackupChannel extends Channel {
     }
 
 
-    void putChunk() {
+    void putChunk(MessageParser messageParsed) {
         System.out.println("BackupChannel\t:: Treating PUTCHUNK...");
         // TODO: Save files.
+        saveFile(messageParsed);
 
         // TODO: Send message of success or error.
         // BackupSubProtocol asd = new BackupSubProtocol(filePath, fileId, senderId, replicationDeg, chunks);
         //asd.start();
     }
 
-    void handleStoredMessage() {
-        // Ler
+    void saveFile(MessageParser messageParsed){
+
+        System.out.println("BackupChannel\t:: Saving file " + messageParsed.getFileId() + "...");
+
+        try {
+            Path path = Paths.get("savedFiles");
+
+            Files.createDirectories(path);
+            File file = new File("savedFiles/" + messageParsed.getFileId());
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
+
 }

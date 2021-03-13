@@ -26,7 +26,9 @@ public class Chunk {
         return replicationDeg;
     }
 
-    public byte[] getChunkData() { return data; }
+    public byte[] getChunkData() {
+        return data;
+    }
 
     public void setReplicationDeg(int replicationDeg){
         this.replicationDeg = replicationDeg;
