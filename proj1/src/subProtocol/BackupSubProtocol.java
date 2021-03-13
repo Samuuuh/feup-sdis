@@ -36,17 +36,19 @@ public class BackupSubProtocol extends SubProtocol {
     @Override
     public void run() {
         try {
-            MulticastSocket socket = new MulticastSocket();
 
-            System.out.println("Sending message in Backup Sub");
+            System.out.println("BackupSubProtoc\t:: Sending multicast requests...");
+            MulticastSocket socket = new MulticastSocket();
 
             byte[] message =new BackupMessageFactory(filePath, senderId, replicationDeg, this.chunks[0]).createMessage();
             sendMessage(socket, message);
 
+            System.out.println("BackupSubProtoc\t:: Message sent!");
+
             //String received = receiveMessage(socket);
             //displayRequest(received);
-        } catch (IOException var2) {
-            var2.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

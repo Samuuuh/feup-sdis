@@ -6,7 +6,6 @@ import file.Chunk;
 import file.FileHandler;
 
 import java.io.*;
-import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
@@ -18,7 +17,7 @@ public class Peer implements Services {
     public static String mcast_addr;
     public static int port;
     public static String version;
-    public static int peer_no;
+    public static String peer_no;
 
     public static void initChannel(int mcast_port, String mcast_addr) throws IOException {
         new BackupChannel(mcast_port, mcast_addr).start();
@@ -32,7 +31,7 @@ public class Peer implements Services {
         }
 
         version = args[0];
-        peer_no = Integer.parseInt(args[1]);
+        peer_no = args[1];
         mcast_port = Integer.parseInt(args[2]);
         mcast_addr = args[3];
 
@@ -46,38 +45,30 @@ public class Peer implements Services {
 
         try {
             Registry registry = LocateRegistry.getRegistry(Definitions.REGISTER_PORT);
-            registry.rebind(String.valueOf(peer_no), stub);
+            registry.rebind(peer_no, stub);
 
         } catch (Exception e) {
             System.out.println("ERROR: Error while trying to bind stub");
             System.err.println("Registry does not exist. Creating a new one...");
 
             Registry registry = LocateRegistry.createRegistry(Definitions.REGISTER_PORT);
-            registry.rebind(String.valueOf(peer_no), stub);
+            registry.rebind(peer_no, stub);
         }
 
         System.out.println("Server is running");
     }
 
     public String backup(String filePath, int replicationDeg) throws IOException {
-        // TODO: to delete.
-
-        System.out.println("Backup called");
+        System.out.println("Peer\t\t:: backup START!");
 
         try {
             byte[] fileContent = FileHandler.readFile(filePath);
-            // Chunk[] chunks = FileHandler.splitFile(fileContent);
-            Chunk chunk = new Chunk(0, fileContent);
-            Chunk[] chunks = {chunk};
-            new BackupSubProtocol(filePath, "fileId", "senderId", replicationDeg, chunks).start();
+            Chunk[] chunks = FileHandler.splitFile(fileContent);
+            new BackupSubProtocol(filePath, "fileId", peer_no, replicationDeg, chunks).start();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-
+        System.out.println("Peer\t\t:: backup END!");
         return "Backup has ended";
     }
-
-
 }

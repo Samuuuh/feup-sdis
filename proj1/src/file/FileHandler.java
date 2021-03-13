@@ -28,10 +28,15 @@ public class FileHandler {
     // uint.
     public static Chunk[] splitFile(byte[] fileContent) {
 
+        if (fileContent.length == 0){
+            Chunk chunk = new Chunk(0, new byte[0]);
+            return new Chunk[]{chunk};
+        }
+
         byte[] data;
 
         // Includes the last chunk be it zero or not.
-        int numSplits = (int) Math.ceil((float) fileContent.length / Definitions.CHUNK_MAX_SIZE);
+        int numSplits = (int) Math.ceil((float) fileContent.length / (float)Definitions.CHUNK_MAX_SIZE);
         int lastChunkPos = numSplits - 1;
         int bytePos = 0;
 
