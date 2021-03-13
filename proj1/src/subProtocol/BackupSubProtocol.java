@@ -21,14 +21,12 @@ import java.nio.charset.StandardCharsets;
  */
 public class BackupSubProtocol extends SubProtocol {
     private String filePath;
-    private String senderId;
     private int replicationDeg;
     Chunk[] chunks;
 
-    public BackupSubProtocol(String filePath, String fileId, String senderId, int replicationDeg, Chunk[] chunks) {
-        super("1.0", Definitions.PUTCHUNK, fileId, chunks[0].getChunkNo());
+    public BackupSubProtocol(String path, String filePath, String fileId, int replicationDeg, Chunk[] chunks) {
+        super(Peer.version, Definitions.PUTCHUNK, fileId);
         this.filePath = filePath;
-        this.senderId = senderId;
         this.replicationDeg = replicationDeg;
         this.chunks = chunks;
     }

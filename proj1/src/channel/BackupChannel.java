@@ -2,6 +2,7 @@ package channel;
 import factory.MessageParser;
 import main.Definitions;
 import main.Peer;
+import subProtocol.SubProtocolChunkTemp;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,6 +44,7 @@ public class BackupChannel extends Channel {
                     putChunk(messageParsed) ;
 
 
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -54,15 +56,16 @@ public class BackupChannel extends Channel {
     void putChunk(MessageParser messageParsed) {
         System.out.println("BackupChannel\t:: Treating PUTCHUNK...");
 
+        // TODO: Save file in different thread
+        // Backup file only reads and redirect data
         if (saveFile(messageParsed)) {
-            // Send ok message
+            new SubProtocolChunkTemp(messageParsed.getVersion(), Definitions.STORED, messageParsed.getFileId(), messageParsed.getChunkNo()).start();
         }
         else {
             // Send bad file.
             System.out.println("BackupChannel\t:: Error saving file");
         }
         // TODO: Send message of success or error.
-        // BackupSubProtocol asd = new BackupSubProtocol(filePath, fileId, senderId, replicationDeg, chunks);
         //asd.start();
     }
 
