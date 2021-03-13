@@ -67,8 +67,9 @@ public class BackupChannel extends Channel {
 
     Boolean saveFile(MessageParser messageParsed){
 
-        System.out.println("BackupChannel\t:: Saving file " + messageParsed.getFileId() + "...");
-        String filePath = "savedFiles/" + messageParsed.getFileId() + ".jpg";
+        System.out.println("BackupChannel\t:: Saving file " + messageParsed.getFileId());
+
+        String filePath = "savedFiles/" + messageParsed.getFileId();
         try {
             Path path = Paths.get("savedFiles");
             Files.createDirectories(path);

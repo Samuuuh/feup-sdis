@@ -16,7 +16,6 @@ import java.util.Arrays;
 // <Version> DELETE <SenderId> <FileId> <CRLF><CRLF>
 
 public class MessageParser {
-
     // Header
     private String version;
     private String messageType;
@@ -28,14 +27,14 @@ public class MessageParser {
     // Body
     private byte[] data;
 
-    static byte[] splitHeader(byte[] bytes){
-        int i = bytes.length - 1;
+    static int splitHeader(byte[] bytes){
+        int i =  0;
         while (true) {
-            if ((bytes[i-1]  == (byte) 0x0D) && (bytes[i] == (byte) 0x0A)) break;
-             --i;
+            if (((bytes[i]  == (byte) 0x0D) && (bytes[i+1] == (byte) 0x0A)) || i >= bytes.length) break;
+            i++;
         }
 
-        return Arrays.copyOf(bytes, i + 2);
+        return i + 1;
     }
 
     static byte[] trim(byte[] bytes) {
@@ -47,44 +46,26 @@ public class MessageParser {
 
     public MessageParser(byte[] byteMessage) {
         try {
-            byte[] fileByte = splitHeader(byteMessage);
-            try {
-                FileOutputStream outputStream = new FileOutputStream("teste3.jpg");
-                outputStream.write(fileByte);
-            } catch (Exception e) {
-                System.out.println("e");
-            }
+            int endHeaderByte = splitHeader(byteMessage);
+            byte[] header = Arrays.copyOfRange(byteMessage, 0, endHeaderByte);
+            byte[] message = trim(Arrays.copyOfRange(byteMessage, endHeaderByte+1, byteMessage.length));
 
-            String fullMessage = new String(byteMessage, "ISO-8859-1");
-
-            String[] splitMessage = fullMessage.split("\r\n");
-            String messageHeader = splitMessage[0];
-
-            try {
-                FileOutputStream outputStream = new FileOutputStream("teste4.jpg");
-                outputStream.write(splitMessage[1].getBytes());
-            } catch (Exception e) {
-                System.out.println("e");
-            }
+            String messageHeader = new String(header, "ISO-8859-1");
 
             // Header Parse
             this.headerString = messageHeader.replaceAll("\\s+", " ");
             String[] splitHeader = this.headerString.split(" ");
-
-            // Check the min side for the
-            if (splitHeader.length < 4) {
-                System.err.println("MessageParser\t::Invalid Header");
-                throw new IOException();
-            }
-
 
             this.version = splitHeader[0];
             this.messageType = splitHeader[1];
             this.senderId = splitHeader[2];
             this.fileId = splitHeader[3];
 
+
             if (this.messageType.equals(Definitions.PUTCHUNK)) {
-                parsePutchunk(splitHeader, splitMessage);
+                // Empty body.
+
+                parsePutchunk(splitHeader, message);
             } else if (this.messageType.equals(Definitions.STORED) ||
                     this.messageType.equals(Definitions.REMOVED) ||
                     this.messageType.equals(Definitions.GETCHUNK)) {
@@ -106,8 +87,7 @@ public class MessageParser {
 
 
 
-    void parsePutchunk(String[] splitHeader, String[] splitMessage) throws IOException {
-
+    void parsePutchunk(String[] splitHeader, byte[] messageByte) throws IOException {
         System.out.println("MessageParser\t:: parsing PUTCHUNK...");
 
         if (splitHeader.length != 6) {
@@ -118,13 +98,12 @@ public class MessageParser {
         this.chunkNo = splitHeader[4];
         this.replicationDeg = splitHeader[5];
 
-        // Empty body.
-        if (splitMessage.length != 2) {
+        if (messageByte.length == 0) {
             this.data = new byte[0];
-            System.out.println("MessageParser\t:: parsed PUTCHUNK!");
-            return;
+        } else {
+            this.data = trim(messageByte);
         }
-        this.data = trim(splitMessage[1].getBytes());
+
 
         System.out.println(this.data.length);
         System.out.println("MessageParser\t:: parsed PUTCHUNK!");
