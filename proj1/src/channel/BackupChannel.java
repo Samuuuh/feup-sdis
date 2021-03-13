@@ -2,6 +2,7 @@ package channel;
 import factory.MessageParser;
 import main.Definitions;
 import main.Peer;
+import processing.ProcessPutChunk;
 import sendMessage.SendMessageWithChunkNo;
 
 import java.io.File;
@@ -41,9 +42,7 @@ public class BackupChannel extends Channel {
 
                 // Treats the message.
                 if (messageParsed.getMessageType().equals(Definitions.PUTCHUNK))
-                    putChunk(messageParsed) ;
-
-
+                    new ProcessPutChunk(messageParsed).start() ;
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -53,44 +52,6 @@ public class BackupChannel extends Channel {
     }
 
 
-    void putChunk(MessageParser messageParsed) {
-        System.out.println("BackupChannel\t:: Treating PUTCHUNK...");
 
-        // TODO: Save file in different thread
-        // Backup file only reads and redirect data
-        if (saveFile(messageParsed)) {
-            new SendMessageWithChunkNo(messageParsed.getVersion(), Definitions.STORED, messageParsed.getFileId(), messageParsed.getChunkNo()).start();
-        }
-        else {
-            // Send bad file.
-            System.out.println("BackupChannel\t:: Error saving file");
-        }
-        // TODO: Send message of success or error.
-        //asd.start();
-    }
-
-    Boolean saveFile(MessageParser messageParsed){
-
-        System.out.println("BackupChannel\t:: Saving file " + messageParsed.getFileId());
-
-        String filePath = "savedFiles/" + messageParsed.getFileId();
-        try {
-            Path path = Paths.get("savedFiles");
-            Files.createDirectories(path);
-            File file = new File(filePath);
-            file.createNewFile();
-
-            FileOutputStream outputStream = new FileOutputStream(filePath);
-            outputStream.write(messageParsed.getData());
-
-            System.out.println(messageParsed.getData().length);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        return true;
-    }
 
 }

@@ -9,16 +9,16 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import file.FileHandler;
+
 import main.Peer;
 
 // Creates messages requesting backup.
 public class BackupMessageFactory extends MessageFactory {
     Chunk chunk;
-    int repDeg;
+    String repDeg;
     String filePath;
 
-    public BackupMessageFactory(String filePath, int repDeg, Chunk chunk) {
+    public BackupMessageFactory(String filePath, String repDeg, Chunk chunk) {
         super(Definitions.PUTCHUNK, null);
         this.filePath = filePath;
         this.repDeg = repDeg;

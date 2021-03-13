@@ -17,10 +17,10 @@ import java.net.MulticastSocket;
  */
 public class SendMessageBackup extends SendMessage {
     private String filePath;
-    private int replicationDeg;
+    private String replicationDeg;
     Chunk[] chunks;
 
-    public SendMessageBackup(String path, String filePath, String fileId, int replicationDeg, Chunk[] chunks) {
+    public SendMessageBackup(String filePath, String fileId, String replicationDeg, Chunk[] chunks) {
         super(Peer.version, Definitions.PUTCHUNK, fileId);
         this.filePath = filePath;
         this.replicationDeg = replicationDeg;
@@ -31,13 +31,13 @@ public class SendMessageBackup extends SendMessage {
     public void run() {
         try {
 
-            System.out.println("SendMessageBackup\t:: Sending multicast requests...");
+            System.out.println("SendMessBackup\t:: Sending multicast requests...");
             MulticastSocket socket = new MulticastSocket();
 
             byte[] message =new BackupMessageFactory(filePath, replicationDeg, this.chunks[0]).createMessage();
             sendMessage(socket, message);
 
-            System.out.println("sendMessageBackup\t:: Message sent!");
+            System.out.println("sendMessBackup\t:: Message sent!");
 
             //String received = receiveMessage(socket);
             //displayRequest(received);
@@ -46,7 +46,4 @@ public class SendMessageBackup extends SendMessage {
         }
     }
 
-    private static void displayRequest(String requestMessage){
-        System.out.println("Server: " + requestMessage);
-    }
 }
