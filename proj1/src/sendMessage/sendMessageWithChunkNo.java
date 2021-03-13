@@ -1,25 +1,22 @@
-package subProtocol;
+package sendMessage;
 
 import factory.MessageChunkTemp;
 import main.Peer;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.MulticastSocket;
 
-public class SubProtocolChunkTemp extends SubProtocol{
+public class sendMessageWithChunkNo extends sendMessage {
 
     String chunkNo;
-    public SubProtocolChunkTemp(String version, String type, String fileId, String chunkNo) {
+    public sendMessageWithChunkNo(String version, String type, String fileId, String chunkNo) {
         super(version, type, fileId);
         this.chunkNo = String.valueOf(chunkNo);
     }
 
 
     public void run(){
-        System.out.println("Subprotocol\t:: Sending message " + type + "...");
+        System.out.println("SendMessageWithChunkNo\t:: Sending message " + type + "...");
         try {
             System.out.println("BackupSubProtoc\t:: Sending multicast requests...");
             MulticastSocket socket = new MulticastSocket();
@@ -27,7 +24,7 @@ public class SubProtocolChunkTemp extends SubProtocol{
             byte[] message = new MessageChunkTemp(type, Peer.peer_no, chunkNo).generateHeader();
             sendMessage(socket, message);
 
-            System.out.println("BackupSubProtoc\t:: Message sent!");
+            System.out.println("SendMessageWithChunkNo\t:: Message sent!");
 
             //String received = receiveMessage(socket);
             //displayRequest(received);

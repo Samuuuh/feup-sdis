@@ -1,7 +1,7 @@
 package main;
 
 import channel.BackupChannel;
-import subProtocol.BackupSubProtocol;
+import sendMessage.sendMessageBackup;
 import file.Chunk;
 import file.FileHandler;
 
@@ -63,7 +63,7 @@ public class Peer implements Services {
             byte[] fileContent = FileHandler.readFile(filePath); 
             Chunk[] chunks = FileHandler.splitFile(fileContent);
 
-            new BackupSubProtocol(filePath, "fileId", peer_no, replicationDeg, chunks).start();
+            new sendMessageBackup(filePath, "fileId", peer_no, replicationDeg, chunks).start();
         } catch (Exception e) {
             e.printStackTrace();
         }
