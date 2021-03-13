@@ -34,9 +34,6 @@ public class Channel extends Thread {
 
         while (true) {
             try {
-                // TODO: quando for enviada a mensagem multicast, o peer nao vai receber mensagem dele mesmo questionmark
-                // Se o sender Id for igual nao fazemos nada.
-
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
                 String receivePacket = receivePacket(mcast_socket, packet);
                 System.out.println(receivePacket);

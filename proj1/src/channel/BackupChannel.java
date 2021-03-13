@@ -22,8 +22,6 @@ public class BackupChannel extends Channel {
 
         while (true) {
             try {
-                // TODO: quando for enviada a mensagem multicast, o peer nao vai receber mensagem dele mesmo questionmark
-                // Se o sender Id for igual nao fazemos nada.
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
                 receivePacket(mcast_socket, packet);
 
@@ -48,7 +46,7 @@ public class BackupChannel extends Channel {
 
     void putChunk() {
         System.out.println("BackupChannel\t:: Treating PUTCHUNK...");
-        // Save files.
+        // TODO: Save files.
 
         // TODO: Send message of success or error.
         // BackupSubProtocol asd = new BackupSubProtocol(filePath, fileId, senderId, replicationDeg, chunks);

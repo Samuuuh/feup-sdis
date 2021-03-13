@@ -36,10 +36,8 @@ public class Peer implements Services {
         mcast_addr = args[3];
 
         initChannel(mcast_port, mcast_addr);
-        // Bind Services.
 
-        // TODO: perguntar ao professor qual vai ser esta porta?
-        // O peer nao cria o registo. Fazemos um programa java separado. Importante.
+        // Bind Services.
         Peer obj = new Peer();
         Services stub = (Services) UnicastRemoteObject.exportObject(obj, 0);
 
