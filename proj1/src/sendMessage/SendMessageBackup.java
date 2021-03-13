@@ -15,12 +15,12 @@ import java.net.MulticastSocket;
  * 3) Send the response.
  * 4) Handle the response.
  */
-public class sendMessageBackup extends sendMessage {
+public class SendMessageBackup extends SendMessage {
     private String filePath;
     private int replicationDeg;
     Chunk[] chunks;
 
-    public sendMessageBackup(String path, String filePath, String fileId, int replicationDeg, Chunk[] chunks) {
+    public SendMessageBackup(String path, String filePath, String fileId, int replicationDeg, Chunk[] chunks) {
         super(Peer.version, Definitions.PUTCHUNK, fileId);
         this.filePath = filePath;
         this.replicationDeg = replicationDeg;

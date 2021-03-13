@@ -8,12 +8,12 @@ import java.net.InetAddress;
 import main.Peer;
 
 
-public abstract class sendMessage extends Thread {
+public abstract class SendMessage extends Thread {
     protected String version;
     protected String type;
     protected String fileId;
 
-    public sendMessage(String version, String type, String fileId) {
+    public SendMessage(String version, String type, String fileId) {
         this.version = version;
         this.type = type;
         this.fileId = fileId;

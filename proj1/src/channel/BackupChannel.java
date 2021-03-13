@@ -2,7 +2,7 @@ package channel;
 import factory.MessageParser;
 import main.Definitions;
 import main.Peer;
-import sendMessage.sendMessageWithChunkNo;
+import sendMessage.SendMessageWithChunkNo;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -59,7 +59,7 @@ public class BackupChannel extends Channel {
         // TODO: Save file in different thread
         // Backup file only reads and redirect data
         if (saveFile(messageParsed)) {
-            new sendMessageWithChunkNo(messageParsed.getVersion(), Definitions.STORED, messageParsed.getFileId(), messageParsed.getChunkNo()).start();
+            new SendMessageWithChunkNo(messageParsed.getVersion(), Definitions.STORED, messageParsed.getFileId(), messageParsed.getChunkNo()).start();
         }
         else {
             // Send bad file.

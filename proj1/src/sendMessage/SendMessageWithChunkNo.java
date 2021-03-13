@@ -6,10 +6,10 @@ import main.Peer;
 import java.io.IOException;
 import java.net.MulticastSocket;
 
-public class sendMessageWithChunkNo extends sendMessage {
+public class SendMessageWithChunkNo extends SendMessage {
 
     String chunkNo;
-    public sendMessageWithChunkNo(String version, String type, String fileId, String chunkNo) {
+    public SendMessageWithChunkNo(String version, String type, String fileId, String chunkNo) {
         super(version, type, fileId);
         this.chunkNo = String.valueOf(chunkNo);
     }
