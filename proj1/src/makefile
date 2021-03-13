@@ -1,6 +1,6 @@
+VERSION = 1
 
 CC = javac
-
 
 find_dir = $(wildcard $(dir)/*.java)
 find_class = $(wildcard $(dir)/*.class)
@@ -8,14 +8,32 @@ PACKAGES := main file factory channel subProtocol
 CLASSES = $(foreach dir, $(PACKAGES), $(find_class))
 FILES = $(foreach dir, $(PACKAGES), $(find_dir))
 
-define NEWLINE
+PEER = main.Peer
+CLIENT = main.Client
 
-endef
+MCAST_PORT = 1889
+MCAST_ADDR = 230.0.0.1
 
 
 .PHONY: all
+# Main compilation.
 all: $(CLASSES)
 	$(CC) $(FILES)
+
+
+# Personalized input
+# java main.Peer version peer_no mcast_port mcast_addr
+peer: all
+	@read -p "Input peer number: " peer_no;
+	$(CC) $(PEER) $(VERSION) $$peer_no $(MCAST_PORT) $(MCAST_ADDR)
+
+# java Client <peer_ap> BACKUP <file> <replication_degree>
+backup: all
+	@read -p "Input file path: " file_path;
+	@read -p "Peer number: " peer_no;
+	@read -p "Replication degree: " rep_deg;
+	$(CC) $(CLIENT) $$peer_no BACKUP $$file_path  $$rep_deg;
+
 
 .PHONY: clean
 clean:

@@ -1,9 +1,9 @@
 package file;
 
 public class Chunk {
-    private int chunkNo;                // Number of the chunck.
+    private final int chunkNo;                // Number of the chunck.
     private int replicationDeg;
-    private byte[] data;
+    private final byte[] data;
 
     public Chunk(int chunkNo, byte[] data){
         this.chunkNo = chunkNo;
@@ -26,7 +26,9 @@ public class Chunk {
         return replicationDeg;
     }
 
-    public byte[] getChunkData() { return data; }
+    public byte[] getChunkData() {
+        return data;
+    }
 
     public void setReplicationDeg(int replicationDeg){
         this.replicationDeg = replicationDeg;

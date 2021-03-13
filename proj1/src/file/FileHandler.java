@@ -4,9 +4,14 @@ import file.Chunk;
 import main.Definitions;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
+
+import static java.nio.file.Files.readAllBytes;
 
 public class FileHandler {
 
@@ -17,20 +22,24 @@ public class FileHandler {
         if (file.length() > Integer.MAX_VALUE)
             throw new IOException("File too large to be read");
         try {
-            return Files.readAllBytes(file.toPath());
+            return readAllBytes(file.toPath());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    // TODO: the num of splits must be long?
     public static Chunk[] splitFile(byte[] fileContent) {
+        if (fileContent.length == 0){
+            Chunk chunk = new Chunk(0, new byte[0]);
+            return new Chunk[]{chunk};
+        }
 
         byte[] data;
 
         // Includes the last chunk be it zero or not.
-        int numSplits = (int) Math.ceil((float) fileContent.length / Definitions.CHUNK_MAX_SIZE);
+        int numSplits = (int) Math.ceil((float) fileContent.length / (float)Definitions.CHUNK_MAX_SIZE);
         int lastChunkPos = numSplits - 1;
         int bytePos = 0;
 
@@ -49,7 +58,7 @@ public class FileHandler {
         }
 
         // Last chunk computation.
-        if (remainSize == 0)
+        if (emptyChunk == 1)
             chunks[lastChunkPos] = new Chunk(lastChunkPos, new byte[0]);
         else {
             data= Arrays.copyOfRange(fileContent, bytePos, bytePos + remainSize);

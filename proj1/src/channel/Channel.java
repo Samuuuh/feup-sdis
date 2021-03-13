@@ -5,7 +5,6 @@ import main.Definitions;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
@@ -15,7 +14,7 @@ public class Channel extends Thread {
     protected final int mcast_port;
     protected final InetAddress group;
     protected final MulticastSocket mcast_socket;
-    protected MessageParser messageParser;
+    protected MessageParser messageParsed;
 
     public Channel(int mcast_port, String mcast_addr) throws IOException {
         this.mcast_port = mcast_port;
@@ -27,12 +26,6 @@ public class Channel extends Thread {
         mcast_socket.joinGroup(group);
     }
 
-    private static void sendMessage(DatagramSocket socket, byte[] message, String host) throws IOException {
-        InetAddress address = InetAddress.getByName(host);
-
-        DatagramPacket packet = new DatagramPacket(message, message.length, address, Definitions.PORT);
-        socket.send(packet);
-    }
 
     // Receives the messages and sends them to a handler.
     @Override
@@ -41,14 +34,29 @@ public class Channel extends Thread {
 
         while (true) {
             try {
-                // TODO: quando for enviada a mensagem multicast, o peer não vai receber mensagem dele mesmo? 
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
-                mcast_socket.receive(packet);
-                messageParser = new MessageParser(packet.getData());
-            } catch (IOException e) {
+                String receivePacket = receivePacket(mcast_socket, packet);
+                System.out.println(receivePacket);
+
+                //messageParsed = new MessageParser(packet.getData());
+
+            // TODO: mudar erros
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
         }
     }
+
+    protected static String receivePacket(MulticastSocket socket, DatagramPacket packet) throws IOException{
+        socket.receive(packet);
+        byte[] messageBytes = packet.getData();
+
+        return new String(messageBytes);
+    }
+
+    /**
+     * This will handle the actions requested by the protocol.
+     */
+    //public void handleAction(MessageParser messageParsed);
 }

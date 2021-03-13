@@ -1,10 +1,6 @@
 package factory;
 
-import main.Definitions;
-
 import java.io.*;
-import java.nio.file.Files;
-import java.util.Arrays;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -35,16 +31,18 @@ abstract class MessageFactory {
 
     protected abstract byte[] generateHeader();
 
+
     public String getFileId() {
         if (this.fileId == null) {
             return hash();
         } else return fileId;
     }
 
-    private String hash() {
+
+    protected String hash() {
         // Probably add the last time file was modified and other metadata.
-        long seconds = System.currentTimeMillis() / 1000L;
-        String identifier = this.fileName + String.valueOf(seconds);
+        File file = new File(this.filePath);
+        String identifier = file.getName() + "/" + file.length() + "/" + file.lastModified();
 
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

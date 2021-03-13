@@ -1,24 +1,21 @@
 package factory;
+
 import file.Chunk;
+import main.Definitions;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-
-public class MessageParser {/*
-    public static void main(String args[]) {  
-        String message = "PUTCHUNK";
-        Chunk cho = new Chunk(0, 3, new byte[Definitions.CHUNK_MAX_SIZE]);
-        MessageFactory p = new MessageFactory("fileName");    
-        MessageParser mes = new MessageParser(message, p, cho); // Cria
-        
-        System.out.println(p.getFileId());
-        System.out.println(mes.createHeader());
+import java.util.Arrays;
 
 
-        MessageParser mes1 = new MessageParser("1.0 SenderId ae00a84b73400bc980fa8fbe400342ac9397c3a3f1ae746803ebbc38df3b6e37 0 3");
+// <Version> PUTCHUNK <SenderId> <FileId> <ChunkNo> <ReplicationDeg> <CRLF><CRLF><Body>
+// <Version> STORED <SenderId> <FileId> <ChunkNo> <CRLF><CRLF>
+// <Version> GETCHUNK <SenderId> <FileId> <ChunkNo> <CRLF><CRLF>
+// <Version> CHUNK <SenderId> <FileId> <ChunkNo> <CRLF><CRLF><Body>
+// <Version> DELETE <SenderId> <FileId> <CRLF><CRLF>
 
-        System.out.println(mes1.createHeader());
-    }  */
-
+public class MessageParser {
     // Header
     private String version;
     private String messageType;
@@ -26,60 +23,139 @@ public class MessageParser {/*
     private String fileId;
     private String chunkNo;
     private String replicationDeg;
-    // TODO: put as protected. 
-    public String headerString;
-
+    private String headerString;
     // Body
     private byte[] data;
 
+    static int splitHeader(byte[] bytes){
+        int i =  0;
+        while (true) {
+            if (((bytes[i]  == (byte) 0x0D) && (bytes[i+1] == (byte) 0x0A)) || i >= bytes.length) break;
+            i++;
+        }
+
+        return i + 1;
+    }
+
+    static byte[] trim(byte[] bytes) {
+        int i = bytes.length - 1;
+        while (i >= 0 && bytes[i] == 0) --i;
+
+        return Arrays.copyOf(bytes, i + 1);
+    }
+
     public MessageParser(byte[] byteMessage) {
         try {
-            String fullMessage = new String(byteMessage, "ISO-8859-1");
+            int endHeaderByte = splitHeader(byteMessage);
+            byte[] header = Arrays.copyOfRange(byteMessage, 0, endHeaderByte);
+            byte[] message = trim(Arrays.copyOfRange(byteMessage, endHeaderByte+1, byteMessage.length));
 
-            String[] partMessage = fullMessage.split("\r\n"); 
+            String messageHeader = new String(header, "ISO-8859-1");
 
-            String messageHeader = partMessage[0];
-            this.data = partMessage[1].getBytes();
-            
             // Header Parse
-            this.headerString = messageHeader.replaceAll("\\s+"," ");
-            String[] partHeader = this.headerString.split(" ");
+            this.headerString = messageHeader.replaceAll("\\s+", " ");
+            String[] splitHeader = this.headerString.split(" ");
 
-            if(partHeader.length != 6) {
-                System.out.println("Invalid Header");
-                return;
+            this.version = splitHeader[0];
+            this.messageType = splitHeader[1];
+            this.senderId = splitHeader[2];
+            this.fileId = splitHeader[3];
+
+
+            if (this.messageType.equals(Definitions.PUTCHUNK)) {
+                // Empty body.
+
+                parsePutchunk(splitHeader, message);
+            } else if (this.messageType.equals(Definitions.STORED) ||
+                    this.messageType.equals(Definitions.REMOVED) ||
+                    this.messageType.equals(Definitions.GETCHUNK)) {
+                System.out.println("MessageParser\t::To implement");
+            } else if (this.messageType.equals(Definitions.CHUNK)) {
+                System.out.println("MessageParser\t::To implement");
+            } else if (this.messageType.equals(Definitions.DELETE)) {
+                System.out.println("MessageParser\t::To implement");
+            } else {
+                System.out.println("MessageParser\t::Not a valid header");
             }
 
-            this.version = partHeader[0];
-            this.messageType = partHeader[1];
-            this.senderId = partHeader[2];
-            this.fileId = partHeader[3];
-            this.chunkNo = partHeader[4];
-            this.replicationDeg = partHeader[5];
 
-            for(String elem : partHeader) {
-                System.out.println(elem);
-            }
-        } catch(UnsupportedEncodingException e) {
+
+        } catch (Exception e ) {
             System.out.println(e);
         }
     }
 
+
+
+    void parsePutchunk(String[] splitHeader, byte[] messageByte) throws IOException {
+        System.out.println("MessageParser\t:: parsing PUTCHUNK...");
+
+        if (splitHeader.length != 6) {
+            System.err.println("Invalid Header");
+            throw new IOException();
+        }
+
+        this.chunkNo = splitHeader[4];
+        this.replicationDeg = splitHeader[5];
+
+        if (messageByte.length == 0) {
+            this.data = new byte[0];
+        } else {
+            this.data = trim(messageByte);
+        }
+
+
+        System.out.println(this.data.length);
+        System.out.println("MessageParser\t:: parsed PUTCHUNK!");
+
+    }
+
+
+
+    public String getVersion() {
+        return version;
+    }
+
+    public String getMessageType(){
+        return messageType;
+    }
+
+    public String getSenderId() {
+        return senderId;
+    }
+
+    public String getFileId() {
+        return fileId;
+    }
+
+    public String getChunkNo() {
+        return chunkNo;
+    }
+
+    public String getReplicationDeg() {
+        return replicationDeg;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+/*
     public MessageParser(String header) {
         this.headerString = header.replaceAll("\\s+"," ");
-        String[] partHeader = this.headerString.split(" ");
+        String[] splitHeader = this.headerString.split(" ");
 
-        if(partHeader.length != 6) {
+        if(splitHeader.length != 6) {
             System.out.println("Invalid Header");
             return;
         }
 
-        this.version = partHeader[0];
-        this.messageType = partHeader[1];
-        this.senderId = partHeader[2];
-        this.fileId = partHeader[3];
-        this.chunkNo = partHeader[4];
-        this.replicationDeg = partHeader[5];
+        this.version = splitHeader[0];
+        this.messageType = splitHeader[1];
+        this.senderId = splitHeader[2];
+        this.fileId = splitHeader[3];
+        this.chunkNo = splitHeader[4];
+        this.replicationDeg = splitHeader[5];
     }
 
     public MessageParser(String messageType, MessageFactory file, Chunk chunk) {
@@ -95,5 +171,5 @@ public class MessageParser {/*
     public String createHeader() {
         headerString = this.version + " " + this.senderId + " " + this.fileId + " " + this.chunkNo  + " " + this.replicationDeg + "\r\n";
         return headerString;
-    }
+    }*/
 }

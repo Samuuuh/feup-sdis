@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 import java.rmi.NotBoundException;
  
 public class Client {
-    private int peerAccessPoint;
+    private String peerAccessPoint;
     private String operation;
     private Registry registry;
 
@@ -22,11 +22,11 @@ public class Client {
     }
 
     private Client(String[] args) throws IOException {
-        this.peerAccessPoint = Integer.parseInt(args[0]);
+        this.peerAccessPoint = args[0];
         this.operation = args[1];
 
         try {
-            this.registry = LocateRegistry.getRegistry(this.peerAccessPoint);
+            this.registry = LocateRegistry.getRegistry(Definitions.REGISTER_PORT);
         } catch (RemoteException e) {
             System.err.println("Client exception: " + e.toString());
             e.printStackTrace();
@@ -39,8 +39,13 @@ public class Client {
             }
 
             String file = args[2];
-            // TODO: check if it's really a int.
             String replication_degree = args[3];
+            boolean isNumber = replication_degree.matches("\\d+");
+
+            if(!isNumber) {
+                System.out.println("Replication degree should be an Integer");
+                return;
+            }
             try {
                 System.out.println("Calling backup");
                 backup(file, replication_degree);
@@ -87,7 +92,7 @@ public class Client {
     }
 
     private void backup(String filePath, String replication_degree) throws IOException, NotBoundException {
-        Services stub = (Services) this.registry.lookup("Services");
+        Services stub = (Services) this.registry.lookup(this.peerAccessPoint);
         int replication = Integer.parseInt(replication_degree);
         String response = stub.backup(filePath, replication);
 
