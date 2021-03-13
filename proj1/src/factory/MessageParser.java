@@ -3,8 +3,10 @@ package factory;
 import file.Chunk;
 import main.Definitions;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
 
 // <Version> PUTCHUNK <SenderId> <FileId> <ChunkNo> <ReplicationDeg> <CRLF><CRLF><Body>
@@ -26,13 +28,44 @@ public class MessageParser {
     // Body
     private byte[] data;
 
-    //
+    static byte[] splitHeader(byte[] bytes){
+        int i = bytes.length - 1;
+        while (true) {
+            if ((bytes[i-1]  == (byte) 0x0D) && (bytes[i] == (byte) 0x0A)) break;
+             --i;
+        }
+
+        return Arrays.copyOf(bytes, i + 2);
+    }
+
+    static byte[] trim(byte[] bytes) {
+        int i = bytes.length - 1;
+        while (i >= 0 && bytes[i] == 0) --i;
+
+        return Arrays.copyOf(bytes, i + 1);
+    }
+
     public MessageParser(byte[] byteMessage) {
         try {
+            byte[] fileByte = splitHeader(byteMessage);
+            try {
+                FileOutputStream outputStream = new FileOutputStream("teste3.jpg");
+                outputStream.write(fileByte);
+            } catch (Exception e) {
+                System.out.println("e");
+            }
+
             String fullMessage = new String(byteMessage, "ISO-8859-1");
 
             String[] splitMessage = fullMessage.split("\r\n");
             String messageHeader = splitMessage[0];
+
+            try {
+                FileOutputStream outputStream = new FileOutputStream("teste4.jpg");
+                outputStream.write(splitMessage[1].getBytes());
+            } catch (Exception e) {
+                System.out.println("e");
+            }
 
             // Header Parse
             this.headerString = messageHeader.replaceAll("\\s+", " ");
@@ -71,6 +104,8 @@ public class MessageParser {
         }
     }
 
+
+
     void parsePutchunk(String[] splitHeader, String[] splitMessage) throws IOException {
 
         System.out.println("MessageParser\t:: parsing PUTCHUNK...");
@@ -89,10 +124,14 @@ public class MessageParser {
             System.out.println("MessageParser\t:: parsed PUTCHUNK!");
             return;
         }
-        this.data = splitMessage[1].getBytes();
+        this.data = trim(splitMessage[1].getBytes());
+
+        System.out.println(this.data.length);
         System.out.println("MessageParser\t:: parsed PUTCHUNK!");
 
     }
+
+
 
     public String getVersion() {
         return version;

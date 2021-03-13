@@ -60,8 +60,9 @@ public class Peer implements Services {
         System.out.println("Peer\t\t:: backup START!");
 
         try {
-            byte[] fileContent = FileHandler.readFile(filePath);
+            byte[] fileContent = FileHandler.readFile(filePath); 
             Chunk[] chunks = FileHandler.splitFile(fileContent);
+
             new BackupSubProtocol(filePath, "fileId", peer_no, replicationDeg, chunks).start();
         } catch (Exception e) {
             e.printStackTrace();

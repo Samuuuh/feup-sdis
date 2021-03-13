@@ -4,6 +4,7 @@ import main.Definitions;
 import main.Peer;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.net.DatagramPacket;
 
 import java.io.IOException;
@@ -51,29 +52,40 @@ public class BackupChannel extends Channel {
 
     void putChunk(MessageParser messageParsed) {
         System.out.println("BackupChannel\t:: Treating PUTCHUNK...");
-        // TODO: Save files.
-        saveFile(messageParsed);
 
+        Boolean success = saveFile(messageParsed);
+        if (success) {
+
+        }
+        else {
+            System.out.println("BackupChannel\t:: Error saving file");
+        }
         // TODO: Send message of success or error.
         // BackupSubProtocol asd = new BackupSubProtocol(filePath, fileId, senderId, replicationDeg, chunks);
         //asd.start();
     }
 
-    void saveFile(MessageParser messageParsed){
+    Boolean saveFile(MessageParser messageParsed){
 
         System.out.println("BackupChannel\t:: Saving file " + messageParsed.getFileId() + "...");
-
+        String filePath = "savedFiles/" + messageParsed.getFileId() + ".jpg";
         try {
             Path path = Paths.get("savedFiles");
-
             Files.createDirectories(path);
-            File file = new File("savedFiles/" + messageParsed.getFileId());
+            File file = new File(filePath);
             file.createNewFile();
+
+            FileOutputStream outputStream = new FileOutputStream(filePath);
+            outputStream.write(messageParsed.getData());
+
+            System.out.println(messageParsed.getData().length);
+
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
 
-
+        return true;
     }
 
 }

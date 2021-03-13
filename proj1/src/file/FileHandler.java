@@ -4,9 +4,14 @@ import file.Chunk;
 import main.Definitions;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
+
+import static java.nio.file.Files.readAllBytes;
 
 public class FileHandler {
 
@@ -17,7 +22,8 @@ public class FileHandler {
         if (file.length() > Integer.MAX_VALUE)
             throw new IOException("File too large to be read");
         try {
-            return Files.readAllBytes(file.toPath());
+            return readAllBytes(file.toPath());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -25,7 +31,6 @@ public class FileHandler {
     }
 
     public static Chunk[] splitFile(byte[] fileContent) {
-
         if (fileContent.length == 0){
             Chunk chunk = new Chunk(0, new byte[0]);
             return new Chunk[]{chunk};
