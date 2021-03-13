@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Random;
 
 // TODO: close file after writing.
 public class ProcessPutChunk extends Thread{
@@ -35,7 +36,9 @@ public class ProcessPutChunk extends Thread{
 
         System.out.println("ProcessPutChunk\t:: Saving file " + messageParsed.getFileId());
 
-        String filePath = "savedFiles/" + messageParsed.getFileId();
+        Random rand = new Random();
+        String filePath = "savedFiles/" + messageParsed.getFileId() + rand.nextInt(1000);
+
         try {
             Path path = Paths.get("savedFiles");
             Files.createDirectories(path);
@@ -49,12 +52,9 @@ public class ProcessPutChunk extends Thread{
                 file.createNewFile();
             }
 
-
             FileOutputStream outputStream = new FileOutputStream(filePath);
             outputStream.write(messageParsed.getData());
             outputStream.close();
-
-            System.out.println(messageParsed.getData().length);
 
         } catch (IOException e) {
             e.printStackTrace();

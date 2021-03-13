@@ -26,7 +26,7 @@ public class BackupChannel extends Channel {
 
     @Override
     public void run() {
-        byte[] buf = new byte[Definitions.CHUNK_MAX_SIZE];
+        byte[] buf = new byte[83648];
 
         while (true) {
             try {

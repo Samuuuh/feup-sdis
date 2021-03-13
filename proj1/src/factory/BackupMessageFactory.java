@@ -28,6 +28,8 @@ public class BackupMessageFactory extends MessageFactory {
     public byte[] createMessage() throws IOException {
         byte[] header = generateHeader();
         byte[] fileContent = chunk.getChunkData();
+        System.out.println(header.length);
+        System.out.println(fileContent.length);
 
         // Concatenate.
         byte[] both = Arrays.copyOf(header, header.length + fileContent.length);

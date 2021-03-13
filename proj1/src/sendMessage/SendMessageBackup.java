@@ -31,17 +31,19 @@ public class SendMessageBackup extends SendMessage {
     public void run() {
         try {
 
+            // TODO: perguntar ao stor este thread sleep
+            // Thread.sleep((long)(Math.random() * 400));
+
             System.out.println("SendMessBackup\t:: Sending multicast requests...");
             MulticastSocket socket = new MulticastSocket();
 
-            byte[] message =new BackupMessageFactory(filePath, replicationDeg, this.chunks[0]).createMessage();
+            byte[] message = new BackupMessageFactory(filePath, replicationDeg, this.chunks[0]).createMessage();
             sendMessage(socket, message);
 
             System.out.println("sendMessBackup\t:: Message sent!");
 
-            //String received = receiveMessage(socket);
-            //displayRequest(received);
-        } catch (IOException e) {
+        } catch (IOException /*| InterruptedException */e) {
+
             e.printStackTrace();
         }
     }

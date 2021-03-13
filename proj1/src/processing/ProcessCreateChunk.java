@@ -27,6 +27,7 @@ public class ProcessCreateChunk extends Thread {
             byte[] fileContent = FileHandler.readFile(filePath);
             Chunk[] chunks = FileHandler.splitFile(fileContent);
 
+            System.out.println("SPLIT SIZE " +  chunks.length);
             for (int i = 0; i < chunks.length; i++) {
 
                 new SendMessageBackup(filePath, "fileId", replicationDeg, chunks).start();

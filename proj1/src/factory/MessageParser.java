@@ -50,6 +50,7 @@ public class MessageParser {
             byte[] header = Arrays.copyOfRange(byteMessage, 0, endHeaderByte);
             byte[] message = trim(Arrays.copyOfRange(byteMessage, endHeaderByte + 1, byteMessage.length));
 
+            System.out.println(byteMessage.length);
             String messageHeader = new String(header, "ISO-8859-1");
 
             // Header Parse
@@ -98,6 +99,7 @@ public class MessageParser {
             this.data = new byte[0];
         } else {
             this.data = trim(messageByte);
+
         }
 
         System.out.println(this.data.length);
