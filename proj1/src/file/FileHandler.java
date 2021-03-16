@@ -31,6 +31,7 @@ public class FileHandler {
     }
 
     public static Chunk[] splitFile(byte[] fileContent) {
+
         if (fileContent.length == 0){
             Chunk chunk = new Chunk(0, new byte[0]);
             return new Chunk[]{chunk};

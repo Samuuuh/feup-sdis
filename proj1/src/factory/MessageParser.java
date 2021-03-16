@@ -27,10 +27,10 @@ public class MessageParser {
     // Body
     private byte[] data;
 
-    static int splitHeader(byte[] bytes){
-        int i =  0;
+    static int splitHeader(byte[] bytes) {
+        int i = 0;
         while (true) {
-            if (((bytes[i]  == (byte) 0x0D) && (bytes[i+1] == (byte) 0x0A)) || i >= bytes.length) break;
+            if (((bytes[i] == (byte) 0x0D) && (bytes[i + 1] == (byte) 0x0A)) || i >= bytes.length) break;
             i++;
         }
 
@@ -48,7 +48,7 @@ public class MessageParser {
         try {
             int endHeaderByte = splitHeader(byteMessage);
             byte[] header = Arrays.copyOfRange(byteMessage, 0, endHeaderByte);
-            byte[] message = trim(Arrays.copyOfRange(byteMessage, endHeaderByte+1, byteMessage.length));
+            byte[] message = trim(Arrays.copyOfRange(byteMessage, endHeaderByte + 1, byteMessage.length));
 
             String messageHeader = new String(header, "ISO-8859-1");
 
@@ -64,7 +64,6 @@ public class MessageParser {
 
             if (this.messageType.equals(Definitions.PUTCHUNK)) {
                 // Empty body.
-
                 parsePutchunk(splitHeader, message);
             } else if (this.messageType.equals(Definitions.STORED) ||
                     this.messageType.equals(Definitions.REMOVED) ||
@@ -78,13 +77,10 @@ public class MessageParser {
                 System.out.println("MessageParser\t::Not a valid header");
             }
 
-
-
-        } catch (Exception e ) {
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
-
 
 
     void parsePutchunk(String[] splitHeader, byte[] messageByte) throws IOException {
@@ -102,21 +98,17 @@ public class MessageParser {
             this.data = new byte[0];
         } else {
             this.data = trim(messageByte);
+
         }
 
-
-        System.out.println(this.data.length);
         System.out.println("MessageParser\t:: parsed PUTCHUNK!");
-
     }
-
-
 
     public String getVersion() {
         return version;
     }
 
-    public String getMessageType(){
+    public String getMessageType() {
         return messageType;
     }
 

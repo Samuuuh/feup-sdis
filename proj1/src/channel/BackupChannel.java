@@ -2,6 +2,8 @@ package channel;
 import factory.MessageParser;
 import main.Definitions;
 import main.Peer;
+import processing.ProcessPutChunk;
+import sendMessage.SendMessageWithChunkNo;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,10 +26,9 @@ public class BackupChannel extends Channel {
 
     @Override
     public void run() {
-        byte[] buf = new byte[Definitions.CHUNK_MAX_SIZE];
-
         while (true) {
             try {
+                byte[] buf = new byte[83648];
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
                 receivePacket(mcast_socket, packet);
 
@@ -40,7 +41,7 @@ public class BackupChannel extends Channel {
 
                 // Treats the message.
                 if (messageParsed.getMessageType().equals(Definitions.PUTCHUNK))
-                    putChunk(messageParsed);
+                    new ProcessPutChunk(messageParsed).start() ;
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -50,43 +51,6 @@ public class BackupChannel extends Channel {
     }
 
 
-    void putChunk(MessageParser messageParsed) {
-        System.out.println("BackupChannel\t:: Treating PUTCHUNK...");
 
-        Boolean success = saveFile(messageParsed);
-        if (success) {
-
-        }
-        else {
-            System.out.println("BackupChannel\t:: Error saving file");
-        }
-        // TODO: Send message of success or error.
-        // BackupSubProtocol asd = new BackupSubProtocol(filePath, fileId, senderId, replicationDeg, chunks);
-        //asd.start();
-    }
-
-    Boolean saveFile(MessageParser messageParsed){
-
-        System.out.println("BackupChannel\t:: Saving file " + messageParsed.getFileId());
-
-        String filePath = "savedFiles/" + messageParsed.getFileId();
-        try {
-            Path path = Paths.get("savedFiles");
-            Files.createDirectories(path);
-            File file = new File(filePath);
-            file.createNewFile();
-
-            FileOutputStream outputStream = new FileOutputStream(filePath);
-            outputStream.write(messageParsed.getData());
-
-            System.out.println(messageParsed.getData().length);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        return true;
-    }
 
 }

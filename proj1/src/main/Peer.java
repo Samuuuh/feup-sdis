@@ -1,9 +1,7 @@
 package main;
 
 import channel.BackupChannel;
-import subProtocol.BackupSubProtocol;
-import file.Chunk;
-import file.FileHandler;
+import processing.ProcessCreateChunk;
 
 import java.io.*;
 import java.rmi.registry.Registry;
@@ -59,15 +57,8 @@ public class Peer implements Services {
     public String backup(String filePath, int replicationDeg) throws IOException {
         System.out.println("Peer\t\t:: backup START!");
 
-        try {
-            byte[] fileContent = FileHandler.readFile(filePath); 
-            Chunk[] chunks = FileHandler.splitFile(fileContent);
+        new ProcessCreateChunk(filePath, String.valueOf(replicationDeg)).start();
 
-            new BackupSubProtocol(filePath, "fileId", peer_no, replicationDeg, chunks).start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println("Peer\t\t:: backup END!");
         return "Backup has ended";
     }
 }

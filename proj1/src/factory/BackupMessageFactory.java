@@ -1,19 +1,31 @@
 package factory;
+
 import file.Chunk;
 import main.Definitions;
+
+import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import file.FileHandler;
+
+import main.Peer;
 
 // Creates messages requesting backup.
-public class BackupMessageFactory extends MessageFactory{
+public class BackupMessageFactory extends MessageFactory {
     Chunk chunk;
-    public BackupMessageFactory(String filePath, String senderId, int repDeg, Chunk chunk) {
-        super(filePath, Definitions.PUTCHUNK, senderId, repDeg);
+    String repDeg;
+    String filePath;
+
+    public BackupMessageFactory(String filePath, String repDeg, Chunk chunk) {
+        super(Definitions.PUTCHUNK, null);
+        this.filePath = filePath;
+        this.repDeg = repDeg;
         this.chunk = chunk;
     }
 
-    @Override
     public byte[] createMessage() throws IOException {
         byte[] header = generateHeader();
         byte[] fileContent = chunk.getChunkData();
@@ -25,6 +37,35 @@ public class BackupMessageFactory extends MessageFactory{
         return both;
     }
 
+    protected String hash() {
+        // Probabed Strinly add the last time file was modified and other metadata.
+        File file = new File(this.filePath);
+        String identifier = file.getName() + "/" + file.length() + "/" + file.lastModified();
+
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(identifier.getBytes(StandardCharsets.UTF_8));
+
+            // Convert byte array into signum representation.
+            BigInteger number = new BigInteger(1, hash);
+
+            // Convert message digest into hex value
+            StringBuilder hashedString = new StringBuilder(number.toString(16) + "-" + this.chunk.getChunkNo());
+
+            // Pad with leading zeros.
+            while (hashedString.length() < 32) {
+                hashedString.insert(0, '0');
+            }
+
+            this.fileId = hashedString.toString();
+            return this.fileId;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        return "-1";
+    }
+
     @Override
     protected byte[] generateHeader() {
         // TODO : to fix the version. How to store the version of a file?
@@ -33,7 +74,7 @@ public class BackupMessageFactory extends MessageFactory{
         // Sim.
 
         String version = "1.0";
-        String header = version + " " + Definitions.PUTCHUNK + " " + senderId + " " + hash() + " " +  chunk.getChunkNo() + " " + repDeg + "\r\n";
+        String header = version + " " + Definitions.PUTCHUNK + " " + Peer.peer_no + " " + hash() + " " + chunk.getChunkNo() + " " + repDeg + "\r\n";
         System.out.println("HEADER " + header);
         return header.getBytes();
     }
