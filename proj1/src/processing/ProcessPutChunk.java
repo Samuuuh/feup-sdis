@@ -2,6 +2,7 @@ package processing;
 
 import factory.MessageParser;
 import main.Definitions;
+import main.Peer;
 import sendMessage.SendMessageWithChunkNo;
 
 import java.io.File;
@@ -15,8 +16,10 @@ import java.util.Random;
 // TODO: close file after writing.
 public class ProcessPutChunk extends Thread{
     MessageParser messageParsed;
+    String saveChunkPath;
     public ProcessPutChunk(MessageParser messageParsed){
         this.messageParsed = messageParsed;
+        this.saveChunkPath = "peers/" + Peer.peer_no + "/chunks/";     // Path to save chunks.
     }
 
     @Override
@@ -36,11 +39,10 @@ public class ProcessPutChunk extends Thread{
 
         System.out.println("ProcessPutChunk\t:: Saving file " + messageParsed.getFileId());
 
-        Random rand = new Random();
-        String filePath = "savedFiles/" + messageParsed.getFileId();
+        String filePath = this.saveChunkPath + messageParsed.getFileId();
 
         try {
-            Path path = Paths.get("savedFiles");
+            Path path = Paths.get(this.saveChunkPath);
             Files.createDirectories(path);
             File file = new File(filePath);
 
