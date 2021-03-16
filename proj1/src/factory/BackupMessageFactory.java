@@ -1,4 +1,5 @@
 package factory;
+
 import file.Chunk;
 import main.Definitions;
 
@@ -28,8 +29,6 @@ public class BackupMessageFactory extends MessageFactory {
     public byte[] createMessage() throws IOException {
         byte[] header = generateHeader();
         byte[] fileContent = chunk.getChunkData();
-        System.out.println(header.length);
-        System.out.println(fileContent.length);
 
         // Concatenate.
         byte[] both = Arrays.copyOf(header, header.length + fileContent.length);
@@ -51,7 +50,7 @@ public class BackupMessageFactory extends MessageFactory {
             BigInteger number = new BigInteger(1, hash);
 
             // Convert message digest into hex value
-            StringBuilder hashedString = new StringBuilder(number.toString(16));
+            StringBuilder hashedString = new StringBuilder(number.toString(16) + "-" + this.chunk.getChunkNo());
 
             // Pad with leading zeros.
             while (hashedString.length() < 32) {
@@ -75,7 +74,7 @@ public class BackupMessageFactory extends MessageFactory {
         // Sim.
 
         String version = "1.0";
-        String header = version + " " + Definitions.PUTCHUNK + " " + Peer.peer_no + " " + hash() + " " +  chunk.getChunkNo() + " " + repDeg + "\r\n";
+        String header = version + " " + Definitions.PUTCHUNK + " " + Peer.peer_no + " " + hash() + " " + chunk.getChunkNo() + " " + repDeg + "\r\n";
         System.out.println("HEADER " + header);
         return header.getBytes();
     }

@@ -36,7 +36,6 @@ public class Channel extends Thread {
             try {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
                 String receivePacket = receivePacket(mcast_socket, packet);
-                System.out.println(receivePacket);
 
                 //messageParsed = new MessageParser(packet.getData());
 

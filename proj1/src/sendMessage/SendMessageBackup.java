@@ -37,8 +37,10 @@ public class SendMessageBackup extends SendMessage {
             System.out.println("SendMessBackup\t:: Sending multicast requests...");
             MulticastSocket socket = new MulticastSocket();
 
-            byte[] message = new BackupMessageFactory(filePath, replicationDeg, this.chunks[0]).createMessage();
-            sendMessage(socket, message);
+            for (int i = 0 ; i < chunks.length; i++) {
+                byte[] message = new BackupMessageFactory(filePath, replicationDeg, this.chunks[i]).createMessage();
+                sendMessage(socket, message);
+            }
 
             System.out.println("sendMessBackup\t:: Message sent!");
 

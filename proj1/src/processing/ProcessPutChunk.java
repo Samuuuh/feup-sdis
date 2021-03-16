@@ -37,7 +37,7 @@ public class ProcessPutChunk extends Thread{
         System.out.println("ProcessPutChunk\t:: Saving file " + messageParsed.getFileId());
 
         Random rand = new Random();
-        String filePath = "savedFiles/" + messageParsed.getFileId() + rand.nextInt(1000);
+        String filePath = "savedFiles/" + messageParsed.getFileId();
 
         try {
             Path path = Paths.get("savedFiles");

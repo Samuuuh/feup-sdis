@@ -4,6 +4,7 @@ import file.Chunk;
 import file.FileHandler;
 import sendMessage.SendMessageBackup;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import static main.Peer.peer_no;
@@ -27,11 +28,7 @@ public class ProcessCreateChunk extends Thread {
             byte[] fileContent = FileHandler.readFile(filePath);
             Chunk[] chunks = FileHandler.splitFile(fileContent);
 
-            System.out.println("SPLIT SIZE " +  chunks.length);
-            for (int i = 0; i < chunks.length; i++) {
-
-                new SendMessageBackup(filePath, "fileId", replicationDeg, chunks).start();
-            }
+            new SendMessageBackup(filePath, "fileId", replicationDeg, chunks).start();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -26,10 +26,9 @@ public class BackupChannel extends Channel {
 
     @Override
     public void run() {
-        byte[] buf = new byte[83648];
-
         while (true) {
             try {
+                byte[] buf = new byte[83648];
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
                 receivePacket(mcast_socket, packet);
 
