@@ -7,7 +7,6 @@ import java.net.InetAddress;
 
 import main.Peer;
 
-
 public abstract class SendMessage extends Thread {
     protected String version;
     protected String type;
@@ -19,13 +18,10 @@ public abstract class SendMessage extends Thread {
         this.fileId = fileId;
     }
 
+    protected static void sendMessage(DatagramSocket socket, byte[] message, String addr, int port) throws IOException {
+        InetAddress address = InetAddress.getByName(addr);
 
-    protected static void sendMessage(DatagramSocket socket, byte[] message) throws IOException {
-        InetAddress address = InetAddress.getByName(Peer.mcast_addr);
-
-        DatagramPacket packet = new DatagramPacket(message, message.length, address, Peer.mcast_port);
+        DatagramPacket packet = new DatagramPacket(message, message.length, address, port);
         socket.send(packet);
     }
-
-
 }

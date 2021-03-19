@@ -14,7 +14,8 @@ import java.nio.file.Paths;
 import java.util.Random;
 
 // TODO: close file after writing.
-public class ProcessPutChunk extends Thread{
+// SEND TO CONTROL CHANNEL THE MESSAGE
+public class ProcessPutChunk extends Thread {
     MessageParser messageParsed;
     String saveChunkPath;
     public ProcessPutChunk(MessageParser messageParsed){

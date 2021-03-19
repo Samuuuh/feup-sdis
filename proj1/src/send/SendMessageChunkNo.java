@@ -1,6 +1,7 @@
 package sendMessage;
 
 import factory.MessageChunkTemp;
+import main.Definitions;
 import main.Peer;
 
 import java.io.IOException;
@@ -21,7 +22,8 @@ public class SendMessageWithChunkNo extends SendMessage {
             MulticastSocket socket = new MulticastSocket();
 
             byte[] message = new MessageChunkTemp(type, Peer.peer_no, chunkNo).generateHeader();
-            sendMessage(socket, message);
+
+            sendMessage(socket, message, Peer.mc_addr, Peer.mc_port);
 
             System.out.println("SendMessageWithChunkNo\t:: Message sent!");
 

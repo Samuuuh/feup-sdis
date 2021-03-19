@@ -67,7 +67,7 @@ public class BackupMessageFactory extends MessageFactory {
     }
 
     @Override
-    protected byte[] generateHeader() {
+    public byte[] generateHeader() {
         // TODO : to fix the version. How to store the version of a file?
         // Eh a versao do protocolo do projeto. Tem que ser passado como parametro.
         // TODO: will the replication degree be the same for all the headers for a file?

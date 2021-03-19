@@ -1,9 +1,6 @@
 package factory;
 
-import channel.BackupChannel;
 import main.Peer;
-
-import java.io.IOException;
 
 public class MessageChunkTemp extends MessageFactory {
         String chunkNo;
@@ -13,6 +10,7 @@ public class MessageChunkTemp extends MessageFactory {
 
         }
 
+        @Override
         public byte[] generateHeader() {
             // TODO : to fix the version. How to store the version of a file?
 

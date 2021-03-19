@@ -8,7 +8,6 @@ import main.Peer;
 import java.io.IOException;
 import java.net.MulticastSocket;
 
-
 /**
  * 1) Send request;
  * 2) Handle the request and call Backup handler.
@@ -30,22 +29,21 @@ public class SendMessageBackup extends SendMessage {
     @Override
     public void run() {
         try {
+            // TODO: Check sleep
+            Thread.sleep((long)(Math.random() * 400));
 
-            // TODO: perguntar ao stor este thread sleep
-            // Thread.sleep((long)(Math.random() * 400));
-
-            System.out.println("SendMessBackup\t:: Sending multicast requests...");
+            System.out.println("Send Message Backup\t:: Sending multicast requests...");
             MulticastSocket socket = new MulticastSocket();
 
-            // TODO: new thread to send message.
-            for (int i = 0 ; i < chunks.length; i++) {
-                byte[] message = new BackupMessageFactory(filePath, replicationDeg, this.chunks[i]).createMessage();
-                sendMessage(socket, message);
+            // TODO: For loop on previous file
+            for (Chunk chunk : chunks) {
+                byte[] message = new BackupMessageFactory(filePath, replicationDeg, chunk).createMessage();
+                sendMessage(socket, message, Peer.mdb_addr, Peer.mdb_port);
             }
 
-            System.out.println("sendMessBackup\t:: Message sent!");
+            System.out.println("Send Message Backup\t:: Message sent!");
 
-        } catch (IOException /*| InterruptedException */e) {
+        } catch (IOException | InterruptedException e) {
 
             e.printStackTrace();
         }
