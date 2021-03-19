@@ -21,6 +21,7 @@ public class Client {
         Client client = new Client(args);
     }
 
+    // TODO: Change String Names to DEFINITIONS
     private Client(String[] args) throws IOException {
         this.peerAccessPoint = args[0];
         this.operation = args[1];

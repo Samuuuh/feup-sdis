@@ -16,7 +16,7 @@ abstract public class MessageFactory {
     }
 
 
-    protected byte[] generateHeader() {
+    public byte[] generateHeader() {
         // TODO : to fix the version. How to store the version of a file?
 
         String version = "1.0";

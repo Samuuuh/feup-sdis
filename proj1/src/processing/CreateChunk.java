@@ -2,22 +2,18 @@ package processing;
 
 import file.Chunk;
 import file.FileHandler;
-import sendMessage.SendMessageBackup;
+import send.SendMessageBackup;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-
-import static main.Peer.peer_no;
 
 /**
  * Reads the file and send the chunks in multiCast.
  */
-public class ProcessCreateChunk extends Thread {
-
-    String replicationDeg;
+public class CreateChunk extends Thread {
     String filePath;
+    String replicationDeg;
 
-    public ProcessCreateChunk(String filePath, String replicationDeg) {
+    public CreateChunk(String filePath, String replicationDeg) {
         this.filePath = filePath;
         this.replicationDeg = replicationDeg;
     }
@@ -28,6 +24,7 @@ public class ProcessCreateChunk extends Thread {
             byte[] fileContent = FileHandler.readFile(filePath);
             Chunk[] chunks = FileHandler.splitFile(fileContent);
 
+            // TODO: FOR LOOP MUST BE HERE
             new SendMessageBackup(filePath, "fileId", replicationDeg, chunks).start();
         } catch (IOException e) {
             e.printStackTrace();

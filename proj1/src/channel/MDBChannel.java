@@ -2,14 +2,14 @@ package channel;
 import factory.MessageParser;
 import main.Definitions;
 import main.Peer;
-import processing.ProcessPutChunk;
+import processing.PutChunk;
 import java.net.DatagramPacket;
 
 import java.io.IOException;
 
 // TODO: MDB
-public class BackupChannel extends Channel {
-    public BackupChannel(int mcast_port, String mcast_addr) throws IOException {
+public class MDBChannel extends Channel {
+    public MDBChannel(int mcast_port, String mcast_addr) throws IOException {
         super(mcast_port, mcast_addr);
 
         // TODO: Como escolhemos os computadores que vao fazer backup?
@@ -34,7 +34,7 @@ public class BackupChannel extends Channel {
 
                 // Treats the message.
                 if (messageParsed.getMessageType().equals(Definitions.PUTCHUNK))
-                    new ProcessPutChunk(messageParsed).start() ;
+                    new PutChunk(messageParsed).start();
 
             } catch (Exception e) {
                 e.printStackTrace();

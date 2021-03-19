@@ -1,17 +1,11 @@
 package channel;
 
-import factory.MessageParser;
-import main.Definitions;
-import main.Peer;
-import processing.ProcessPutChunk;
-
 import java.io.IOException;
-import java.net.DatagramPacket;
 
 // TODO: MDR
-public class RestoreChannel extends Channel {
+public class MDRChannel extends Channel {
 
-    public RestoreChannel(int mcast_port, String mcast_addr) throws IOException {
+    public MDRChannel(int mcast_port, String mcast_addr) throws IOException {
         super(mcast_port, mcast_addr);
 
         // TODO: Como escolhemos os computadores que vao fazer backup?
@@ -30,6 +24,7 @@ public class RestoreChannel extends Channel {
 
                 System.out.println("RestoreChannel\t:: Packet received.");
                 */
+                System.out.println("Restore Channel ::: TO DO :::");
             } catch (Exception e) {
                 e.printStackTrace();
             }

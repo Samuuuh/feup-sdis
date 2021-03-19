@@ -1,39 +1,52 @@
 package main;
 
-import channel.BackupChannel;
-import processing.ProcessCreateChunk;
+import channel.*;
+import processing.CreateChunk;
 
 import java.io.*;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 
-// TODO: esperar resposta de um ficheiro especifico.
 public class Peer implements Services {
+    public static String mc_addr;
+    public static int mc_port;
 
-    public static int mcast_port;
-    public static String mcast_addr;
-    public static int port;
+    public static String mdb_addr;
+    public static int mdb_port;
+
+    public static String mdr_addr;
+    public static int mdr_port;
+
     public static String version;
     public static String peer_no;
 
-    public static void initChannel(int mcast_port, String mcast_addr) throws IOException {
-        new BackupChannel(mcast_port, mcast_addr).start();
+    public static void initChannel(String mcast_addr, int mcast_port, String mdb_addr, int mdb_port, String mdr_addr, int mdr_port) throws IOException {
+        new MCChannel(mcast_port, mcast_addr).start();
+        new MDBChannel(mdb_port, mdb_addr).start();
+        //new MDRChannel(mdr_port, mdr_addr).start();
     }
 
     public static void main(String[] args) throws IOException {
 
-        if (args.length != 4) {
-            System.out.println("Usage:\n java Peer version peer_no mcast_port mcast_addr");
+        if (args.length != 8) {
+            System.out.println("Usage:\n java Peer version peer_no mcast_addr mcast_port mdb_addr mdb_port mdr_addr mdr_port");
             return;
         }
 
         version = args[0];
         peer_no = args[1];
-        mcast_port = Integer.parseInt(args[2]);
-        mcast_addr = args[3];
 
-        initChannel(mcast_port, mcast_addr);
+        mc_addr = args[2];
+        mc_port = Integer.parseInt(args[3]);
+
+        mdb_addr = args[4];
+        mdb_port = Integer.parseInt(args[5]);
+
+        mdr_addr = args[6];
+        mdr_port = Integer.parseInt(args[7]);
+
+        initChannel(mc_addr, mc_port, mdb_addr, mdb_port, mdr_addr, mdr_port);
 
         // Bind Services.
         Peer obj = new Peer();
@@ -57,7 +70,7 @@ public class Peer implements Services {
     public String backup(String filePath, int replicationDeg) throws IOException {
         System.out.println("Peer\t\t:: backup START!");
 
-        new ProcessCreateChunk(filePath, String.valueOf(replicationDeg)).start();
+        new CreateChunk(filePath, String.valueOf(replicationDeg)).start();
 
         return "Backup has ended";
     }

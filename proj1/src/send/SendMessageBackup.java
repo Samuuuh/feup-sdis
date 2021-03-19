@@ -1,6 +1,6 @@
-package sendMessage;
+package send;
 
-import factory.BackupMessageFactory;
+import factory.MessageBackup;
 import file.Chunk;
 import main.Definitions;
 import main.Peer;
@@ -37,7 +37,7 @@ public class SendMessageBackup extends SendMessage {
 
             // TODO: For loop on previous file
             for (Chunk chunk : chunks) {
-                byte[] message = new BackupMessageFactory(filePath, replicationDeg, chunk).createMessage();
+                byte[] message = new MessageBackup(filePath, replicationDeg, chunk).createMessage();
                 sendMessage(socket, message, Peer.mdb_addr, Peer.mdb_port);
             }
 

@@ -14,12 +14,12 @@ import java.util.Arrays;
 import main.Peer;
 
 // Creates messages requesting backup.
-public class BackupMessageFactory extends MessageFactory {
+public class MessageBackup extends MessageFactory {
     Chunk chunk;
     String repDeg;
     String filePath;
 
-    public BackupMessageFactory(String filePath, String repDeg, Chunk chunk) {
+    public MessageBackup(String filePath, String repDeg, Chunk chunk) {
         super(Definitions.PUTCHUNK, null);
         this.filePath = filePath;
         this.repDeg = repDeg;

@@ -1,11 +1,9 @@
-package sendMessage;
+package send;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-
-import main.Peer;
 
 public abstract class SendMessage extends Thread {
     protected String version;

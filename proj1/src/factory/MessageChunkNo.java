@@ -2,9 +2,9 @@ package factory;
 
 import main.Peer;
 
-public class MessageChunkTemp extends MessageFactory {
+public class MessageChunkNo extends MessageFactory {
         String chunkNo;
-        public MessageChunkTemp(String type, String fileId, String chunkNo) {
+        public MessageChunkNo(String type, String fileId, String chunkNo) {
             super(type, fileId);
             this.chunkNo = chunkNo;
 

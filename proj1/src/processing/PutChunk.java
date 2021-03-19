@@ -3,7 +3,7 @@ package processing;
 import factory.MessageParser;
 import main.Definitions;
 import main.Peer;
-import sendMessage.SendMessageWithChunkNo;
+import send.SendMessageChunkNo;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -11,14 +11,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Random;
 
 // TODO: close file after writing.
 // SEND TO CONTROL CHANNEL THE MESSAGE
-public class ProcessPutChunk extends Thread {
+public class PutChunk extends Thread {
     MessageParser messageParsed;
     String saveChunkPath;
-    public ProcessPutChunk(MessageParser messageParsed){
+    public PutChunk(MessageParser messageParsed){
         this.messageParsed = messageParsed;
         this.saveChunkPath = "peers/" + Peer.peer_no + "/chunks/";     // Path to save chunks.
     }
@@ -29,7 +28,7 @@ public class ProcessPutChunk extends Thread {
 
         // Backup file only reads and redirect data
         if (saveFile(messageParsed)) {
-            new SendMessageWithChunkNo(messageParsed.getVersion(), Definitions.STORED, messageParsed.getFileId(), messageParsed.getChunkNo()).start();
+            new SendMessageChunkNo(messageParsed.getVersion(), Definitions.STORED, messageParsed.getFileId(), messageParsed.getChunkNo()).start();
         }
         else {
             System.out.println("ProcessPutChunk\t:: Error saving file");
