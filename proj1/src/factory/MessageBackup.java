@@ -37,34 +37,6 @@ public class MessageBackup extends MessageFactory {
         return both;
     }
 
-    protected String hash() {
-        // Probabed Strinly add the last time file was modified and other metadata.
-        File file = new File(this.filePath);
-        String identifier = file.getName() + "/" + file.length() + "/" + file.lastModified();
-
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(identifier.getBytes(StandardCharsets.UTF_8));
-
-            // Convert byte array into signum representation.
-            BigInteger number = new BigInteger(1, hash);
-
-            // Convert message digest into hex value
-            StringBuilder hashedString = new StringBuilder(number.toString(16) + "-" + this.chunk.getChunkNo());
-
-            // Pad with leading zeros.
-            while (hashedString.length() < 32) {
-                hashedString.insert(0, '0');
-            }
-
-            this.fileId = hashedString.toString();
-            return this.fileId;
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-
-        return "-1";
-    }
 
     @Override
     public byte[] generateHeader() {
@@ -74,7 +46,7 @@ public class MessageBackup extends MessageFactory {
         // Sim.
 
         String version = "1.0";
-        String header = version + " " + Definitions.PUTCHUNK + " " + Peer.peer_no + " " + hash() + " " + chunk.getChunkNo() + " " + repDeg + "\r\n";
+        String header = version + " " + Definitions.PUTCHUNK + " " + Peer.peer_no + " " + Peer.hash(filePath, chunk.getChunkNo()) + " " + chunk.getChunkNo() + " " + repDeg + "\r\n";
         System.out.println("HEADER " + header);
         return header.getBytes();
     }

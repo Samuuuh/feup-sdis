@@ -3,12 +3,16 @@ package main;
 // Java Packages
 
 import java.io.*;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 // Custom Packages
 import channel.*;
@@ -107,10 +111,40 @@ public class Peer implements Services {
 
         return "Backup has ended";
     }
-    public String restore(String filePath) throws IOException{
+    public String restore(String fileName) throws IOException{
         System.out.println("Peer\t\t:: restore START!");
 
-
+        new Restore(fileName).start();
         return "Store has ended";
+    }
+
+    // TODO: change function file.
+
+    public static String hash(String filePath, int chunkNo) {
+        // Probabed Strinly add the last time file was modified and other metadata.
+        File file = new File(filePath);
+        String identifier = file.getName() + "/" + file.length() + "/" + file.lastModified();
+
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(identifier.getBytes(StandardCharsets.UTF_8));
+
+            // Convert byte array into signum representation.
+            BigInteger number = new BigInteger(1, hash);
+
+            // Convert message digest into hex value
+            StringBuilder hashedString = new StringBuilder(number.toString(16) + "-" + chunkNo);
+
+            // Pad with leading zeros.
+            while (hashedString.length() < 32) {
+                hashedString.insert(0, '0');
+            }
+
+            return hashedString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        return "-1";
     }
 }

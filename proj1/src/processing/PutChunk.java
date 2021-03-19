@@ -21,7 +21,7 @@ public class PutChunk extends Thread {
     String saveChunkPath;
     public PutChunk(MessageParser messageParsed){
         this.messageParsed = messageParsed;
-        this.saveChunkPath = "peers/" + Peer.peer_no + "/chunks/";     // Path to save chunks.
+        this.saveChunkPath = Definitions.getFilePath(Peer.peer_no);
     }
 
     @Override
