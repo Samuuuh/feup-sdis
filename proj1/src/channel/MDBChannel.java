@@ -36,11 +36,13 @@ public class MDBChannel extends Channel {
                 if (messageParsed.getMessageType().equals(Definitions.PUTCHUNK))
                     new PutChunk(messageParsed).start();
 
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
+
+
     }
 
 

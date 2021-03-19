@@ -1,6 +1,7 @@
 package main;
 
 // Java Packages
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,8 +46,7 @@ public class Peer implements Services {
         }
 
         setVariables(args);
-        restoreState();
-        new SaveState().start();
+        //restoreState();
         initChannel(mc_addr, mc_port, mdb_addr, mdb_port, mdr_addr, mdr_port);
 
         // Bind Services.
@@ -66,11 +66,10 @@ public class Peer implements Services {
         }
 
 
-
         System.out.println("Server is running");
     }
 
-    private static void setVariables(String[] args){
+    private static void setVariables(String[] args) {
         version = args[0];
         peer_no = args[1];
 
@@ -83,22 +82,21 @@ public class Peer implements Services {
     }
 
 
-
     private static void restoreState() {
         try {
-                FileInputStream fileIn = new FileInputStream("state.ser");
-                ObjectInputStream in = new ObjectInputStream(fileIn);
-                peer_state = (State) in.readObject();
-                in.close();
-                fileIn.close();
-            } catch (IOException | ClassNotFoundException e) {
-                System.out.println("Initializing new state.");
-                peer_state = new State(peer_no);
-            }
-
-        System.out.println("Deserialized State...");
-        System.out.println("Peer: " + peer_state.peer_no);
-
+            FileInputStream fileIn = new FileInputStream(Definitions.getStatePath(peer_no) + Definitions.STATE_FILE_NAME);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            peer_state = (State) in.readObject();
+            in.close();
+            fileIn.close();
+            System.out.println("Deserialized State...");
+            System.out.println("Peer: " + peer_state.peer_no);
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Initializing new state.");
+            peer_state = new State(peer_no);
+        }
+        peer_state.printState();
+        new SaveState().start();
     }
 
 
@@ -108,5 +106,11 @@ public class Peer implements Services {
         new CreateChunk(filePath, String.valueOf(replicationDeg)).start();
 
         return "Backup has ended";
+    }
+    public String restore(String filePath) throws IOException{
+        System.out.println("Peer\t\t:: restore START!");
+
+
+        return "Store has ended";
     }
 }

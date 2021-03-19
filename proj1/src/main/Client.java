@@ -100,9 +100,15 @@ public class Client {
         System.out.println(response);
     }   
 
-    private void restore(String file) {
-        System.out.println("restore");
-    }  
+    private void restore(String filePath) {
+        try {
+            Services stub = (Services) this.registry.lookup(this.peerAccessPoint);
+            String response = stub.restore(filePath);
+            System.out.println(response);
+        }catch (IOException | NotBoundException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void delete(String file) {
         System.out.println("delete");

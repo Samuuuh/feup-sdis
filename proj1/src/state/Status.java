@@ -1,5 +1,7 @@
 package state;
 
-public interface Status {
+import java.io.Serializable;
+
+public interface Status extends Serializable {
 
 }

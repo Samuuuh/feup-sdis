@@ -35,6 +35,7 @@ public class MCChannel extends Channel {
                 // Treats the message.
                 if (messageParsed.getMessageType().equals(Definitions.STORED)) {
                     System.out.println("Received stored");
+
                 }
 
 

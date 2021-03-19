@@ -1,4 +1,6 @@
 package state;
+import file.Chunk;
+
 import java.util.*;
 
 public class FileStatus implements Status{
@@ -13,9 +15,14 @@ public class FileStatus implements Status{
         this.desiredRepDeg = desiredRepDeg;
     }
 
-    public void addChunk(int chunkId,  int perceivedRepDeg){
+    public void addChunkList(List<Chunk> chunksList){
+
+    }
+
+    public void addChunk(String chunkId,  int perceivedRepDeg){
         ChunkStatus chunkStatus = new ChunkStatus(chunkId, perceivedRepDeg);
         chunkStateList.add(chunkStatus);
     }
+
 
 }

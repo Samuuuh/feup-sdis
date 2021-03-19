@@ -24,7 +24,7 @@ public class Definitions {
     // State
     public static String STATE_FILE_NAME = "state.ser";
     public static String getStatePath(String peer_no){
-        return  "peers/" + peer_no + "savedState/";
+        return  "peers/peer_" + peer_no + "/savedState/";
     }
 
 

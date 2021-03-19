@@ -13,22 +13,26 @@ public class SaveState extends Thread {
 
     @Override
     public void run() {
-        try {
-            String pathString = Definitions.getStatePath(Peer.peer_no);
-            String filePathString = pathString + Definitions.STATE_FILE_NAME;
+        while(true) {
+            try {
+                Thread.sleep(5 * 1000);
+                Peer.peer_state.printState();
+                String pathString = Definitions.getStatePath(Peer.peer_no);
+                String filePathString = pathString + Definitions.STATE_FILE_NAME;
 
-            Path path = Paths.get(pathString);
-            Files.createDirectories(path);
+                Path path = Paths.get(pathString);
+                Files.createDirectories(path);
 
-            FileOutputStream fileOutputStream = new FileOutputStream(filePathString);
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-            objectOutputStream.writeObject(Peer.peer_state);
-            objectOutputStream.close();
-            fileOutputStream.close();
+                FileOutputStream fileOutputStream = new FileOutputStream(filePathString);
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+                objectOutputStream.writeObject(Peer.peer_state);
+                objectOutputStream.close();
+                fileOutputStream.close();
 
-
-        } catch (IOException i) {
-            i.printStackTrace();
+                System.out.println("State saved");
+            } catch (IOException | InterruptedException i) {
+                i.printStackTrace();
+            }
         }
     }
 }

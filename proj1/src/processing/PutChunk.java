@@ -1,9 +1,11 @@
 package processing;
 
 import factory.MessageParser;
+import file.Chunk;
 import main.Definitions;
 import main.Peer;
 import send.SendMessageChunkNo;
+import state.ChunkStatus;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,7 +29,9 @@ public class PutChunk extends Thread {
         System.out.println("ProcessPutChunk\t:: Treating PUTCHUNK...");
 
         // Backup file only reads and redirect data
-        if (saveFile(messageParsed)) {
+        Boolean fileIsSaved = saveFile(messageParsed);
+        //addChunkStatus();
+        if (fileIsSaved) {
             new SendMessageChunkNo(messageParsed.getVersion(), Definitions.STORED, messageParsed.getFileId(), messageParsed.getChunkNo()).start();
         }
         else {
@@ -66,4 +70,13 @@ public class PutChunk extends Thread {
         return true;
     }
 
+    public void addChunkStatus(){
+        String id =  messageParsed.getFileId();
+        int size = messageParsed.getData().length;
+        int repDeg = Integer.parseInt(messageParsed.getReplicationDeg());
+        ChunkStatus chunkStatus = new ChunkStatus(id, size, repDeg);
+        Peer.peer_state.putChunk(id, chunkStatus);
+        System.out.println("PUTCHUNK STATE");
+        Peer.peer_state.printState();
+    }
 }
