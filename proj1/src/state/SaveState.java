@@ -1,5 +1,6 @@
 package state;
 
+import main.Definitions;
 import main.Peer;
 
 import java.io.*;
@@ -8,27 +9,23 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class SaveState extends Thread {
-    private final String filePath = "/peers/" + Peer.peer_no + "/savedState/";
 
 
     @Override
     public void run() {
         try {
-            String fileName = "state.ser";
+            String pathString = Definitions.getStatePath(Peer.peer_no);
+            String filePathString = pathString + Definitions.STATE_FILE_NAME;
 
-            /*Path path = Paths.get(this.filePath);
-            Files.createDirectories(path);*/
-            File file = new File(fileName);
+            Path path = Paths.get(pathString);
+            Files.createDirectories(path);
 
-            if (!file.exists()) {
-                file.createNewFile();
-            }
+            FileOutputStream fileOutputStream = new FileOutputStream(filePathString);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(Peer.peer_state);
+            objectOutputStream.close();
+            fileOutputStream.close();
 
-
-            FileOutputStream fileStream = new FileOutputStream(fileName);
-            ObjectOutputStream out = new ObjectOutputStream(fileStream);
-            out.writeObject(Peer.peer_state);
-            out.close();
 
         } catch (IOException i) {
             i.printStackTrace();

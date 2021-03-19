@@ -2,6 +2,9 @@ package main;
 
 // Java Packages
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
@@ -41,20 +44,9 @@ public class Peer implements Services {
             return;
         }
 
-        version = args[0];
-        peer_no = args[1];
-
-        mc_addr = args[2];
-        mc_port = Integer.parseInt(args[3]);
-        mdb_addr = args[4];
-        mdb_port = Integer.parseInt(args[5]);
-        mdr_addr = args[6];
-        mdr_port = Integer.parseInt(args[7]);
-
-        //peer_state =  new State(peer_no);
-        //new SaveState().start();
-        peer_state = restoreState(peer_no);
-
+        setVariables(args);
+        restoreState();
+        new SaveState().start();
         initChannel(mc_addr, mc_port, mdb_addr, mdb_port, mdr_addr, mdr_port);
 
         // Bind Services.
@@ -78,28 +70,37 @@ public class Peer implements Services {
         System.out.println("Server is running");
     }
 
-    private static State restoreState(String peer_no) {
-        State stateRecover = null;
+    private static void setVariables(String[] args){
+        version = args[0];
+        peer_no = args[1];
+
+        mc_addr = args[2];
+        mc_port = Integer.parseInt(args[3]);
+        mdb_addr = args[4];
+        mdb_port = Integer.parseInt(args[5]);
+        mdr_addr = args[6];
+        mdr_port = Integer.parseInt(args[7]);
+    }
+
+
+
+    private static void restoreState() {
         try {
                 FileInputStream fileIn = new FileInputStream("state.ser");
                 ObjectInputStream in = new ObjectInputStream(fileIn);
-                stateRecover = (State) in.readObject();
+                peer_state = (State) in.readObject();
                 in.close();
                 fileIn.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return new State(peer_no);
-            } catch (ClassNotFoundException classError) {
-                System.out.println("State not found");
-                classError.printStackTrace();
-                return new State(peer_no);
+            } catch (IOException | ClassNotFoundException e) {
+                System.out.println("Initializing new state.");
+                peer_state = new State(peer_no);
             }
 
-            System.out.println("Deserialized State...");
-            System.out.println("Peer: " + stateRecover.peer_no);
+        System.out.println("Deserialized State...");
+        System.out.println("Peer: " + peer_state.peer_no);
 
-        return stateRecover;
     }
+
 
     public String backup(String filePath, int replicationDeg) throws IOException {
         System.out.println("Peer\t\t:: backup START!");

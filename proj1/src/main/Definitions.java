@@ -21,4 +21,12 @@ public class Definitions {
     public static String DELETE = "DELETE";
 
 
+    // State
+    public static String STATE_FILE_NAME = "state.ser";
+    public static String getStatePath(String peer_no){
+        return  "peers/" + peer_no + "savedState/";
+    }
+
+
+
 }
