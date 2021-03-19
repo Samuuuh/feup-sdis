@@ -1,26 +1,20 @@
 package channel;
+
 import factory.MessageParser;
 import main.Definitions;
 import main.Peer;
 import processing.ProcessPutChunk;
-import sendMessage.SendMessageWithChunkNo;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.net.DatagramPacket;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.net.DatagramPacket;
 
-public class BackupChannel extends Channel {
-
-    public BackupChannel(int mcast_port, String mcast_addr) throws IOException {
+public class ControlChannel extends Channel {
+    // TODO:
+    // STORED
+    // GETCHUNK
+    // DELETE
+    public ControlChannel(int mcast_port, String mcast_addr) throws IOException {
         super(mcast_port, mcast_addr);
-
-        // TODO: Como escolhemos os computadores que vao fazer backup?
-        // Guardamos em todos os computadores da rede se o repetition degree < terminals.
     }
 
 
@@ -32,7 +26,7 @@ public class BackupChannel extends Channel {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
                 receivePacket(mcast_socket, packet);
 
-                System.out.println("BackupChannel\t:: Packet received.");
+                System.out.println("BackupChannel\t:: Packet received."); // Receive PutChunk
                 messageParsed = new MessageParser(packet.getData());
 
                 // Checks if message came from the same peer.
@@ -49,8 +43,4 @@ public class BackupChannel extends Channel {
 
         }
     }
-
-
-
-
 }
