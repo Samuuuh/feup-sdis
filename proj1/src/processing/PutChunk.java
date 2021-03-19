@@ -50,7 +50,7 @@ public class PutChunk extends Thread {
                 FileOutputStream outputFile = new FileOutputStream(filePath, true);
                 outputFile.write(messageParsed.getData());
                 outputFile.close();
-            }else{
+            } else {
                 file.createNewFile();
             }
 

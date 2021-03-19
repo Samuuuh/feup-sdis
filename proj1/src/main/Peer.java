@@ -1,25 +1,32 @@
 package main;
 
-import channel.*;
-import processing.CreateChunk;
-
+// Java Packages
 import java.io.*;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 
+// Custom Packages
+import channel.*;
+import processing.*;
+import state.State;
+import state.SaveState;
+
 public class Peer implements Services {
-    public static String mc_addr;
-    public static int mc_port;
-
-    public static String mdb_addr;
-    public static int mdb_port;
-
-    public static String mdr_addr;
-    public static int mdr_port;
-
+    // Peer Version
     public static String version;
     public static String peer_no;
+
+    // Peer State
+    public static State peer_state;
+
+    // Multicast Address
+    public static String mc_addr;
+    public static int mc_port;
+    public static String mdb_addr;
+    public static int mdb_port;
+    public static String mdr_addr;
+    public static int mdr_port;
 
     public static void initChannel(String mcast_addr, int mcast_port, String mdb_addr, int mdb_port, String mdr_addr, int mdr_port) throws IOException {
         new MCChannel(mcast_port, mcast_addr).start();
@@ -39,12 +46,14 @@ public class Peer implements Services {
 
         mc_addr = args[2];
         mc_port = Integer.parseInt(args[3]);
-
         mdb_addr = args[4];
         mdb_port = Integer.parseInt(args[5]);
-
         mdr_addr = args[6];
         mdr_port = Integer.parseInt(args[7]);
+
+        //peer_state =  new State(peer_no);
+        //new SaveState().start();
+        peer_state = restoreState(peer_no);
 
         initChannel(mc_addr, mc_port, mdb_addr, mdb_port, mdr_addr, mdr_port);
 
@@ -64,7 +73,32 @@ public class Peer implements Services {
             registry.rebind(peer_no, stub);
         }
 
+
+
         System.out.println("Server is running");
+    }
+
+    private static State restoreState(String peer_no) {
+        State stateRecover = null;
+        try {
+                FileInputStream fileIn = new FileInputStream("state.ser");
+                ObjectInputStream in = new ObjectInputStream(fileIn);
+                stateRecover = (State) in.readObject();
+                in.close();
+                fileIn.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return new State(peer_no);
+            } catch (ClassNotFoundException classError) {
+                System.out.println("State not found");
+                classError.printStackTrace();
+                return new State(peer_no);
+            }
+
+            System.out.println("Deserialized State...");
+            System.out.println("Peer: " + stateRecover.peer_no);
+
+        return stateRecover;
     }
 
     public String backup(String filePath, int replicationDeg) throws IOException {
