@@ -11,11 +11,11 @@ import java.io.IOException;
 /**
  * Reads the file and send the chunks in multiCast.
  */
-public class SendChunks extends Thread {
+public class RequestPutChunk extends Thread {
     String filePath;
     String replicationDeg;
 
-    public SendChunks(String filePath, String replicationDeg) {
+    public RequestPutChunk(String filePath, String replicationDeg) {
         this.filePath = filePath;
         this.replicationDeg = replicationDeg;
     }

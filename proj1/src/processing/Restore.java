@@ -1,37 +1,39 @@
 package processing;
 
+import factory.MessageChunkNo;
+import file.FileHandler;
 import main.Definitions;
 import main.Peer;
 import main.Utils;
+import send.SendMessageChunkNo;
+import send.SendMessageRestore;
 
 import java.io.File;
 
-public class Restore extends Thread{
-    private final String fileName;
-    private final int chunkNo;
 
-    public Restore(String fileName, int chunkNo){
-        this.fileName = fileName;
-        this.chunkNo = chunkNo ;
+public class Restore extends Thread {
+    private final String fileId;
+    private final String chunkNo;
+
+    public Restore(String fileId, String chunkNo) {
+        this.fileId = fileId;
+        this.chunkNo = chunkNo;
     }
 
+    // CHUNK
     @Override
-    public void run(){
-        int counter = 0;
-        String filePath = "";
-        // Will run until the next chunk is not found.
-            String fileHash = Utils.hash(fileName);
-            filePath = "peers/" + Peer.peer_no + "/chunks/" + fileHash;
-            File file = new File(filePath);
+    public void run() {
+        try {
+            String chunkId = Utils.buildChunkId(fileId, chunkNo);
 
-            if (file.exists()){
-                // TODO: send message;
+            String path = Definitions.getFilePath(Peer.peer_no) + chunkId;
+            File file = new File(path);
+            if (file.exists()) {
+                byte[] body = FileHandler.readFile(path);
+                new SendMessageRestore(Peer.version, Definitions.CHUNK, fileId, body, chunkNo).start();
             }
-
-
-        System.out.println("End restore thread");
+        } catch (Exception e) {
+            System.out.println("Error Restoring");
+        }
     }
-
-
-
 }

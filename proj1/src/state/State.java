@@ -21,6 +21,10 @@ public class State implements Serializable {
         chunkHash.put(key, chunkState);
     }
 
+    public FileState getFileState(String key){
+        return fileHash.get(key);
+    }
+
     /**
      *  Increases the replication degree of a chunkId.
      */

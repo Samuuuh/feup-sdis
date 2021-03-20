@@ -18,13 +18,14 @@ import java.nio.file.Paths;
 public class PutChunk extends Thread {
     MessageParser messageParsed;
     String saveChunkPath;
-    public PutChunk(MessageParser messageParsed){
+
+    public PutChunk(MessageParser messageParsed) {
         this.messageParsed = messageParsed;
         this.saveChunkPath = Definitions.getFilePath(Peer.peer_no);
     }
 
     @Override
-    public void run(){
+    public void run() {
         System.out.println("ProcessPutChunk\t:: Treating PUTCHUNK...");
 
         // Backup file only reads and redirect data
@@ -32,13 +33,12 @@ public class PutChunk extends Thread {
         addChunkStatus();
         if (fileIsSaved) {
             new SendMessageChunkNo(messageParsed.getVersion(), Definitions.STORED, messageParsed.getFileId(), messageParsed.getChunkNo()).start();
-        }
-        else {
+        } else {
             System.out.println("ProcessPutChunk\t:: Error saving file");
         }
     }
 
-    Boolean saveFile(MessageParser messageParsed){
+    Boolean saveFile(MessageParser messageParsed) {
 
         System.out.println("ProcessPutChunk\t:: Saving file " + messageParsed.getFileId());
 
@@ -49,7 +49,7 @@ public class PutChunk extends Thread {
             Files.createDirectories(path);
             File file = new File(filePath);
 
-            if (file.exists()){
+            if (file.exists()) {
                 FileOutputStream outputFile = new FileOutputStream(filePath, true);
                 outputFile.write(messageParsed.getData());
                 outputFile.close();
@@ -69,8 +69,8 @@ public class PutChunk extends Thread {
         return true;
     }
 
-    public void addChunkStatus(){
-        String id =  messageParsed.getFileId() + "-" + messageParsed.getChunkNo();
+    public void addChunkStatus() {
+        String id = messageParsed.getFileId() + "-" + messageParsed.getChunkNo();
         int size = messageParsed.getData().length;
         int repDeg = Integer.parseInt(messageParsed.getReplicationDeg());
         ChunkState chunkState = new ChunkState(id, size, repDeg);

@@ -18,7 +18,7 @@ public abstract class SendMessage extends Thread {
 
     protected static void sendMessage(DatagramSocket socket, byte[] message, String addr, int port) throws IOException {
         InetAddress address = InetAddress.getByName(addr);
-
+        System.out.println("IHAVE SENT TO THE MDR");
         DatagramPacket packet = new DatagramPacket(message, message.length, address, port);
         socket.send(packet);
     }
