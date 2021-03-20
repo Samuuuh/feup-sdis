@@ -1,17 +1,17 @@
 package file;
 
 public class Chunk {
-    private final int chunkNo;
+    private final String chunkNo;
     private int replicationDeg;
     private final byte[] data;
 
-    public Chunk(int chunkNo, byte[] data) {
+    public Chunk(String chunkNo, byte[] data) {
         this.chunkNo = chunkNo;
         this.replicationDeg = 1;
         this.data = data;
     }
 
-    public int getChunkNo() {
+    public String getChunkNo() {
         return chunkNo;
     }
 

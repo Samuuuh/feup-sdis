@@ -1,11 +1,8 @@
-package factory;
+package message;
 
-import file.Chunk;
 import main.Definitions;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 

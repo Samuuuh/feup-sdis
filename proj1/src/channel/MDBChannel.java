@@ -1,5 +1,5 @@
 package channel;
-import factory.MessageParser;
+import message.MessageParser;
 import main.Definitions;
 import main.Peer;
 import processing.PutChunk;

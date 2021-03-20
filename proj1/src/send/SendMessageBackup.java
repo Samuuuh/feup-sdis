@@ -1,6 +1,6 @@
 package send;
 
-import factory.MessageBackup;
+import message.MessageBuilder;
 import file.Chunk;
 import main.Definitions;
 import main.Peer;
@@ -17,13 +17,13 @@ import java.net.MulticastSocket;
  */
 public class SendMessageBackup extends SendMessage {
     private String fileId;
-    private String replicationDeg;
+    private String repDeg;
     Chunk chunk;
 
-    public SendMessageBackup(String filePath, String fileId, String replicationDeg, Chunk chunk) {
+    public SendMessageBackup(String filePath, String fileId, String repDeg, Chunk chunk) {
         super(Peer.version, Definitions.PUTCHUNK, fileId);
         this.fileId = Utils.hash(filePath);
-        this.replicationDeg = replicationDeg;
+        this.repDeg = repDeg;
         this.chunk = chunk;
     }
 
@@ -36,7 +36,13 @@ public class SendMessageBackup extends SendMessage {
             System.out.println("Send Message Backup\t:: Sending multicast requests...");
             MulticastSocket socket = new MulticastSocket();
 
-            byte[] message = new MessageBackup(fileId, chunk, replicationDeg).createMessage();
+            // Build message
+            MessageBuilder messageBuilder = new MessageBuilder(Definitions.PUTCHUNK, fileId);
+            messageBuilder.addChunkNo(chunk.getChunkNo());
+            messageBuilder.addRepDeg(repDeg);
+            byte[] message = messageBuilder.buildWithBody(chunk.getChunkData());
+
+            // Send message
             sendMessage(socket, message, Peer.mdb_addr, Peer.mdb_port);
 
             System.out.println("Send Message Backup\t:: Message sent!");

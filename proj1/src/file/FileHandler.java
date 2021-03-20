@@ -27,7 +27,7 @@ public class FileHandler {
     public static Chunk[] splitFile(byte[] fileContent) {
 
         if (fileContent.length == 0){
-            Chunk chunk = new Chunk(0, new byte[0]);
+            Chunk chunk = new Chunk("0", new byte[0]);
             return new Chunk[]{chunk};
         }
 
@@ -48,16 +48,16 @@ public class FileHandler {
         // Does not compute the last chunk.
         for (int i = 0; i < lastChunkPos; i++){
             data = Arrays.copyOfRange(fileContent, bytePos, bytePos + Definitions.CHUNK_MAX_SIZE);
-            chunks[i] = new Chunk(i, data);
+            chunks[i] = new Chunk(Integer.toString(i), data);
             bytePos += Definitions.CHUNK_MAX_SIZE;
         }
 
         // Last chunk computation.
         if (emptyChunk == 1)
-            chunks[lastChunkPos] = new Chunk(lastChunkPos, new byte[0]);
+            chunks[lastChunkPos] = new Chunk(Integer.toString(lastChunkPos), new byte[0]);
         else {
             data= Arrays.copyOfRange(fileContent, bytePos, bytePos + remainSize);
-            chunks[lastChunkPos] = new Chunk(lastChunkPos, data);
+            chunks[lastChunkPos] = new Chunk(Integer.toString(lastChunkPos), data);
         }
 
         return chunks;

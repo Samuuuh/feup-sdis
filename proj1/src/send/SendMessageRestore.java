@@ -1,6 +1,7 @@
 package send;
 
-import factory.MessageChunk;
+import message.MessageBuilder;
+import main.Definitions;
 import main.Peer;
 
 import java.io.IOException;
@@ -23,7 +24,11 @@ public class SendMessageRestore extends SendMessage {
             System.out.println("Restore\t:: Sending multicast requests...");
             MulticastSocket socket = new MulticastSocket();
 
-            byte[] message = new MessageChunk(fileId, chunkNo, body).createMessage();
+            // Build message
+            MessageBuilder messageBuilder = new MessageBuilder(Definitions.CHUNK, fileId);
+            messageBuilder.addChunkNo(chunkNo);
+            byte[] message = messageBuilder.buildWithBody(body);
+
             sendMessage(socket, message, Peer.mdr_addr, Peer.mdr_port);
 
             System.out.println("SendMessageRestore\t:: Message sent!");

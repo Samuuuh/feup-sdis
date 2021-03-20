@@ -1,6 +1,6 @@
 package send;
 
-import factory.MessageChunkNo;
+import message.MessageBuilder;
 import main.Peer;
 
 import java.io.IOException;
@@ -19,7 +19,10 @@ public class SendMessageChunkNo extends SendMessage {
             System.out.println("BackupSubProtoc\t:: Sending multicast requests...");
             MulticastSocket socket = new MulticastSocket();
 
-            byte[] message = new MessageChunkNo(type, fileId, chunkNo).createMessage();
+            // Build message.
+            MessageBuilder messageBuilder = new MessageBuilder(type, fileId);
+            messageBuilder.addChunkNo(chunkNo);
+            byte[] message = messageBuilder.build();
 
             sendMessage(socket, message, Peer.mc_addr, Peer.mc_port);
 

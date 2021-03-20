@@ -4,7 +4,7 @@ CC = javac
 
 find_dir = $(wildcard $(dir)/*.java)
 find_class = $(wildcard $(dir)/*.class)
-PACKAGES := main file factory channel processing send state
+PACKAGES := main file message channel processing send state
 CLASSES = $(foreach dir, $(PACKAGES), $(find_class))
 FILES = $(foreach dir, $(PACKAGES), $(find_dir))
 

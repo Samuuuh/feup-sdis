@@ -1,11 +1,9 @@
 package processing;
 
-import factory.MessageChunkNo;
 import file.FileHandler;
 import main.Definitions;
 import main.Peer;
 import main.Utils;
-import send.SendMessageChunkNo;
 import send.SendMessageRestore;
 
 import java.io.File;

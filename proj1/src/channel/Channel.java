@@ -1,10 +1,8 @@
 package channel;
 
-import factory.MessageParser;
-import main.Definitions;
+import message.MessageParser;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
