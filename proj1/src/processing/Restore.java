@@ -7,9 +7,11 @@ import java.io.File;
 
 public class Restore extends Thread{
     private final String fileName;
+    private final int chunkNo;
 
-    public Restore(String fileName){
+    public Restore(String fileName, int chunkNo){
         this.fileName = fileName;
+        this.chunkNo = chunkNo ;
     }
 
     @Override
@@ -17,14 +19,15 @@ public class Restore extends Thread{
         int counter = 0;
         String filePath = "";
         // Will run until the next chunk is not found.
-        while(true) {
             String fileHash = Peer.hash(fileName, counter);
             filePath = "peers/" + Peer.peer_no + "/chunks/" + fileHash;
             File file = new File(filePath);
-            System.out.println(filePath); 
-            if (!file.exists()) break;
-            counter++;
-        }
+
+            if (file.exists()){
+                // TODO: send message;
+            }
+
+
         System.out.println("End restore thread");
     }
 

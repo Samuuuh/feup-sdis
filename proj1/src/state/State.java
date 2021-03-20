@@ -10,13 +10,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class State implements Serializable {
     public final String peer_no;
 
-    public ConcurrentHashMap<String, FileStatus> fileHash;
-    public ConcurrentHashMap<String, ChunkStatus> chunkHash;
+    public ConcurrentHashMap<String, FileStatus> fileHash = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, ChunkStatus> chunkHash = new ConcurrentHashMap<>();
 
     public State(String peer_no) {
         this.peer_no = peer_no;
-        fileHash = new ConcurrentHashMap<>();
-        chunkHash = new ConcurrentHashMap<>();
     }
 
 
@@ -41,8 +39,8 @@ public class State implements Serializable {
     // Just to test
     public void printState() {
         System.out.println("I WAS CALLED");
-        System.out.println(fileHash.size());
-        System.out.println(fileHash.toString());
+        System.out.println(chunkHash.size());
+        System.out.println(chunkHash.toString());
     }
 
 }

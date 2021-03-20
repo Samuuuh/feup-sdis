@@ -5,9 +5,6 @@ package main;
 import java.io.*;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
@@ -16,7 +13,7 @@ import java.security.NoSuchAlgorithmException;
 
 // Custom Packages
 import channel.*;
-import processing.*;
+import send.SendChunks;
 import state.State;
 import state.SaveState;
 
@@ -50,7 +47,7 @@ public class Peer implements Services {
         }
 
         setVariables(args);
-        //restoreState();
+        restoreState();
         initChannel(mc_addr, mc_port, mdb_addr, mdb_port, mdr_addr, mdr_port);
 
         // Bind Services.
@@ -107,14 +104,15 @@ public class Peer implements Services {
     public String backup(String filePath, int replicationDeg) throws IOException {
         System.out.println("Peer\t\t:: backup START!");
 
-        new CreateChunk(filePath, String.valueOf(replicationDeg)).start();
+        new SendChunks(filePath, String.valueOf(replicationDeg)).start();
 
         return "Backup has ended";
     }
     public String restore(String fileName) throws IOException{
         System.out.println("Peer\t\t:: restore START!");
 
-        new Restore(fileName).start();
+        // Requesting message.
+
         return "Store has ended";
     }
 

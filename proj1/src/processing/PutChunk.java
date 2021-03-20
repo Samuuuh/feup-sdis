@@ -30,7 +30,7 @@ public class PutChunk extends Thread {
 
         // Backup file only reads and redirect data
         Boolean fileIsSaved = saveFile(messageParsed);
-        //addChunkStatus();
+        addChunkStatus();
         if (fileIsSaved) {
             new SendMessageChunkNo(messageParsed.getVersion(), Definitions.STORED, messageParsed.getFileId(), messageParsed.getChunkNo()).start();
         }

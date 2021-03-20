@@ -1,5 +1,6 @@
-package processing;
+package send;
 
+import factory.MessageBackup;
 import file.Chunk;
 import file.FileHandler;
 import send.SendMessageBackup;
@@ -9,11 +10,11 @@ import java.io.IOException;
 /**
  * Reads the file and send the chunks in multiCast.
  */
-public class CreateChunk extends Thread {
+public class SendChunks extends Thread {
     String filePath;
     String replicationDeg;
 
-    public CreateChunk(String filePath, String replicationDeg) {
+    public SendChunks(String filePath, String replicationDeg) {
         this.filePath = filePath;
         this.replicationDeg = replicationDeg;
     }
@@ -24,8 +25,10 @@ public class CreateChunk extends Thread {
             byte[] fileContent = FileHandler.readFile(filePath);
             Chunk[] chunks = FileHandler.splitFile(fileContent);
 
-            // TODO: FOR LOOP MUST BE HERE
-            new SendMessageBackup(filePath, "fileId", replicationDeg, chunks).start();
+            for (Chunk chunk : chunks) {
+                new SendMessageBackup(filePath, "fileId", replicationDeg, chunk).start();
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
