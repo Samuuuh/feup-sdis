@@ -1,10 +1,6 @@
 package state;
-
-import file.Chunk;
-
 import java.io.*;
 
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class State implements Serializable {
@@ -38,9 +34,13 @@ public class State implements Serializable {
 
     // Just to test
     public void printState() {
-        System.out.println("I WAS CALLED");
+        System.out.println("CHUNK HASH");
         System.out.println(chunkHash.size());
         System.out.println(chunkHash.toString());
+
+        System.out.println("FILE HASH");
+        System.out.println(fileHash.size());
+        System.out.println(fileHash.toString());
     }
 
 }

@@ -9,7 +9,7 @@ public class FileStatus implements Status{
     private final int desiredRepDeg;
     public List<ChunkStatus> chunkStateList = new ArrayList<ChunkStatus>();
 
-    FileStatus(String pathName, String fileId, int desiredRepDeg){
+    public FileStatus(String pathName, String fileId, int desiredRepDeg){
         this.pathName = pathName;
         this.fileId = fileId;
         this.desiredRepDeg = desiredRepDeg;
@@ -19,7 +19,7 @@ public class FileStatus implements Status{
 
     }
 
-    public void addChunk(String chunkId,  int perceivedRepDeg){
+    public void addChunk(String chunkId, int perceivedRepDeg) {
         ChunkStatus chunkStatus = new ChunkStatus(chunkId, perceivedRepDeg);
         chunkStateList.add(chunkStatus);
     }

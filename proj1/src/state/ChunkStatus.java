@@ -11,6 +11,7 @@ public class ChunkStatus implements Status {
         this.perceivedRepDeg = repDeg;
     }
 
+    // FileStatus.
     public ChunkStatus(String id, int repDeg) {
         this.id = id;
         this.size = 0;      // Not necessary information.
