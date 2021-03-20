@@ -12,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import main.Peer;
+import main.Utils;
 
 // Creates messages requesting backup.
 public class MessageBackup extends MessageFactory {
@@ -30,23 +31,18 @@ public class MessageBackup extends MessageFactory {
         byte[] header = generateHeader();
         byte[] fileContent = chunk.getChunkData();
 
-        // Concatenate.
+        // Array concatenation
         byte[] both = Arrays.copyOf(header, header.length + fileContent.length);
         System.arraycopy(fileContent, 0, both, header.length, fileContent.length);
 
         return both;
     }
 
-
     @Override
     public byte[] generateHeader() {
-        // TODO : to fix the version. How to store the version of a file?
-        // Eh a versao do protocolo do projeto. Tem que ser passado como parametro.
-        // TODO: will the replication degree be the same for all the headers for a file?
-        // Sim.
-
+        // TODO : Fix the version
         String version = "1.0";
-        String header = version + " " + Definitions.PUTCHUNK + " " + Peer.peer_no + " " + Peer.hash(filePath) + " " + chunk.getChunkNo() + " " + repDeg + "\r\n";
+        String header = version + " " + Definitions.PUTCHUNK + " " + Peer.peer_no + " " + Utils.hash(filePath) + " " + chunk.getChunkNo() + " " + repDeg + "\r\n";
         System.out.println("HEADER " + header);
         return header.getBytes();
     }

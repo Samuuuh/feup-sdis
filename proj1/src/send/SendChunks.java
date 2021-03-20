@@ -1,13 +1,10 @@
 package send;
 
-import factory.MessageBackup;
 import file.Chunk;
 import file.FileHandler;
-import main.Definitions;
 import main.Peer;
-import send.SendMessageBackup;
-import state.ChunkStatus;
-import state.FileStatus;
+import main.Utils;
+import state.FileState;
 
 import java.io.IOException;
 
@@ -29,14 +26,14 @@ public class SendChunks extends Thread {
             byte[] fileContent = FileHandler.readFile(filePath);
             Chunk[] chunks = FileHandler.splitFile(fileContent);
 
-            String fileId = Peer.hash(filePath);
-            FileStatus fileStatus = new FileStatus(filePath, fileId, Integer.parseInt(replicationDeg));
+            String fileId = Utils.hash(filePath);
+            FileState fileState = new FileState(filePath, fileId, Integer.parseInt(replicationDeg));
 
             for (Chunk chunk : chunks) {
                 // Add fileStatus to State.
                 String chunkId = fileId + "-" + chunk.getChunkNo();
-                fileStatus.addChunk(chunkId, 0);
-                Peer.peer_state.putFile(fileId, fileStatus);
+                fileState.addChunk(chunkId, 0);
+                Peer.peer_state.putFile(fileId, fileState);
 
                 new SendMessageBackup(filePath, "fileId", replicationDeg, chunk).start();
             }

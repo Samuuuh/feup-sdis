@@ -5,19 +5,17 @@ import main.Peer;
 
 import java.io.*;
 
-abstract public class MessageFactory {
+public abstract class MessageFactory {
     protected String fileId;
     protected String type;
-    protected String senderId;
 
     public MessageFactory(String type, String fileId) {
         this.type = type;
         this.fileId = fileId;
     }
 
-
     public byte[] generateHeader() {
-        // TODO : to fix the version. How to store the version of a file?
+        // TODO : Fix the version.
 
         String version = "1.0";
         String header = version + " " + type + " " + Peer.peer_no + " " + fileId + "\r\n";

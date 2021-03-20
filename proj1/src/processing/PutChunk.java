@@ -1,11 +1,10 @@
 package processing;
 
 import factory.MessageParser;
-import file.Chunk;
 import main.Definitions;
 import main.Peer;
 import send.SendMessageChunkNo;
-import state.ChunkStatus;
+import state.ChunkState;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -74,8 +73,8 @@ public class PutChunk extends Thread {
         String id =  messageParsed.getFileId() + "-" + messageParsed.getChunkNo();
         int size = messageParsed.getData().length;
         int repDeg = Integer.parseInt(messageParsed.getReplicationDeg());
-        ChunkStatus chunkStatus = new ChunkStatus(id, size, repDeg);
-        Peer.peer_state.putChunk(id, chunkStatus);
+        ChunkState chunkState = new ChunkState(id, size, repDeg);
+        Peer.peer_state.putChunk(id, chunkState);
         System.out.println("PUTCHUNK STATE");
         Peer.peer_state.printState();
     }

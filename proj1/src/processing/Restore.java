@@ -2,6 +2,7 @@ package processing;
 
 import main.Definitions;
 import main.Peer;
+import main.Utils;
 
 import java.io.File;
 
@@ -19,7 +20,7 @@ public class Restore extends Thread{
         int counter = 0;
         String filePath = "";
         // Will run until the next chunk is not found.
-            String fileHash = Peer.hash(fileName);
+            String fileHash = Utils.hash(fileName);
             filePath = "peers/" + Peer.peer_no + "/chunks/" + fileHash;
             File file = new File(filePath);
 

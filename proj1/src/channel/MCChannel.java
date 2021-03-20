@@ -7,12 +7,8 @@ import main.Peer;
 import java.io.IOException;
 import java.net.DatagramPacket;
 
+// TODO: STORED, GETCHUNK, DELETE, REMOVE
 public class MCChannel extends Channel {
-    // TODO:
-    // STORED
-    // GETCHUNK
-    // DELETE
-    // REMOVE
     public MCChannel(int mcast_port, String mcast_addr) throws IOException {
         super(mcast_port, mcast_addr);
     }
@@ -23,7 +19,7 @@ public class MCChannel extends Channel {
             try {
                 byte[] buf = new byte[83648];
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
-                receivePacket(mcast_socket, packet);
+                mcast_socket.receive(packet);
 
                 System.out.println("Control Channel\t:: Packet received."); // Receive PutChunk
                 messageParsed = new MessageParser(packet.getData());

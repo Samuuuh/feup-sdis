@@ -1,14 +1,9 @@
 package file;
 
-import file.Chunk;
 import main.Definitions;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 
 import static java.nio.file.Files.readAllBytes;
@@ -18,7 +13,6 @@ public class FileHandler {
     public static byte[] readFile(String filePath) throws IOException {
         File file = new File(filePath);
 
-        // Check the size.
         if (file.length() > Integer.MAX_VALUE)
             throw new IOException("File too large to be read");
         try {

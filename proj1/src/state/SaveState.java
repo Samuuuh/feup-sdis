@@ -16,7 +16,7 @@ public class SaveState extends Thread {
         while(true) {
             try {
                 Thread.sleep(5 * 1000);
-                Peer.peer_state.printState();
+
                 String pathString = Definitions.getStatePath(Peer.peer_no);
                 String filePathString = pathString + Definitions.STATE_FILE_NAME;
 
@@ -29,7 +29,8 @@ public class SaveState extends Thread {
                 objectOutputStream.close();
                 fileOutputStream.close();
 
-                System.out.println("State saved");
+                Peer.peer_state.printState();
+                System.out.println("Saving State");
             } catch (IOException | InterruptedException i) {
                 i.printStackTrace();
             }

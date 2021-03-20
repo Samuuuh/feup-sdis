@@ -11,11 +11,7 @@ import java.io.IOException;
 public class MDBChannel extends Channel {
     public MDBChannel(int mcast_port, String mcast_addr) throws IOException {
         super(mcast_port, mcast_addr);
-
-        // TODO: Como escolhemos os computadores que vao fazer backup?
-        // Guardamos em todos os computadores da rede se o repetition degree < terminals.
     }
-
 
     @Override
     public void run() {
@@ -23,7 +19,7 @@ public class MDBChannel extends Channel {
             try {
                 byte[] buf = new byte[83648];
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
-                receivePacket(mcast_socket, packet);
+                mcast_socket.receive(packet);
 
                 System.out.println("BackupChannel\t:: Packet received."); // Receive PutChunk
                 messageParsed = new MessageParser(packet.getData());

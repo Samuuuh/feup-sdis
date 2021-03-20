@@ -1,23 +1,19 @@
 package state;
-import file.Chunk;
 
-import java.util.*;
+import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class FileStatus implements Status{
+public class FileState implements Serializable {
     private final String pathName;
     private final String fileId;
     private final int desiredRepDeg;
-    public ConcurrentHashMap<String, ChunkStatus> chunkStateHash = new ConcurrentHashMap<>();
 
-    public FileStatus(String pathName, String fileId, int desiredRepDeg){
+    public ConcurrentHashMap<String, ChunkState> chunkStateHash = new ConcurrentHashMap<>();
+
+    public FileState(String pathName, String fileId, int desiredRepDeg){
         this.pathName = pathName;
         this.fileId = fileId;
         this.desiredRepDeg = desiredRepDeg;
-    }
-
-    public void addChunkList(List<Chunk> chunksList){
-
     }
 
     public String getFileId(){
@@ -25,15 +21,14 @@ public class FileStatus implements Status{
     }
 
     public void addChunk(String chunkId, int perceivedRepDeg) {
-
-        ChunkStatus chunkStatus = new ChunkStatus(chunkId, perceivedRepDeg);
-        chunkStateHash.put(chunkId, chunkStatus);
+        ChunkState chunkState = new ChunkState(chunkId, perceivedRepDeg);
+        chunkStateHash.put(chunkId, chunkState);
     }
 
     public void increaseChunkRepDeg(String chunkId){
-        ChunkStatus chunkStatus = chunkStateHash.remove(chunkId);
-        chunkStatus.setPerceivedRepDeg(chunkStatus.getPerceivedRepDeg() + 1 );
-        chunkStateHash.put(chunkId, chunkStatus);
+        ChunkState chunkState = chunkStateHash.remove(chunkId);
+        chunkState.increasePerceivedRepDeg();
+        chunkStateHash.put(chunkId, chunkState);
     }
 
     public String toString(){
