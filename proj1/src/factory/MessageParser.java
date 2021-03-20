@@ -68,7 +68,7 @@ public class MessageParser {
             } else if (this.messageType.equals(Definitions.STORED) ||
                     this.messageType.equals(Definitions.REMOVED) ||
                     this.messageType.equals(Definitions.GETCHUNK)) {
-                System.out.println("MessageParser\t::To implement");
+               parseWithChunkNo(splitHeader);
             } else if (this.messageType.equals(Definitions.CHUNK)) {
                 System.out.println("MessageParser\t::To implement");
             } else if (this.messageType.equals(Definitions.DELETE)) {
@@ -104,6 +104,11 @@ public class MessageParser {
         System.out.println("MessageParser\t:: parsed PUTCHUNK!");
     }
 
+    void parseWithChunkNo(String[] splitHeader){
+
+        System.out.println("Parsing with chunkNo");
+        this.chunkNo = splitHeader[4];
+    }
     public String getVersion() {
         return version;
     }

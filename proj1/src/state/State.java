@@ -43,4 +43,19 @@ public class State implements Serializable {
         System.out.println(fileHash.toString());
     }
 
+    /**
+     *  Increases the replication degree of a chunkId.
+     */
+    public void increaseRepDeg(String fileId, String chunkId){
+        System.out.println(fileId);
+        System.out.println(chunkId);
+
+        FileStatus fileStatus =  fileHash.remove(fileId);
+        System.out.println("aqui");
+        if (fileStatus == null) return;
+        System.out.println("Teste");
+        fileStatus.increaseChunkRepDeg(chunkId);
+        fileHash.put(fileStatus.getFileId(), fileStatus);
+        System.out.println(fileStatus.toString());
+    }
 }

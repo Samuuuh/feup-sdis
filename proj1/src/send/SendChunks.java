@@ -28,7 +28,8 @@ public class SendChunks extends Thread {
         try {
             byte[] fileContent = FileHandler.readFile(filePath);
             Chunk[] chunks = FileHandler.splitFile(fileContent);
-            String fileId = Peer.hash(Definitions.getFilePath(Peer.peer_no));
+
+            String fileId = Peer.hash(filePath);
             FileStatus fileStatus = new FileStatus(filePath, fileId, Integer.parseInt(replicationDeg));
 
             for (Chunk chunk : chunks) {

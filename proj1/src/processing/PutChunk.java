@@ -71,7 +71,7 @@ public class PutChunk extends Thread {
     }
 
     public void addChunkStatus(){
-        String id =  messageParsed.getFileId();
+        String id =  messageParsed.getFileId() + "-" + messageParsed.getChunkNo();
         int size = messageParsed.getData().length;
         int repDeg = Integer.parseInt(messageParsed.getReplicationDeg());
         ChunkStatus chunkStatus = new ChunkStatus(id, size, repDeg);

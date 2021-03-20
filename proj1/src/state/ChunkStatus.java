@@ -3,7 +3,7 @@ package state;
 public class ChunkStatus implements Status {
     private final String id;
     private final int size;
-    private final int perceivedRepDeg;
+    private int perceivedRepDeg;
 
     public ChunkStatus(String id, int size, int repDeg) {
         this.id = id;
@@ -28,6 +28,10 @@ public class ChunkStatus implements Status {
 
     public int getSize() {
         return size;
+    }
+
+    public void setPerceivedRepDeg(int perceivedRepDeg){
+        this.perceivedRepDeg = perceivedRepDeg;
     }
 
     @Override

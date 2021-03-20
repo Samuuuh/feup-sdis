@@ -34,8 +34,10 @@ public class MCChannel extends Channel {
 
                 // Treats the message.
                 if (messageParsed.getMessageType().equals(Definitions.STORED)) {
+                    String fileId = messageParsed.getFileId();
+                    System.out.println(messageParsed.getChunkNo());
+                    Peer.peer_state.increaseRepDeg( fileId, fileId + "-" + messageParsed.getChunkNo());
                     System.out.println("Received stored");
-
                 }
 
 
@@ -45,4 +47,6 @@ public class MCChannel extends Channel {
 
         }
     }
+
+
 }
