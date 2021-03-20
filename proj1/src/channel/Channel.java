@@ -8,8 +8,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
-public class Channel extends Thread {
-
+public abstract class Channel extends Thread {
     protected final String mcast_addr;
     protected final int mcast_port;
     protected final InetAddress group;
@@ -25,37 +24,4 @@ public class Channel extends Thread {
         this.group = InetAddress.getByName(mcast_addr);
         mcast_socket.joinGroup(group);
     }
-
-
-    // Receives the messages and sends them to a handler.
-    @Override
-    public void run() {
-        byte[] buf = new byte[Definitions.CHUNK_MAX_SIZE];
-
-        while (true) {
-            try {
-                DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
-                String receivePacket = receivePacket(mcast_socket, packet);
-
-                //messageParsed = new MessageParser(packet.getData());
-
-            // TODO: mudar erros
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
-    protected static String receivePacket(MulticastSocket socket, DatagramPacket packet) throws IOException{
-        socket.receive(packet);
-        byte[] messageBytes = packet.getData();
-
-        return new String(messageBytes);
-    }
-
-    /**
-     * This will handle the actions requested by the protocol.
-     */
-    //public void handleAction(MessageParser messageParsed);
 }

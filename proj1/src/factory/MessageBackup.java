@@ -12,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import main.Peer;
+import main.Utils;
 
 // Creates messages requesting backup.
 public class MessageBackup extends MessageFactory {
@@ -30,51 +31,18 @@ public class MessageBackup extends MessageFactory {
         byte[] header = generateHeader();
         byte[] fileContent = chunk.getChunkData();
 
-        // Concatenate.
+        // Array concatenation
         byte[] both = Arrays.copyOf(header, header.length + fileContent.length);
         System.arraycopy(fileContent, 0, both, header.length, fileContent.length);
 
         return both;
     }
 
-    protected String hash() {
-        // Probabed Strinly add the last time file was modified and other metadata.
-        File file = new File(this.filePath);
-        String identifier = file.getName() + "/" + file.length() + "/" + file.lastModified();
-
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(identifier.getBytes(StandardCharsets.UTF_8));
-
-            // Convert byte array into signum representation.
-            BigInteger number = new BigInteger(1, hash);
-
-            // Convert message digest into hex value
-            StringBuilder hashedString = new StringBuilder(number.toString(16) + "-" + this.chunk.getChunkNo());
-
-            // Pad with leading zeros.
-            while (hashedString.length() < 32) {
-                hashedString.insert(0, '0');
-            }
-
-            this.fileId = hashedString.toString();
-            return this.fileId;
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-
-        return "-1";
-    }
-
     @Override
     public byte[] generateHeader() {
-        // TODO : to fix the version. How to store the version of a file?
-        // Eh a versao do protocolo do projeto. Tem que ser passado como parametro.
-        // TODO: will the replication degree be the same for all the headers for a file?
-        // Sim.
-
+        // TODO : Fix the version
         String version = "1.0";
-        String header = version + " " + Definitions.PUTCHUNK + " " + Peer.peer_no + " " + hash() + " " + chunk.getChunkNo() + " " + repDeg + "\r\n";
+        String header = version + " " + Definitions.PUTCHUNK + " " + Peer.peer_no + " " + Utils.hash(filePath) + " " + chunk.getChunkNo() + " " + repDeg + "\r\n";
         System.out.println("HEADER " + header);
         return header.getBytes();
     }
