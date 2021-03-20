@@ -1,7 +1,5 @@
 package channel;
 
-import message.MessageParser;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MulticastSocket;

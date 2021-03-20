@@ -1,9 +1,15 @@
 package file;
 
 import main.Definitions;
+import main.Peer;
+import channel.MessageParser;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 import static java.nio.file.Files.readAllBytes;
@@ -22,6 +28,36 @@ public class FileHandler {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static Boolean saveFileChunks(MessageParser messageParsed) {
+
+        String chunkPath = Definitions.getFilePath(Peer.peer_no);
+        String filePath = chunkPath + messageParsed.getFileId() + "-" + messageParsed.getChunkNo();
+
+        try {
+            Path path = Paths.get(chunkPath);
+            Files.createDirectories(path);
+            File file = new File(filePath);
+
+            if (file.exists()) {
+                FileOutputStream outputFile = new FileOutputStream(filePath, true);
+                outputFile.write(messageParsed.getData());
+                outputFile.close();
+            } else {
+                file.createNewFile();
+            }
+
+            FileOutputStream outputStream = new FileOutputStream(filePath);
+            outputStream.write(messageParsed.getData());
+            outputStream.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 
     public static Chunk[] splitFile(byte[] fileContent) {

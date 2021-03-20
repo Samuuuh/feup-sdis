@@ -1,19 +1,19 @@
-package processing;
+package process.answer;
 
 import file.FileHandler;
 import main.Definitions;
 import main.Peer;
 import main.Utils;
-import send.SendMessageRestore;
+import send.SendChunk;
 
 import java.io.File;
 
 
-public class Restore extends Thread {
+public class PrepareChunk extends Thread {
     private final String fileId;
     private final String chunkNo;
 
-    public Restore(String fileId, String chunkNo) {
+    public PrepareChunk(String fileId, String chunkNo) {
         this.fileId = fileId;
         this.chunkNo = chunkNo;
     }
@@ -28,7 +28,7 @@ public class Restore extends Thread {
             File file = new File(path);
             if (file.exists()) {
                 byte[] body = FileHandler.readFile(path);
-                new SendMessageRestore(Peer.version, Definitions.CHUNK, fileId, body, chunkNo).start();
+                new SendChunk(Definitions.CHUNK, fileId, body, chunkNo).start();
             }
         } catch (Exception e) {
             System.out.println("Error Restoring");

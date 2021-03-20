@@ -1,6 +1,5 @@
 package channel;
 
-import message.MessageParser;
 import main.Definitions;
 import main.Peer;
 

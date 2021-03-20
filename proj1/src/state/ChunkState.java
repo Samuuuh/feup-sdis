@@ -26,6 +26,6 @@ public class ChunkState implements Serializable {
 
     @Override
     public String toString() {
-        return "ID: " + id + " SIZE: " + size + " REPDEG: " + perceivedRepDeg;
+        return " ID: " + id + " SIZE: " + size + " REPDEG: " + perceivedRepDeg + "\n";
     }
 }

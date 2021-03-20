@@ -1,9 +1,10 @@
-package send;
+package process.request;
 
 import file.Chunk;
 import file.FileHandler;
 import main.Peer;
 import main.Utils;
+import send.SendPutChunk;
 import state.FileState;
 
 import java.io.IOException;
@@ -25,7 +26,6 @@ public class RequestPutChunk extends Thread {
         try {
             byte[] fileContent = FileHandler.readFile(filePath);
             Chunk[] chunks = FileHandler.splitFile(fileContent);
-
             String fileId = Utils.hash(filePath);
             FileState fileState = new FileState(filePath, fileId, Integer.parseInt(replicationDeg));
 
@@ -34,8 +34,9 @@ public class RequestPutChunk extends Thread {
                 String chunkId = fileId + "-" + chunk.getChunkNo();
                 fileState.addChunk(chunkId, 0);
                 Peer.peer_state.putFile(fileId, fileState);
+                Peer.peer_state.printState();
 
-                new SendMessageBackup(filePath, "fileId", replicationDeg, chunk).start();
+                new SendPutChunk(fileId, replicationDeg, chunk).start();
             }
 
         } catch (IOException e) {
@@ -43,4 +44,6 @@ public class RequestPutChunk extends Thread {
         }
 
     }
+
+
 }

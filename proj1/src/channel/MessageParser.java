@@ -1,4 +1,4 @@
-package message;
+package channel;
 
 import main.Definitions;
 
@@ -113,7 +113,6 @@ public class MessageParser {
     }
 
     void parsePutchunk(String[] splitHeader, byte[] messageByte) throws IOException {
-        System.out.println("MessageParser\t:: parsing PUTCHUNK...");
 
         if (splitHeader.length != 6) {
             System.err.println("Invalid Header");
@@ -129,7 +128,6 @@ public class MessageParser {
             this.data = trim(messageByte);
 
         }
-        System.out.println("MessageParser\t:: parsed PUTCHUNK!");
     }
 
     void parseWithChunkNo(String[] splitHeader){

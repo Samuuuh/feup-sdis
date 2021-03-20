@@ -1,8 +1,7 @@
 package channel;
-import message.MessageParser;
 import main.Definitions;
 import main.Peer;
-import processing.PutChunk;
+import process.answer.PrepareStored;
 import java.net.DatagramPacket;
 
 import java.io.IOException;
@@ -30,7 +29,7 @@ public class MDBChannel extends Channel {
 
                 // Treats the message.
                 if (messageParsed.getMessageType().equals(Definitions.PUTCHUNK))
-                    new PutChunk(messageParsed).start();
+                    new PrepareStored(messageParsed).start();
 
 
             } catch (Exception e) {

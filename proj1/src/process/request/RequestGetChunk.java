@@ -1,22 +1,22 @@
-package send;
+package process.request;
 
 import main.Definitions;
 import main.Peer;
 import main.Utils;
+import send.SendChunkNo;
 import state.ChunkState;
 import state.FileState;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-public class RequestRestore extends Thread{
+public class RequestGetChunk extends Thread{
     protected String fileName;
 
-    public RequestRestore(String fileName){
+    public RequestGetChunk(String fileName){
         this.fileName = fileName;
     }
 
 
-    // GETCHUNK
     @Override
     public void run() {
         String fileId = Utils.hash(fileName);
@@ -28,7 +28,7 @@ public class RequestRestore extends Thread{
 
         chunkHash.forEach((chunkId, chunkState) -> {
             String chunkNo = chunkId.split("-")[1];
-            new SendMessageChunkNo(Peer.version, Definitions.GETCHUNK, fileId, chunkNo).start();
+            new SendChunkNo(Definitions.GETCHUNK, fileId, chunkNo, Peer.mc_addr, Peer.mc_port).start();
         });
 
     }
