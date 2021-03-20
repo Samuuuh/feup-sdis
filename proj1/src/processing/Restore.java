@@ -19,7 +19,7 @@ public class Restore extends Thread{
         int counter = 0;
         String filePath = "";
         // Will run until the next chunk is not found.
-            String fileHash = Peer.hash(fileName, counter);
+            String fileHash = Peer.hash(fileName);
             filePath = "peers/" + Peer.peer_no + "/chunks/" + fileHash;
             File file = new File(filePath);
 

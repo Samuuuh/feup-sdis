@@ -43,7 +43,7 @@ public class PutChunk extends Thread {
 
         System.out.println("ProcessPutChunk\t:: Saving file " + messageParsed.getFileId());
 
-        String filePath = this.saveChunkPath + messageParsed.getFileId();
+        String filePath = this.saveChunkPath + messageParsed.getFileId() + "-" + messageParsed.getChunkNo();
 
         try {
             Path path = Paths.get(this.saveChunkPath);

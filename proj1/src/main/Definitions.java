@@ -30,7 +30,7 @@ public class Definitions {
 
     // File
     public static String getFilePath(String peer_no) {
-        return "peers/" + peer_no + "/chunks/";
+        return "peers/peer_" + peer_no + "/chunks/";
     }
 
 

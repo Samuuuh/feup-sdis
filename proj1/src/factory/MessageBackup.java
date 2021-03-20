@@ -46,7 +46,7 @@ public class MessageBackup extends MessageFactory {
         // Sim.
 
         String version = "1.0";
-        String header = version + " " + Definitions.PUTCHUNK + " " + Peer.peer_no + " " + Peer.hash(filePath, chunk.getChunkNo()) + " " + chunk.getChunkNo() + " " + repDeg + "\r\n";
+        String header = version + " " + Definitions.PUTCHUNK + " " + Peer.peer_no + " " + Peer.hash(filePath) + " " + chunk.getChunkNo() + " " + repDeg + "\r\n";
         System.out.println("HEADER " + header);
         return header.getBytes();
     }

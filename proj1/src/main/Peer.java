@@ -117,8 +117,7 @@ public class Peer implements Services {
     }
 
     // TODO: change function file.
-
-    public static String hash(String filePath, int chunkNo) {
+    public static String hash(String filePath) {
         // Probabed Strinly add the last time file was modified and other metadata.
         File file = new File(filePath);
         String identifier = file.getName() + "/" + file.length() + "/" + file.lastModified();
@@ -131,7 +130,7 @@ public class Peer implements Services {
             BigInteger number = new BigInteger(1, hash);
 
             // Convert message digest into hex value
-            StringBuilder hashedString = new StringBuilder(number.toString(16) + "-" + chunkNo);
+            StringBuilder hashedString = new StringBuilder(number.toString(16));
 
             // Pad with leading zeros.
             while (hashedString.length() < 32) {

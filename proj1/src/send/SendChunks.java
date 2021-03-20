@@ -4,6 +4,7 @@ import factory.MessageBackup;
 import file.Chunk;
 import file.FileHandler;
 import send.SendMessageBackup;
+import state.FileStatus;
 
 import java.io.IOException;
 
@@ -24,8 +25,10 @@ public class SendChunks extends Thread {
         try {
             byte[] fileContent = FileHandler.readFile(filePath);
             Chunk[] chunks = FileHandler.splitFile(fileContent);
+            //FileStatus fileStatus = new FileStatus(filePath);
 
             for (Chunk chunk : chunks) {
+                // TODO: add information in filehash.
                 new SendMessageBackup(filePath, "fileId", replicationDeg, chunk).start();
             }
 
