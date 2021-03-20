@@ -3,19 +3,18 @@ package factory;
 import main.Definitions;
 import main.Peer;
 
-import java.io.IOException;
 import java.util.Arrays;
 
-public class MessageRestore {
-    String fileId;
+public class MessageChunk extends MessageFactory{
     byte[] fileContent;
     String chunkNo;
-    public MessageRestore(String fileId, byte[] body, String chunkNo){
+    public MessageChunk(String fileId,  String chunkNo, byte[] body){
+        super(Definitions.CHUNK, fileId);
         this.fileId = fileId;
         this.fileContent = body;
         this.chunkNo = chunkNo;
     }
-    public byte[] createMessage() throws IOException {
+    public byte[] createMessage() {
         byte[] header = generateHeader();
 
         // Array concatenation
@@ -28,7 +27,7 @@ public class MessageRestore {
     public byte[] generateHeader() {
         // TODO : to fix the version.
         String version = "1.0";
-        String header = version + " " + Definitions.CHUNK + " " + Peer.peer_no + " " + fileId + " " +  chunkNo + "\r\n";
+        String header = version + " " + type + " " + Peer.peer_no + " " + fileId + " " +  chunkNo + "\r\n";
         System.out.println("HEADER " + header);
         return header.getBytes();
     }

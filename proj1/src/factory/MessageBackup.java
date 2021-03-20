@@ -16,34 +16,27 @@ import main.Utils;
 
 // Creates messages requesting backup.
 public class MessageBackup extends MessageFactory {
-    Chunk chunk;
     String repDeg;
-    String filePath;
-
-    public MessageBackup(String filePath, String repDeg, Chunk chunk) {
-        super(Definitions.PUTCHUNK, null);
-        this.filePath = filePath;
+    Chunk chunk;
+    public MessageBackup(String fileId, Chunk chunk, String repDeg) {
+        super(Definitions.PUTCHUNK, fileId);
         this.repDeg = repDeg;
-        this.chunk = chunk;
+        this.chunk= chunk;
     }
 
-    public byte[] createMessage() throws IOException {
-        byte[] header = generateHeader();
-        byte[] fileContent = chunk.getChunkData();
+    public byte[] createMessage() {
+        byte[] header = createHeader();
+        byte[] body = chunk.getChunkData();
 
-        // Array concatenation
-        byte[] both = Arrays.copyOf(header, header.length + fileContent.length);
-        System.arraycopy(fileContent, 0, both, header.length, fileContent.length);
-
-        return both;
+        return mergeHeaderBody(header, body);
     }
+
 
     @Override
-    public byte[] generateHeader() {
+    public byte[] createHeader() {
         // TODO : Fix the version
         String version = "1.0";
-        String header = version + " " + Definitions.PUTCHUNK + " " + Peer.peer_no + " " + Utils.hash(filePath) + " " + chunk.getChunkNo() + " " + repDeg + "\r\n";
-        System.out.println("HEADER " + header);
+        String header = version + " " + type + " " + Peer.peer_no + " " + fileId + " " + chunk.getChunkNo() + " " + repDeg + "\r\n";
         return header.getBytes();
     }
 }

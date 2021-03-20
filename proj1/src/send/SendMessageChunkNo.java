@@ -19,7 +19,7 @@ public class SendMessageChunkNo extends SendMessage {
             System.out.println("BackupSubProtoc\t:: Sending multicast requests...");
             MulticastSocket socket = new MulticastSocket();
 
-            byte[] message = new MessageChunkNo(type, fileId, chunkNo).generateHeader();
+            byte[] message = new MessageChunkNo(type, fileId, chunkNo).createMessage();
 
             sendMessage(socket, message, Peer.mc_addr, Peer.mc_port);
 
