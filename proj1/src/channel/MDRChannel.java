@@ -2,6 +2,7 @@ package channel;
 
 import main.Definitions;
 import main.Peer;
+import process.postAnswer.StoreChunk;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -13,7 +14,6 @@ public class MDRChannel extends Channel {
 
     @Override
     public void run() {
-        System.out.println("COMEÇOU A ZOERA MANO");
         while (true) {
             try {
                 byte[] buf = new byte[83648];
@@ -27,9 +27,16 @@ public class MDRChannel extends Channel {
                 if (messageParsed.getSenderId().equals(Peer.peer_no))
                     continue;
 
-                System.out.println("Cheguei cheguei chegando bagunçando a zorra toda MAS FORA");
-                if (messageParsed.getMessageType().equals(Definitions.CHUNK))
-                    System.out.println("Cheguei cheguei chegando bagunçando a zorra toda");
+                if (messageParsed.getMessageType().equals(Definitions.CHUNK)) {
+                    System.out.println("Received CHUNK");
+                    System.out.println(messageParsed.getHeader());
+                    // Guardar todos os chunks
+                    new StoreChunk(messageParsed).start();
+
+                    // Juntar todos os juntos e escrever para filename
+                }
+
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

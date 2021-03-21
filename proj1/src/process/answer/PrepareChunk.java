@@ -18,7 +18,7 @@ public class PrepareChunk extends Thread {
         this.chunkNo = chunkNo;
     }
 
-    // CHUNK
+
     @Override
     public void run() {
         try {
@@ -26,6 +26,7 @@ public class PrepareChunk extends Thread {
 
             String path = Definitions.getFilePath(Peer.peer_no) + chunkId;
             File file = new File(path);
+
             if (file.exists()) {
                 byte[] body = FileHandler.readFile(path);
                 new SendChunk(Definitions.CHUNK, fileId, body, chunkNo).start();

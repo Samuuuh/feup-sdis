@@ -52,7 +52,7 @@ public class MessageParser {
                parseWithChunkNo(splitHeader);
 
             } else if (this.messageType.equals(Definitions.CHUNK)) {
-                System.out.println("MessageParser\t::To implement");
+                parseChunk(splitHeader, message);
 
             } else if (this.messageType.equals(Definitions.DELETE)) {
                 System.out.println("MessageParser\t::To implement");
@@ -65,6 +65,10 @@ public class MessageParser {
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    public String getHeader() {
+        return headerString;
     }
 
     public String getVersion() {
@@ -132,5 +136,14 @@ public class MessageParser {
 
     void parseWithChunkNo(String[] splitHeader){
         this.chunkNo = splitHeader[4];
+    }
+
+    void parseChunk(String[] splitHeader, byte[] messageParsed) {
+        this.chunkNo = splitHeader[4];
+        if (messageParsed.length == 0)  {
+            this.data = new byte[0];
+        } else {
+            this.data = trim(messageParsed);
+        }
     }
 }

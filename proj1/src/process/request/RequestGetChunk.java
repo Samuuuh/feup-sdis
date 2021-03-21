@@ -16,7 +16,6 @@ public class RequestGetChunk extends Thread{
         this.fileName = fileName;
     }
 
-
     @Override
     public void run() {
         String fileId = Utils.hash(fileName);
@@ -24,7 +23,6 @@ public class RequestGetChunk extends Thread{
         FileState fileState = Peer.peer_state.getFileState(fileId);
 
         ConcurrentHashMap<String, ChunkState> chunkHash = fileState.getChunkStateHash();
-        System.out.println(chunkHash);
 
         chunkHash.forEach((chunkId, chunkState) -> {
             String chunkNo = chunkId.split("-")[1];

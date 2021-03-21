@@ -33,7 +33,7 @@ public class Peer implements Services {
     public static void initChannel(String mcast_addr, int mcast_port, String mdb_addr, int mdb_port, String mdr_addr, int mdr_port) throws IOException {
         new MCChannel(mcast_port, mcast_addr).start();
         new MDBChannel(mdb_port, mdb_addr).start();
-        //new MDRChannel(mdr_port, mdr_addr).start();
+        new MDRChannel(mdr_port, mdr_addr).start();
     }
 
     public static void main(String[] args) throws IOException {

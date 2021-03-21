@@ -19,6 +19,5 @@ public class SendChunk extends Send {
     protected byte[] buildMessage(MessageBuilder messageBuilder) {
         messageBuilder.addChunkNo(chunkNo);
         return messageBuilder.buildWithBody(body);
-
     }
 }

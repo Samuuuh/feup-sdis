@@ -18,7 +18,8 @@ public class PrepareStored extends Thread {
     @Override
     public void run() {
         System.out.println("Preparing stored");
-        Boolean fileIsSaved = saveFileChunks(messageParsed);
+
+        Boolean fileIsSaved = saveFileChunks(messageParsed, Definitions.getFilePath(Peer.peer_no));
         addChunkStatus();
 
         if (fileIsSaved) {

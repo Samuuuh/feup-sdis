@@ -35,8 +35,10 @@ public class MCChannel extends Channel {
                 }
 
                 // Treats the message.
-                if (messageParsed.getMessageType().equals(Definitions.GETCHUNK))
-                    new PrepareChunk(messageParsed.getFileId(), messageParsed.getChunkNo());
+                if (messageParsed.getMessageType().equals(Definitions.GETCHUNK)) {
+                    new PrepareChunk(messageParsed.getFileId(), messageParsed.getChunkNo()).start();
+                }
+
 
             } catch (Exception e) {
                 e.printStackTrace();
