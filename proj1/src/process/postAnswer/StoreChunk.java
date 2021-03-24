@@ -7,9 +7,12 @@ import state.FileState;
 
 import java.io.IOException;
 
-
+/**
+ * Store the chunk after the CHUNK answer.
+ */
 public class StoreChunk extends Thread {
     private MessageParser messageParsed;
+
     public StoreChunk(MessageParser messageParsed) {
         this.messageParsed = messageParsed;
     }
@@ -17,13 +20,13 @@ public class StoreChunk extends Thread {
     @Override
     public void run() {
         FileHandler.saveFileChunks(messageParsed, "peers/peer_" + Peer.peer_no + "/restore/");
-
+        Peer.increaseWaitingToRestore(messageParsed.getFileId());
         FileState fileState = Peer.peer_state.fileHash.get(messageParsed.getFileId());
         int chunkNo = fileState.getChunkStateHash().size();
 
-        if (Integer.parseInt(messageParsed.getChunkNo()) == (chunkNo-1)) {
+        if (Peer.getWaitingToRestore(messageParsed.getFileId()) == chunkNo ) {
             try {
-                FileHandler.saveFile(messageParsed.getFileId(), "peers/peer_" + Peer.peer_no + "/restore/", chunkNo-1);
+                FileHandler.saveFile(messageParsed.getFileId(), "peers/peer_" + Peer.peer_no + "/restore/", chunkNo - 1);
             } catch (IOException e) {
                 e.printStackTrace();
             }

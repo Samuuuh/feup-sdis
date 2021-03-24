@@ -20,7 +20,6 @@ public class MDBChannel extends Channel {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
                 mcast_socket.receive(packet);
 
-                System.out.println("MDB Channel\t:: Packet received."); // Receive PutChunk
                 messageParsed = new MessageParser(packet.getData());
 
                 // Checks if message came from the same peer.
