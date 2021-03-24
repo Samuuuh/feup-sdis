@@ -24,7 +24,7 @@ public class StoreChunk extends Thread {
         FileState fileState = Peer.peer_state.fileHash.get(messageParsed.getFileId());
         int chunkNo = fileState.getChunkStateHash().size();
 
-        if (Peer.waitingToRestore.get(messageParsed.getFileId()) == chunkNo ) {
+        if (Peer.getWaitingToRestore(messageParsed.getFileId()) == chunkNo ) {
             try {
                 FileHandler.saveFile(messageParsed.getFileId(), "peers/peer_" + Peer.peer_no + "/restore/", chunkNo - 1);
             } catch (IOException e) {

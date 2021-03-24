@@ -1,12 +1,11 @@
 package file;
 
+import channel.MessageParser;
 import main.Definitions;
 import main.Peer;
-import channel.MessageParser;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -57,6 +56,7 @@ public class FileHandler {
 
         outputFile.close();
 
+        Peer.removeWaitingToRestore(fileId);
         deleteChunks(fileId, filePath);
     }
 

@@ -21,20 +21,20 @@ public class MDRChannel extends Channel {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
                 mcast_socket.receive(packet);
 
-                System.out.println("MDR Channel\t:: Packet received."); // Receive PutChunk
                 messageParsed = new MessageParser(packet.getData());
 
                 // Checks if message came from the same peer.
                 if (messageParsed.getSenderId().equals(Peer.peer_no))
                     continue;
 
-                if (messageParsed.getMessageType().equals(Definitions.CHUNK) && Peer.isWaitingToRestore(messageParsed.getFileId())) {
-                    System.out.println("Received CHUNK");
+                if (messageParsed.getMessageType().equals(Definitions.CHUNK)) {
                     // Abort if exists the task to restore the chunk.
                     String chunkId = Utils.buildChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
                     Peer.abortRestoreSchedule(chunkId);
-                    // Store all the chunk locally.
-                    new StoreChunk(messageParsed).start();
+
+                    // Store the chunk locally.
+                    if (Peer.isWaitingToRestore(messageParsed.getFileId()))
+                        new StoreChunk(messageParsed).start();
                 }
 
 
