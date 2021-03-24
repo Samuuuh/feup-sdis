@@ -2,6 +2,7 @@ package channel;
 
 import main.Definitions;
 import main.Peer;
+import main.Utils;
 import process.postAnswer.StoreChunk;
 
 import java.io.IOException;
@@ -27,13 +28,13 @@ public class MDRChannel extends Channel {
                 if (messageParsed.getSenderId().equals(Peer.peer_no))
                     continue;
 
-                if (messageParsed.getMessageType().equals(Definitions.CHUNK)) {
+                if (messageParsed.getMessageType().equals(Definitions.CHUNK) && Peer.isWaitingToRestore(messageParsed.getFileId())) {
                     System.out.println("Received CHUNK");
-                    System.out.println(messageParsed.getHeader());
-                    // Guardar todos os chunks
+                    // Abort if exists the task to restore the chunk.
+                    String chunkId = Utils.buildChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
+                    Peer.abortRestoreSchedule(chunkId);
+                    // Store all the chunk locally.
                     new StoreChunk(messageParsed).start();
-
-                    // Juntar todos os juntos e escrever para filename
                 }
 
 

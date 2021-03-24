@@ -29,7 +29,7 @@ public class SaveState extends Thread {
                 objectOutputStream.close();
                 fileOutputStream.close();
 
-                Peer.peer_state.printState();
+                //Peer.peer_state.printState();
             } catch (IOException | InterruptedException i) {
                 i.printStackTrace();
             }

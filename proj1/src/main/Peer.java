@@ -6,6 +6,9 @@ import java.io.*;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 
 // Custom Packages
 import channel.*;
@@ -29,6 +32,11 @@ public class Peer implements Services {
     public static int mdb_port;
     public static String mdr_addr;
     public static int mdr_port;
+
+
+    // This is a hashmap that stores the scheduled restores to be done.
+    public static ConcurrentHashMap<String, Timer> restoreHash = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, Integer> waitingToRestore = new ConcurrentHashMap<>();
 
     public static void initChannel(String mcast_addr, int mcast_port, String mdb_addr, int mdb_port, String mdr_addr, int mdr_port) throws IOException {
         new MCChannel(mcast_port, mcast_addr).start();
@@ -67,6 +75,44 @@ public class Peer implements Services {
         System.out.println("Server is running");
     }
 
+    // SCHEDULE FUNCTIONS
+    public static void addRestoreSchedule(String chunkId, Timer task) {
+        restoreHash.put(chunkId, task);
+    }
+
+    public static void abortRestoreSchedule(String chunkId) {
+        try {
+            Timer restoredTimer = restoreHash.remove(chunkId);
+            if (restoredTimer != null) {
+                restoredTimer.cancel();
+            }
+        } catch (NullPointerException ignored) {
+        }
+
+    }
+
+    public static void addWaitingToRestore(String fileId) {
+        waitingToRestore.put(fileId, 0);
+    }
+
+    public static void removeWaitingToRestore(String fileId) {
+        waitingToRestore.remove(fileId);
+    }
+
+    public static Boolean isWaitingToRestore(String fileId) {
+        return waitingToRestore.get(fileId) != null;
+    }
+
+    public static void increaseWaitingToRestore(String fileId){
+        int numReceived = waitingToRestore.remove(fileId);
+        numReceived+= 1;
+        waitingToRestore.put(fileId, numReceived);
+    }
+
+    public static Integer getWaitingToRestore(String fileId){
+        return waitingToRestore.get(fileId);
+    }
+
     private static void setVariables(String[] args) {
         version = args[0];
         peer_no = args[1];
@@ -78,7 +124,6 @@ public class Peer implements Services {
         mdr_addr = args[6];
         mdr_port = Integer.parseInt(args[7]);
     }
-
 
     private static void restoreState() {
         try {
@@ -97,7 +142,6 @@ public class Peer implements Services {
         new SaveState().start();
     }
 
-
     public String backup(String filePath, int replicationDeg) throws IOException {
         System.out.println("Peer\t\t:: backup START!");
 
@@ -105,7 +149,8 @@ public class Peer implements Services {
 
         return "Backup has ended";
     }
-    public String restore(String fileName) throws IOException{
+
+    public String restore(String fileName) throws IOException {
         System.out.println("Peer\t\t:: restore START!");
 
         new RequestGetChunk(fileName).start();

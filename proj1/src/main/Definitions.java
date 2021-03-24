@@ -24,6 +24,7 @@ public class Definitions {
     // State
     public static String STATE_FILE_NAME = "state.ser";
 
+    // TODO: move the functions above to Utils file.
     public static String getStatePath(String peer_no) {
         return "peers/peer_" + peer_no + "/savedState/";
     }
@@ -33,5 +34,8 @@ public class Definitions {
         return "peers/peer_" + peer_no + "/chunks/";
     }
 
+    public static String getChunkId(String fileId, String chunkNo){
+        return fileId + "-" + chunkNo;
+    }
 
 }
