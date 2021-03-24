@@ -34,7 +34,7 @@ public class FileHandler {
     public static void deleteChunks(String fileId, String filePath) throws IOException {
         File folder = new File(filePath);
 
-        File[] files = folder.listFiles((file, s) -> s.matches(fileId + "-\\d"));
+        File[] files = folder.listFiles((file, s) -> s.matches(fileId + "-\\d+"));
 
         for (File file : files) {
             System.out.println(file.getName());
