@@ -1,11 +1,8 @@
-package factory;
+package channel;
 
-import file.Chunk;
 import main.Definitions;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 
@@ -55,7 +52,7 @@ public class MessageParser {
                parseWithChunkNo(splitHeader);
 
             } else if (this.messageType.equals(Definitions.CHUNK)) {
-                System.out.println("MessageParser\t::To implement");
+                parseChunk(splitHeader, message);
 
             } else if (this.messageType.equals(Definitions.DELETE)) {
                 System.out.println("MessageParser\t::To implement");
@@ -68,6 +65,10 @@ public class MessageParser {
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    public String getHeader() {
+        return headerString;
     }
 
     public String getVersion() {
@@ -116,7 +117,6 @@ public class MessageParser {
     }
 
     void parsePutchunk(String[] splitHeader, byte[] messageByte) throws IOException {
-        System.out.println("MessageParser\t:: parsing PUTCHUNK...");
 
         if (splitHeader.length != 6) {
             System.err.println("Invalid Header");
@@ -130,12 +130,19 @@ public class MessageParser {
             this.data = new byte[0];
         } else {
             this.data = trim(messageByte);
-
         }
-        System.out.println("MessageParser\t:: parsed PUTCHUNK!");
     }
 
     void parseWithChunkNo(String[] splitHeader){
         this.chunkNo = splitHeader[4];
+    }
+
+    void parseChunk(String[] splitHeader, byte[] messageParsed) {
+        this.chunkNo = splitHeader[4];
+        if (messageParsed.length == 0)  {
+            this.data = new byte[0];
+        } else {
+            this.data = trim(messageParsed);
+        }
     }
 }

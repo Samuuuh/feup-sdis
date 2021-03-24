@@ -16,6 +16,9 @@ public class FileState implements Serializable {
         this.desiredRepDeg = desiredRepDeg;
     }
 
+    public ConcurrentHashMap<String, ChunkState> getChunkStateHash() {
+        return chunkStateHash;
+    }
     public String getFileId(){
         return fileId;
     }
@@ -33,9 +36,9 @@ public class FileState implements Serializable {
 
     public String toString(){
         String s = "";
-        s += "FILE STATUS";
-        s += this.pathName;
-        s += this.fileId;
+        s += "FILE STATUS\n";
+        s += "PATHNAME = " + this.pathName + "\n";
+        s += "FILEID = " + this.fileId + "\n";
         s += chunkStateHash.toString();
 
         return s;

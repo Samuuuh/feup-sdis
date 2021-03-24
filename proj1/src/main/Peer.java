@@ -3,17 +3,15 @@ package main;
 // Java Packages
 
 import java.io.*;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 // Custom Packages
 import channel.*;
-import send.SendChunks;
+import process.request.RequestDelete;
+import process.request.RequestPutChunk;
+import process.request.RequestGetChunk;
 import state.State;
 import state.SaveState;
 
@@ -36,7 +34,7 @@ public class Peer implements Services {
     public static void initChannel(String mcast_addr, int mcast_port, String mdb_addr, int mdb_port, String mdr_addr, int mdr_port) throws IOException {
         new MCChannel(mcast_port, mcast_addr).start();
         new MDBChannel(mdb_port, mdb_addr).start();
-        //new MDRChannel(mdr_port, mdr_addr).start();
+        new MDRChannel(mdr_port, mdr_addr).start();
     }
 
     public static void main(String[] args) throws IOException {
@@ -104,15 +102,23 @@ public class Peer implements Services {
     public String backup(String filePath, int replicationDeg) throws IOException {
         System.out.println("Peer\t\t:: backup START!");
 
-        new SendChunks(filePath, String.valueOf(replicationDeg)).start();
+        new RequestPutChunk(filePath, String.valueOf(replicationDeg)).start();
 
         return "Backup has ended";
     }
     public String restore(String fileName) throws IOException{
         System.out.println("Peer\t\t:: restore START!");
 
-        // Requesting message.
+        new RequestGetChunk(fileName).start();
 
         return "Store has ended";
+    }
+
+    public String delete(String filename) throws IOException {
+        System.out.println("Peer\t\t:: delete START!");
+
+        new RequestDelete(filename).start();
+
+        return "Delete has ended";
     }
 }

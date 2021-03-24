@@ -34,4 +34,10 @@ public class Utils {
 
         return "-1";
     }
+
+    public static String buildChunkId(String fileId, String chunkId){
+        return fileId + "-" + chunkId;
+    }
+
+
 }

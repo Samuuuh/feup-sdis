@@ -1,8 +1,7 @@
 package channel;
-import factory.MessageParser;
 import main.Definitions;
 import main.Peer;
-import processing.PutChunk;
+import process.answer.PrepareStored;
 import java.net.DatagramPacket;
 
 import java.io.IOException;
@@ -21,7 +20,7 @@ public class MDBChannel extends Channel {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
                 mcast_socket.receive(packet);
 
-                System.out.println("BackupChannel\t:: Packet received."); // Receive PutChunk
+                System.out.println("MDB Channel\t:: Packet received."); // Receive PutChunk
                 messageParsed = new MessageParser(packet.getData());
 
                 // Checks if message came from the same peer.
@@ -30,18 +29,12 @@ public class MDBChannel extends Channel {
 
                 // Treats the message.
                 if (messageParsed.getMessageType().equals(Definitions.PUTCHUNK))
-                    new PutChunk(messageParsed).start();
+                    new PrepareStored(messageParsed).start();
 
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
-
     }
-
-
-
-
 }

@@ -21,10 +21,23 @@ public class State implements Serializable {
         chunkHash.put(key, chunkState);
     }
 
+    public void removeFile(String key) {
+        fileHash.remove(key);
+    }
+
+    public void removeChunk(String key) {
+        chunkHash.remove(key);
+    }
+
+    public FileState getFileState(String key){
+        return fileHash.get(key);
+    }
+
     /**
      *  Increases the replication degree of a chunkId.
      */
     public void increaseRepDeg(String fileId, String chunkId){
+        System.out.println(fileId);
         FileState fileState =  fileHash.remove(fileId);
         if (fileState == null) return;
 

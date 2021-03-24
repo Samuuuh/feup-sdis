@@ -110,8 +110,14 @@ public class Client {
         }
     }
 
-    private void delete(String file) {
-        System.out.println("delete");
+    private void delete(String filePath) {
+        try {
+            Services stub = (Services) this.registry.lookup(this.peerAccessPoint);
+            String response = stub.delete(filePath);
+            System.out.println(response);
+        }catch (IOException | NotBoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private void reclaim(String file) {
