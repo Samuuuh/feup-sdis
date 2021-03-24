@@ -1,7 +1,7 @@
 package process.postAnswer;
 
 import channel.MessageParser;
-import dataStructure.restore.RestoreWaiting;
+import tasks.restore.RestoreWaiting;
 import main.etc.FileHandler;
 import main.Peer;
 import main.etc.Logger;

@@ -1,6 +1,6 @@
 package process.answer;
 
-import dataStructure.restore.RestoreTasks;
+import tasks.restore.RestoreTasks;
 import main.etc.FileHandler;
 import main.Peer;
 import main.etc.Logger;

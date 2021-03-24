@@ -1,7 +1,7 @@
 package channel;
 
-import dataStructure.restore.RestoreTasks;
-import dataStructure.restore.RestoreWaiting;
+import tasks.restore.RestoreTasks;
+import tasks.restore.RestoreWaiting;
 import main.Peer;
 import main.etc.Singleton;
 import process.postAnswer.StoreChunk;

@@ -1,8 +1,7 @@
 package main.etc;
 
 import channel.MessageParser;
-import dataStructure.Chunk;
-import dataStructure.restore.RestoreWaiting;
+import tasks.restore.RestoreWaiting;
 
 import java.io.File;
 import java.io.FileOutputStream;

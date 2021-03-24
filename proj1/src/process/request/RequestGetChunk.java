@@ -1,6 +1,6 @@
 package process.request;
 
-import dataStructure.restore.RestoreWaiting;
+import tasks.restore.RestoreWaiting;
 import main.Peer;
 import main.etc.Logger;
 import main.etc.Singleton;
