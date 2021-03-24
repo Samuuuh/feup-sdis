@@ -21,6 +21,14 @@ public class State implements Serializable {
         chunkHash.put(key, chunkState);
     }
 
+    public void removeFile(String key) {
+        fileHash.remove(key);
+    }
+
+    public void removeChunk(String key) {
+        chunkHash.remove(key);
+    }
+
     public FileState getFileState(String key){
         return fileHash.get(key);
     }

@@ -130,7 +130,6 @@ public class MessageParser {
             this.data = new byte[0];
         } else {
             this.data = trim(messageByte);
-
         }
     }
 

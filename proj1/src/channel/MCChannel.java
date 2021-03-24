@@ -3,6 +3,7 @@ package channel;
 import main.Definitions;
 import main.Peer;
 import process.answer.PrepareChunk;
+import process.postAnswer.DeleteChunk;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -32,10 +33,12 @@ public class MCChannel extends Channel {
                     String fileId = messageParsed.getFileId();
                     Peer.peer_state.increaseRepDeg( fileId, fileId + "-" + messageParsed.getChunkNo());
                 }
-
-                // Treats the message.
-                if (messageParsed.getMessageType().equals(Definitions.GETCHUNK)) {
+                else if (messageParsed.getMessageType().equals(Definitions.GETCHUNK)) {
                     new PrepareChunk(messageParsed.getFileId(), messageParsed.getChunkNo()).start();
+                }
+                else if (messageParsed.getMessageType().equals(Definitions.DELETE)) {
+                    System.out.println();
+                    new DeleteChunk(messageParsed.getFileId()).start();
                 }
 
 

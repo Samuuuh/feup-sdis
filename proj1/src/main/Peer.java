@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 // Custom Packages
 import channel.*;
+import process.request.RequestDelete;
 import process.request.RequestPutChunk;
 import process.request.RequestGetChunk;
 import state.State;
@@ -156,5 +157,13 @@ public class Peer implements Services {
         new RequestGetChunk(fileName).start();
 
         return "Store has ended";
+    }
+
+    public String delete(String filename) throws IOException {
+        System.out.println("Peer\t\t:: delete START!");
+
+        new RequestDelete(filename).start();
+
+        return "Delete has ended";
     }
 }
