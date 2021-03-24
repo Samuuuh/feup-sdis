@@ -1,9 +1,10 @@
 package process.answer;
 
-import file.FileHandler;
-import main.Definitions;
+import dataStructure.restore.RestoreTasks;
+import main.etc.FileHandler;
 import main.Peer;
-import main.Utils;
+import main.etc.Logger;
+import main.etc.Singleton;
 import send.SendChunk;
 
 import java.io.File;
@@ -11,7 +12,9 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
+/**
+ * Prepare the information to send the CHUNK message.
+ */
 public class PrepareChunk extends Thread {
     private final String fileId;
     private final String chunkNo;
@@ -21,22 +24,21 @@ public class PrepareChunk extends Thread {
         this.chunkNo = chunkNo;
     }
 
-
     @Override
     public void run() {
+
+        String chunkId = Singleton.buildChunkId(fileId, chunkNo);
+        String path = Singleton.getFilePath(Peer.peer_no) + chunkId;
+        File file = new File(path);
+
         try {
-            String chunkId = Utils.buildChunkId(fileId, chunkNo);
-
-            String path = Definitions.getFilePath(Peer.peer_no) + chunkId;
-            File file = new File(path);
-
             if (file.exists()) {
                 byte[] body = FileHandler.readFile(path);
                 scheduleSendMessage(fileId, body, chunkNo, chunkId);
-                System.out.println("Scheduled");
+                Logger.INFO(this.getClass().getName(), "SCHEDULED sending " + chunkId);
             }
         } catch (Exception e) {
-            System.out.println("Error Restoring");
+            Logger.ERR(this.getClass().getName(), "Error restoring chunk " + chunkId);
         }
     }
 
@@ -46,7 +48,7 @@ public class PrepareChunk extends Thread {
     private void scheduleSendMessage(String fileId, byte[] body, String chunkNo, String chunkId){
         Timer timer = new Timer();      // A new thread Timer will be created.
         timer.schedule(createTimerTask(fileId, body, chunkNo), new Random().nextInt(401));
-        Peer.addRestoreSchedule(chunkId, timer);
+        RestoreTasks.addRestoreSchedule(chunkId, timer);
     }
 
     /**
@@ -56,7 +58,7 @@ public class PrepareChunk extends Thread {
          return new TimerTask() {
             @Override
             public void run() {
-                new SendChunk(Definitions.CHUNK, fileId, body, chunkNo).start();
+                new SendChunk(Singleton.CHUNK, fileId, body, chunkNo).start();
                 this.cancel();      // Do not repeat.
             }
         };

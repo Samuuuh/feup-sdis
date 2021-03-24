@@ -1,9 +1,9 @@
 package process.request;
 
-import main.Definitions;
-import main.Logger;
+import dataStructure.restore.RestoreWaiting;
 import main.Peer;
-import main.Utils;
+import main.etc.Logger;
+import main.etc.Singleton;
 import send.SendChunkNo;
 import state.ChunkState;
 import state.FileState;
@@ -19,7 +19,7 @@ public class RequestGetChunk extends Thread {
 
     @Override
     public void run() {
-        String fileId = Utils.hash(fileName);
+        String fileId = Singleton.hash(fileName);
 
         FileState fileState = Peer.peer_state.getFileState(fileId);
         ConcurrentHashMap<String, ChunkState> chunkHash;
@@ -28,17 +28,16 @@ public class RequestGetChunk extends Thread {
         try {
             chunkHash = fileState.getChunkStateHash();
         } catch (NullPointerException e) {
-            Logger.ERR(this.getClass().getName(), "Not possible to restore file " + fileId);
+            Logger.ERR(this.getClass().getName(), "Failed REQUESTING GETCHUNK on " + fileId);
             return;
         }
 
-
         chunkHash.forEach((chunkId, chunkState) -> {
             String chunkNo = chunkId.split("-")[1];
-            Peer.addWaitingToRestore(fileId);
-            new SendChunkNo(Definitions.GETCHUNK, fileId, chunkNo, Peer.mc_addr, Peer.mc_port).start();
+            RestoreWaiting.addWaitingToRestore(fileId);
+            new SendChunkNo(Singleton.GETCHUNK, fileId, chunkNo, Peer.mc_addr, Peer.mc_port).start();
         });
-
+        Logger.REQUEST(this.getClass().getName(), "Requested GETCHUNK on " + fileId);
     }
 
 

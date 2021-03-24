@@ -1,4 +1,4 @@
-package file;
+package dataStructure;
 
 public class Chunk {
     private final String chunkNo;

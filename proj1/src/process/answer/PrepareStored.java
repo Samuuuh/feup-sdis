@@ -1,13 +1,17 @@
 package process.answer;
 
 import channel.MessageParser;
-import main.Definitions;
 import main.Peer;
+import main.etc.Logger;
+import main.etc.Singleton;
 import send.SendChunkNo;
 import state.ChunkState;
 
-import static file.FileHandler.saveFileChunks;
+import static main.etc.FileHandler.saveFileChunks;
 
+/**
+ * Saves the chunk and prepares to send the STORED message.
+ */
 public class PrepareStored extends Thread {
     MessageParser messageParsed;
 
@@ -17,19 +21,21 @@ public class PrepareStored extends Thread {
 
     @Override
     public void run() {
-        System.out.println("Preparing stored");
-
-        Boolean fileIsSaved = saveFileChunks(messageParsed, Definitions.getFilePath(Peer.peer_no));
+        Boolean fileIsSaved = saveFileChunks(messageParsed, Singleton.getFilePath(Peer.peer_no));
         addChunkStatus();
 
         if (fileIsSaved) {
-            new SendChunkNo(Definitions.STORED, messageParsed.getFileId(), messageParsed.getChunkNo(), Peer.mc_addr, Peer.mc_port).start();
+            new SendChunkNo(Singleton.STORED, messageParsed.getFileId(), messageParsed.getChunkNo(), Peer.mc_addr, Peer.mc_port).start();
+            String chunkId = Singleton.buildChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
+            Logger.INFO(this.getClass().getName(), "Sending STORED message on " + chunkId);
         } else {
-            System.out.println("ProcessPutChunk\t:: Error saving file");
+            Logger.ERR(this.getClass().getName(), "Chunk " + Singleton.buildChunkId(messageParsed.getFileId(), messageParsed.getChunkNo()) + "wasn't stored!");
         }
     }
 
-
+    /**
+     * Once the chunk is stored. It's saved on the status.
+     */
     public void addChunkStatus() {
         String id = messageParsed.getFileId() + "-" + messageParsed.getChunkNo();
         int size = messageParsed.getData().length;
@@ -37,6 +43,5 @@ public class PrepareStored extends Thread {
 
         ChunkState chunkState = new ChunkState(id, size, repDeg);
         Peer.peer_state.putChunk(id, chunkState);
-        Peer.peer_state.printState();
     }
 }

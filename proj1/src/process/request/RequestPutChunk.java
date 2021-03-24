@@ -1,9 +1,10 @@
 package process.request;
 
-import file.Chunk;
-import file.FileHandler;
+import dataStructure.Chunk;
 import main.Peer;
-import main.Utils;
+import main.etc.FileHandler;
+import main.etc.Logger;
+import main.etc.Singleton;
 import send.SendPutChunk;
 import state.FileState;
 
@@ -23,10 +24,11 @@ public class RequestPutChunk extends Thread {
 
     @Override
     public void run() {
+
+        String fileId = Singleton.hash(filePath);
         try {
             byte[] fileContent = FileHandler.readFile(filePath);
             Chunk[] chunks = FileHandler.splitFile(fileContent);
-            String fileId = Utils.hash(filePath);
             FileState fileState = new FileState(filePath, fileId, Integer.parseInt(replicationDeg));
 
             for (Chunk chunk : chunks) {
@@ -34,12 +36,13 @@ public class RequestPutChunk extends Thread {
                 String chunkId = fileId + "-" + chunk.getChunkNo();
                 fileState.addChunk(chunkId, 0);
                 Peer.peer_state.putFile(fileId, fileState);
-                Peer.peer_state.printState();
 
                 new SendPutChunk(fileId, replicationDeg, chunk).start();
             }
+            Logger.REQUEST(this.getClass().getName(), "Requested PUTCHUNK on " + fileId);
 
         } catch (IOException e) {
+            Logger.REQUEST(this.getClass().getName(), "Requested PUTCHUNK on " + fileId);
             e.printStackTrace();
         }
 

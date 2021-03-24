@@ -1,8 +1,10 @@
 package process.postAnswer;
 
 import channel.MessageParser;
-import file.FileHandler;
+import dataStructure.restore.RestoreWaiting;
+import main.etc.FileHandler;
 import main.Peer;
+import main.etc.Logger;
 import state.FileState;
 
 import java.io.IOException;
@@ -20,13 +22,14 @@ public class StoreChunk extends Thread {
     @Override
     public void run() {
         FileHandler.saveFileChunks(messageParsed, "peers/peer_" + Peer.peer_no + "/restore/");
-        Peer.increaseWaitingToRestore(messageParsed.getFileId());
+        RestoreWaiting.increaseWaitingToRestore(messageParsed.getFileId());
         FileState fileState = Peer.peer_state.fileHash.get(messageParsed.getFileId());
         int chunkNo = fileState.getChunkStateHash().size();
 
-        if (Peer.getWaitingToRestore(messageParsed.getFileId()) == chunkNo ) {
+        if (RestoreWaiting.getWaitingToRestore(messageParsed.getFileId()) == chunkNo ) {
             try {
                 FileHandler.saveFile(messageParsed.getFileId(), "peers/peer_" + Peer.peer_no + "/restore/", chunkNo - 1);
+                Logger.SUC(this.getClass().getName(), "File " + messageParsed.getFileId() + " has been restored.");
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -1,14 +1,9 @@
 package process.request;
 
-import main.Definitions;
 import main.Peer;
-import main.Utils;
-import send.SendChunkNo;
+import main.etc.Logger;
+import main.etc.Singleton;
 import send.SendDelete;
-import state.ChunkState;
-import state.FileState;
-
-import java.util.concurrent.ConcurrentHashMap;
 
 public class RequestDelete extends Thread {
     protected String fileName;
@@ -19,17 +14,19 @@ public class RequestDelete extends Thread {
 
     @Override
     public void run() {
-        try {
-            String fileId = Utils.hash(fileName);
 
+        String fileId = Singleton.hash(fileName);
+        try {
             // TODO: Change the place of this
             Peer.peer_state.removeFile(fileId);
 
             for(int i = 0; i < 5; i++) {
                 Thread.sleep(500);
-                new SendDelete(Definitions.DELETE, fileId, Peer.mc_addr, Peer.mc_port).start();
+                new SendDelete(Singleton.DELETE, fileId, Peer.mc_addr, Peer.mc_port).start();
+                Logger.REQUEST(this.getClass().getName(), "Requested DELETE on " + fileId + " ATTEMPT No. " + i);
             }
         } catch (InterruptedException e) {
+            Logger.ERR(this.getClass().getName(), "Failed REQUESTING DELETE " + fileId);
             e.printStackTrace();
         }
     }

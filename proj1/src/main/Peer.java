@@ -2,21 +2,25 @@ package main;
 
 // Java Packages
 
-import java.io.*;
-import java.rmi.registry.Registry;
+import channel.MCChannel;
+import channel.MDBChannel;
+import channel.MDRChannel;
+import main.etc.Logger;
+import main.etc.Singleton;
+import process.request.RequestDelete;
+import process.request.RequestGetChunk;
+import process.request.RequestPutChunk;
+import state.SaveState;
+import state.State;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ConcurrentHashMap;
 
 // Custom Packages
-import channel.*;
-import process.request.RequestDelete;
-import process.request.RequestPutChunk;
-import process.request.RequestGetChunk;
-import state.State;
-import state.SaveState;
 
 public class Peer implements Services {
     // Peer Version
@@ -36,8 +40,7 @@ public class Peer implements Services {
 
 
     // This is a hashmap that stores the scheduled restores to be done.
-    public static ConcurrentHashMap<String, Timer> restoreHash = new ConcurrentHashMap<>();
-    public static ConcurrentHashMap<String, Integer> waitingToRestore = new ConcurrentHashMap<>();
+
 
     public static void initChannel(String mcast_addr, int mcast_port, String mdb_addr, int mdb_port, String mdr_addr, int mdr_port) throws IOException {
         new MCChannel(mcast_port, mcast_addr).start();
@@ -61,57 +64,15 @@ public class Peer implements Services {
         Services stub = (Services) UnicastRemoteObject.exportObject(obj, 0);
 
         try {
-            Registry registry = LocateRegistry.getRegistry(Definitions.REGISTER_PORT);
+            Registry registry = LocateRegistry.getRegistry(Singleton.REGISTER_PORT);
             registry.rebind(peer_no, stub);
 
         } catch (Exception e) {
-            System.out.println("ERROR: Error while trying to bind stub");
-            System.err.println("Registry does not exist. Creating a new one...");
-
-            Registry registry = LocateRegistry.createRegistry(Definitions.REGISTER_PORT);
+            Logger.ANY("Peer", "Registry does not exist. Creating a new one...");
+            Registry registry = LocateRegistry.createRegistry(Singleton.REGISTER_PORT);
             registry.rebind(peer_no, stub);
         }
-
-
-        System.out.println("Server is running");
-    }
-
-    // SCHEDULE FUNCTIONS
-    public static void addRestoreSchedule(String chunkId, Timer task) {
-        restoreHash.put(chunkId, task);
-    }
-
-    public static void abortRestoreSchedule(String chunkId) {
-        try {
-            Timer restoredTimer = restoreHash.remove(chunkId);
-            if (restoredTimer != null) {
-                restoredTimer.cancel();
-            }
-        } catch (NullPointerException ignored) {
-        }
-
-    }
-
-    public static void addWaitingToRestore(String fileId) {
-        waitingToRestore.put(fileId, 0);
-    }
-
-    public static void removeWaitingToRestore(String fileId) {
-        waitingToRestore.remove(fileId);
-    }
-
-    public static Boolean isWaitingToRestore(String fileId) {
-        return waitingToRestore.get(fileId) != null;
-    }
-
-    public static void increaseWaitingToRestore(String fileId){
-        int numReceived = waitingToRestore.remove(fileId);
-        numReceived+= 1;
-        waitingToRestore.put(fileId, numReceived);
-    }
-
-    public static Integer getWaitingToRestore(String fileId){
-        return waitingToRestore.get(fileId);
+        Logger.ANY("Peer", "Server is running");
     }
 
     private static void setVariables(String[] args) {
@@ -128,39 +89,37 @@ public class Peer implements Services {
 
     private static void restoreState() {
         try {
-            FileInputStream fileIn = new FileInputStream(Definitions.getStatePath(peer_no) + Definitions.STATE_FILE_NAME);
+            FileInputStream fileIn = new FileInputStream(Singleton.getStatePath(peer_no) + Singleton.STATE_FILE_NAME);
             ObjectInputStream in = new ObjectInputStream(fileIn);
             peer_state = (State) in.readObject();
             in.close();
             fileIn.close();
-            System.out.println("Deserialized State...");
-            System.out.println("Peer: " + peer_state.peer_no);
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Initializing new state.");
+            Logger.ANY("Peer", "Initializing new state.");
             peer_state = new State(peer_no);
         }
-        peer_state.printState();
         new SaveState().start();
     }
 
-    public String backup(String filePath, int replicationDeg) throws IOException {
-        System.out.println("Peer\t\t:: backup START!");
 
+    // SERVICES
+
+    public String backup(String filePath, int replicationDeg)  {
+        Logger.ANY("Peer", "BACKUP requested");
         new RequestPutChunk(filePath, String.valueOf(replicationDeg)).start();
 
         return "Backup has ended";
     }
 
-    public String restore(String fileName) throws IOException {
-        System.out.println("Peer\t\t:: restore START!");
-
+    public String restore(String fileName)  {
+        Logger.ANY("Peer", "RESTORE requested");
         new RequestGetChunk(fileName).start();
 
         return "Store has ended";
     }
 
-    public String delete(String filename) throws IOException {
-        System.out.println("Peer\t\t:: delete START!");
+    public String delete(String filename)  {
+        Logger.ANY("Peer", "DELETE requested");
 
         new RequestDelete(filename).start();
 
