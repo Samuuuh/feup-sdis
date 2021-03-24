@@ -19,6 +19,7 @@ public class FileState implements Serializable {
     public ConcurrentHashMap<String, ChunkState> getChunkStateHash() {
         return chunkStateHash;
     }
+
     public String getFileId(){
         return fileId;
     }

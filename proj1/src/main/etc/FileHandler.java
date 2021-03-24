@@ -1,12 +1,11 @@
-package file;
+package main.etc;
 
-import main.Definitions;
-import main.Peer;
 import channel.MessageParser;
+import dataStructure.Chunk;
+import dataStructure.restore.RestoreWaiting;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,8 +36,6 @@ public class FileHandler {
         File[] files = folder.listFiles((file, s) -> s.matches(fileId + "-\\d+"));
 
         for (File file : files) {
-            System.out.println(file.getName());
-
             if (!file.delete()) {
                 System.err.println( "Can't remove " + file.getAbsolutePath() );
             }
@@ -57,6 +54,7 @@ public class FileHandler {
 
         outputFile.close();
 
+        RestoreWaiting.removeWaitingToRestore(fileId);
         deleteChunks(fileId, filePath);
     }
 
@@ -98,11 +96,11 @@ public class FileHandler {
         byte[] data;
 
         // Includes the last chunk be it zero or not.
-        int numSplits = (int) Math.ceil((float) fileContent.length / (float) Definitions.CHUNK_MAX_SIZE);
+        int numSplits = (int) Math.ceil((float) fileContent.length / (float) Singleton.CHUNK_MAX_SIZE);
         int lastChunkPos = numSplits - 1;
         int bytePos = 0;
 
-        int remainSize = fileContent.length % Definitions.CHUNK_MAX_SIZE;   // Size of the last chunk.
+        int remainSize = fileContent.length % Singleton.CHUNK_MAX_SIZE;   // Size of the last chunk.
         int emptyChunk = 0;
         if (remainSize == 0)
             emptyChunk = 1;
@@ -111,9 +109,9 @@ public class FileHandler {
 
         // Does not compute the last chunk.
         for (int i = 0; i < lastChunkPos; i++) {
-            data = Arrays.copyOfRange(fileContent, bytePos, bytePos + Definitions.CHUNK_MAX_SIZE);
+            data = Arrays.copyOfRange(fileContent, bytePos, bytePos + Singleton.CHUNK_MAX_SIZE);
             chunks[i] = new Chunk(Integer.toString(i), data);
-            bytePos += Definitions.CHUNK_MAX_SIZE;
+            bytePos += Singleton.CHUNK_MAX_SIZE;
         }
 
         // Last chunk computation.

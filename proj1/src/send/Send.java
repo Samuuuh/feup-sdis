@@ -37,8 +37,6 @@ public class Send extends Thread {
             DatagramPacket packet = new DatagramPacket(message, message.length, address, port);
             socket.send(packet);
 
-            System.out.println("Send Message Backup\t:: Message sent!");
-
         } catch (IOException e) {
             e.printStackTrace();
         }

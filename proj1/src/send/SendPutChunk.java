@@ -1,7 +1,7 @@
 package send;
 
-import file.Chunk;
-import main.Definitions;
+import dataStructure.Chunk;
+import main.etc.Singleton;
 import main.Peer;
 
 
@@ -10,7 +10,7 @@ public class SendPutChunk extends Send {
     Chunk chunk;
 
     public SendPutChunk(String fileId, String repDeg, Chunk chunk) {
-        super(Definitions.PUTCHUNK, fileId, Peer.mdb_addr, Peer.mdb_port);
+        super(Singleton.PUTCHUNK, fileId, Peer.mdb_addr, Peer.mdb_port);
         this.repDeg = repDeg;
         this.chunk = chunk;
     }

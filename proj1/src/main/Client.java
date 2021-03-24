@@ -1,5 +1,7 @@
 package main;
 
+import main.etc.Singleton;
+
 import java.io.*;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
@@ -27,7 +29,7 @@ public class Client {
         this.operation = args[1];
 
         try {
-            this.registry = LocateRegistry.getRegistry(Definitions.REGISTER_PORT);
+            this.registry = LocateRegistry.getRegistry(Singleton.REGISTER_PORT);
         } catch (RemoteException e) {
             System.err.println("Client exception: " + e.toString());
             e.printStackTrace();
@@ -48,7 +50,6 @@ public class Client {
                 return;
             }
             try {
-                System.out.println("Calling backup");
                 backup(file, replication_degree);
             } catch (RemoteException | NotBoundException e) {
                 System.err.println("Client exception: " + e.toString());

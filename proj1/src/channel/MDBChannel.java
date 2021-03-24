@@ -1,5 +1,5 @@
 package channel;
-import main.Definitions;
+import main.etc.Singleton;
 import main.Peer;
 import process.answer.PrepareStored;
 import java.net.DatagramPacket;
@@ -19,18 +19,13 @@ public class MDBChannel extends Channel {
                 byte[] buf = new byte[83648];
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
                 mcast_socket.receive(packet);
-
-                System.out.println("MDB Channel\t:: Packet received."); // Receive PutChunk
                 messageParsed = new MessageParser(packet.getData());
 
-                // Checks if message came from the same peer.
                 if (messageParsed.getSenderId().equals(Peer.peer_no))
                     continue;
 
-                // Treats the message.
-                if (messageParsed.getMessageType().equals(Definitions.PUTCHUNK))
+                if (messageParsed.getMessageType().equals(Singleton.PUTCHUNK))
                     new PrepareStored(messageParsed).start();
-
 
             } catch (Exception e) {
                 e.printStackTrace();

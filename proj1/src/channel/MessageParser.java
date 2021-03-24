@@ -1,6 +1,6 @@
 package channel;
 
-import main.Definitions;
+import main.etc.Singleton;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -43,19 +43,16 @@ public class MessageParser {
             this.fileId = splitHeader[3];
 
 
-            if (this.messageType.equals(Definitions.PUTCHUNK)) {
+            if (this.messageType.equals(Singleton.PUTCHUNK)) {
                 parsePutchunk(splitHeader, message);
 
-            } else if (this.messageType.equals(Definitions.STORED) ||
-                    this.messageType.equals(Definitions.REMOVED) ||
-                    this.messageType.equals(Definitions.GETCHUNK)) {
+            } else if (this.messageType.equals(Singleton.STORED) ||
+                    this.messageType.equals(Singleton.REMOVED) ||
+                    this.messageType.equals(Singleton.GETCHUNK)) {
                parseWithChunkNo(splitHeader);
 
-            } else if (this.messageType.equals(Definitions.CHUNK)) {
+            } else if (this.messageType.equals(Singleton.CHUNK)) {
                 parseChunk(splitHeader, message);
-
-            } else if (this.messageType.equals(Definitions.DELETE)) {
-                System.out.println("MessageParser\t::To implement");
 
             } else {
                 System.out.println("MessageParser\t::Not a valid header");

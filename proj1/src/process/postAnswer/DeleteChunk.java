@@ -1,10 +1,8 @@
 package process.postAnswer;
 
-import channel.MessageParser;
-import file.FileHandler;
-import main.Definitions;
 import main.Peer;
-import send.SendChunkNo;
+import main.etc.FileHandler;
+import main.etc.Logger;
 import state.ChunkState;
 
 import java.io.IOException;
@@ -23,15 +21,14 @@ public class DeleteChunk extends Thread {
             ConcurrentHashMap<String, ChunkState> chunkHash = Peer.peer_state.chunkHash;
 
             for (Map.Entry<String, ChunkState> entry : chunkHash.entrySet()) {
-                System.out.println(entry.getKey());
-                System.out.println(fileId);
-
                 if (entry.getKey().matches(fileId + "-\\d+")) {
                     Peer.peer_state.removeChunk(entry.getKey());
                 }
             }
-
             FileHandler.deleteChunks(fileId, "peers/peer_" + Peer.peer_no + "/chunks/");
+            if (chunkHash.size() != 0 )
+                Logger.SUC(this.getClass().getName(), "File " + fileId + " was deleted.");
+            
         } catch (IOException e) {
             e.printStackTrace();
         }

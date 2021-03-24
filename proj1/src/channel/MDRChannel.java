@@ -1,7 +1,9 @@
 package channel;
 
-import main.Definitions;
+import dataStructure.restore.RestoreTasks;
+import dataStructure.restore.RestoreWaiting;
 import main.Peer;
+import main.etc.Singleton;
 import process.postAnswer.StoreChunk;
 
 import java.io.IOException;
@@ -19,23 +21,19 @@ public class MDRChannel extends Channel {
                 byte[] buf = new byte[83648];
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
                 mcast_socket.receive(packet);
-
-                System.out.println("MDR Channel\t:: Packet received."); // Receive PutChunk
                 messageParsed = new MessageParser(packet.getData());
 
-                // Checks if message came from the same peer.
                 if (messageParsed.getSenderId().equals(Peer.peer_no))
                     continue;
 
-                if (messageParsed.getMessageType().equals(Definitions.CHUNK)) {
-                    System.out.println("Received CHUNK");
-                    System.out.println(messageParsed.getHeader());
-                    // Guardar todos os chunks
-                    new StoreChunk(messageParsed).start();
-
-                    // Juntar todos os juntos e escrever para filename
+                if (messageParsed.getMessageType().equals(Singleton.CHUNK)) {
+                    // Abort if exists the task to restore the chunk.
+                    String chunkId = Singleton.buildChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
+                    RestoreTasks.abortRestoreSchedule(chunkId);
+                    // Store the chunk locally.
+                    if (RestoreWaiting.isWaitingToRestore(messageParsed.getFileId()))
+                        new StoreChunk(messageParsed).start();
                 }
-
 
             } catch (Exception e) {
                 e.printStackTrace();
