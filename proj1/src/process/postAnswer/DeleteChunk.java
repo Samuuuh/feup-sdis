@@ -1,7 +1,7 @@
 package process.postAnswer;
 
-import main.etc.FileHandler;
 import main.Peer;
+import main.etc.FileHandler;
 import main.etc.Logger;
 import state.ChunkState;
 
@@ -26,7 +26,9 @@ public class DeleteChunk extends Thread {
                 }
             }
             FileHandler.deleteChunks(fileId, "peers/peer_" + Peer.peer_no + "/chunks/");
-            Logger.SUC(this.getClass().getName(), "File " + fileId + " was deleted.");
+            if (chunkHash.size() != 0 )
+                Logger.SUC(this.getClass().getName(), "File " + fileId + " was deleted.");
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
