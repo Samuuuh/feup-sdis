@@ -1,5 +1,7 @@
 package tasks.backup;
 
+import state.FileState;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
@@ -63,5 +65,8 @@ public class BackupTrackFile implements Serializable {
         return this.tries == 5;
     }
 
+    public FileState generateFileState(String fileId){
+         return new FileState(fileId, getActualRepDeg());
+    }
     // TODO: Save it on a file after update or initialize.
 }

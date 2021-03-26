@@ -21,6 +21,10 @@ public class State implements Serializable {
         chunkHash.put(key, chunkState);
     }
 
+    /**
+     * Removes the fileId from the fileHas.
+     * @param key fileId.
+     */
     public void removeFile(String key) {
         fileHash.remove(key);
     }
@@ -44,6 +48,15 @@ public class State implements Serializable {
         fileHash.put(fileState.getFileId(), fileState);
     }
 
+    /**
+     * Updates a FileState by other.
+     * @param fileId
+     * @param newState New FileState to replace the old one.
+     */
+    public void updateFileState(String fileId, FileState newState){
+        removeFile(fileId);
+        putFile(fileId, newState);
+    }
     // Just to test
     public void printState() {
         System.out.println("CHUNK HASH");

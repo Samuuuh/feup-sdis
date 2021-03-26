@@ -10,8 +10,7 @@ public class FileState implements Serializable {
 
     public ConcurrentHashMap<String, ChunkState> chunkStateHash = new ConcurrentHashMap<>();
 
-    public FileState(String pathName, String fileId, int desiredRepDeg){
-        this.pathName = pathName;
+    public FileState(String fileId, int desiredRepDeg){
         this.fileId = fileId;
         this.desiredRepDeg = desiredRepDeg;
     }

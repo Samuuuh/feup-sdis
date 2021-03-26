@@ -33,7 +33,7 @@ public class RequestPutChunk extends Thread {
         try {
             byte[] fileContent = FileHandler.readFile(filePath);
             Chunk[] chunks = FileHandler.splitFile(fileContent);
-            FileState fileState = new FileState(filePath, fileId, Integer.parseInt(replicationDeg));
+            FileState fileState = new FileState(fileId, Integer.parseInt(replicationDeg));
             BackupTasks.addTrackFile(fileId, new BackupTrackFile(chunks.length));    // Track the file.
 
             for (Chunk chunk : chunks) {

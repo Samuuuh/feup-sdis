@@ -49,10 +49,20 @@ public class BackupTasks {
         addTrackFile(fileId, trackFile);
     }
 
+    /**
+     * Increases how many tries that were to backup a file.
+     * @param fileId
+     */
     public static void increaseTries(String fileId){
         BackupTrackFile trackFile = removeTrackFile(fileId);
         if (trackFile != null)
             trackFile.increaseTries();
         addTrackFile(fileId, trackFile);
+    }
+
+
+    // TODO: create method to update the state.
+    public static void updateState(){
+
     }
 }
