@@ -28,6 +28,9 @@ public class BackupTrackFile implements Serializable {
             chunkRepDeg.put(String.valueOf(i), new ArrayList<>());
     }
 
+    public ConcurrentHashMap<String, ArrayList<String>> getChunkRepDeg(){
+        return chunkRepDeg;
+    }
     public Integer getNumTries(){
         return tries;
     }
@@ -65,8 +68,4 @@ public class BackupTrackFile implements Serializable {
         return this.tries == 5;
     }
 
-    public FileState generateFileState(String fileId){
-         return new FileState(fileId, getActualRepDeg());
-    }
-    // TODO: Save it on a file after update or initialize.
 }

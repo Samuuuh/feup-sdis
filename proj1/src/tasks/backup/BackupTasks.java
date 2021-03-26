@@ -3,6 +3,8 @@ package tasks.backup;
 
 import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
+import state.FileState;
+import main.Peer;
 
 /**
  * The system will schedule the thread necessary to check replication degree of a file.
@@ -60,9 +62,4 @@ public class BackupTasks {
         addTrackFile(fileId, trackFile);
     }
 
-
-    // TODO: create method to update the state.
-    public static void updateState(){
-
-    }
 }

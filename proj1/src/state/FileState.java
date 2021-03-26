@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FileState implements Serializable {
-    private final String pathName;
     private final String fileId;
     private final int desiredRepDeg;
 
@@ -37,7 +36,7 @@ public class FileState implements Serializable {
     public String toString(){
         String s = "";
         s += "FILE STATUS\n";
-        s += "PATHNAME = " + this.pathName + "\n";
+        s += "REPDEG DESIRED " + desiredRepDeg + "\n";
         s += "FILEID = " + this.fileId + "\n";
         s += chunkStateHash.toString();
 

@@ -5,7 +5,9 @@ import main.etc.Singleton;
 import main.Peer;
 import process.answer.PrepareChunk;
 import process.postAnswer.DeleteChunk;
+import state.FileState;
 import tasks.backup.BackupTasks;
+import tasks.backup.BackupTrackFile;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -29,10 +31,9 @@ public class MCChannel extends Channel {
                     continue;
 
                 if (messageParsed.getMessageType().equals(Singleton.STORED) && BackupTasks.getTrackFile(messageParsed.getFileId()) != null) {
-                    String chunkId = Singleton.buildChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
-                    BackupTasks.updateTrackFile(messageParsed.getFileId(), messageParsed.getSenderId(), messageParsed.getChunkNo());
-                    // TODO: Change the update state.
-                    Peer.peer_state.increaseRepDeg( messageParsed.getFileId(), chunkId);
+                    String fileId = messageParsed.getFileId();
+                    String chunkId = Singleton.buildChunkId(fileId, messageParsed.getChunkNo());
+                    BackupTasks.updateTrackFile(fileId, messageParsed.getSenderId(), messageParsed.getChunkNo());
                     Logger.SUC(this.getClass().getName(), "STORED " + chunkId + " on PEER " + messageParsed.getSenderId());
                 }
 

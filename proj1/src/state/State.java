@@ -57,6 +57,7 @@ public class State implements Serializable {
         removeFile(fileId);
         putFile(fileId, newState);
     }
+
     // Just to test
     public void printState() {
         System.out.println("CHUNK HASH");

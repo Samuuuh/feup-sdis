@@ -32,7 +32,7 @@ public class RequestGetChunk extends Thread {
             return;
         }
 
-        chunkHash.forEach((chunkId, chunkState) -> {
+            chunkHash.forEach((chunkId, chunkState) -> {
             String chunkNo = chunkId.split("-")[1];
             RestoreWaiting.addWaitingToRestore(fileId);
             new SendChunkNo(Singleton.GETCHUNK, fileId, chunkNo, Peer.mc_addr, Peer.mc_port).start();
