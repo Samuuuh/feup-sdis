@@ -2,6 +2,8 @@ package channel;
 import main.etc.Singleton;
 import main.Peer;
 import process.answer.PrepareStored;
+import state.ChunkState;
+
 import java.net.DatagramPacket;
 
 import java.io.IOException;
@@ -24,8 +26,12 @@ public class MDBChannel extends Channel {
                 if (messageParsed.getSenderId().equals(Peer.peer_no))
                     continue;
 
-                if (messageParsed.getMessageType().equals(Singleton.PUTCHUNK))
+                if (messageParsed.getMessageType().equals(Singleton.PUTCHUNK)) {
+                    String chunkId = Singleton.buildChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
+                    ChunkState chunkState = new ChunkState(chunkId, Integer.parseInt(messageParsed.getReplicationDeg()));
+                    Peer.peer_state.putChunk(chunkId, chunkState);
                     new PrepareStored(messageParsed).start();
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();

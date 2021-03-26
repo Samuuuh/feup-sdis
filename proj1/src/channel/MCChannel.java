@@ -30,10 +30,15 @@ public class MCChannel extends Channel {
                 if (messageParsed.getSenderId().equals(Peer.peer_no))
                     continue;
 
-                if (messageParsed.getMessageType().equals(Singleton.STORED) && BackupTasks.getTrackFile(messageParsed.getFileId()) != null) {
+                if (messageParsed.getMessageType().equals(Singleton.STORED) ) {
                     String fileId = messageParsed.getFileId();
                     String chunkId = Singleton.buildChunkId(fileId, messageParsed.getChunkNo());
-                    BackupTasks.updateTrackFile(fileId, messageParsed.getSenderId(), messageParsed.getChunkNo());
+                    Peer.peer_state.addStoredPeer(chunkId, messageParsed.getChunkNo());
+
+                    if (BackupTasks.getTrackFile(messageParsed.getFileId()) != null) {
+                        BackupTasks.updateTrackFile(fileId, messageParsed.getSenderId(), messageParsed.getChunkNo());
+                    }
+
                     Logger.SUC(this.getClass().getName(), "STORED " + chunkId + " on PEER " + messageParsed.getSenderId());
                 }
 

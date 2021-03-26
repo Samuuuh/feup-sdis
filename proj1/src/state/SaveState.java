@@ -30,6 +30,7 @@ public class SaveState extends Thread {
                 objectOutputStream.writeObject(Peer.peer_state);
                 objectOutputStream.close();
                 fileOutputStream.close();
+                Peer.peer_state.printState();
             } catch (IOException | InterruptedException i) {
                 i.printStackTrace();
             }

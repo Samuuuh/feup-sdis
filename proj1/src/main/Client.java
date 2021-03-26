@@ -78,8 +78,8 @@ public class Client {
                 return;
             }
 
-            String file = args[2];
-            reclaim(file);
+            String space = args[2];
+            reclaim(space);
         } else if (this.operation.equals("STATE")) {
             if (args.length != 2) {
                 System.out.println("Usage:\n java Client <peer_ap> STATE\n");
@@ -121,9 +121,15 @@ public class Client {
         }
     }
 
-    private void reclaim(String file) {
-        System.out.println("reclaim");
-    }  
+    private void reclaim(String space) {
+        try {
+            Services stub = (Services) this.registry.lookup(this.peerAccessPoint);
+            String response = stub.reclaim(space);
+            System.out.println(response);
+        }catch (IOException | NotBoundException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void state() {
         System.out.println("state");

@@ -7,9 +7,7 @@ import channel.MDBChannel;
 import channel.MDRChannel;
 import main.etc.Logger;
 import main.etc.Singleton;
-import process.request.RequestDelete;
-import process.request.RequestGetChunk;
-import process.request.RequestPutChunk;
+import process.request.*;
 import state.SaveState;
 import state.State;
 
@@ -107,14 +105,14 @@ public class Peer implements Services {
         Logger.ANY("Peer", "BACKUP requested");
         new RequestPutChunk(filePath, String.valueOf(replicationDeg)).start();
 
-        return "Backup has ended";
+        return "Backup has executed";
     }
 
     public String restore(String fileName)  {
         Logger.ANY("Peer", "RESTORE requested");
         new RequestGetChunk(fileName).start();
 
-        return "Store has ended";
+        return "Store has executed";
     }
 
     public String delete(String filename)  {
@@ -122,6 +120,14 @@ public class Peer implements Services {
 
         new RequestDelete(filename).start();
 
-        return "Delete has ended";
+        return "Delete has executed";
+    }
+
+    public String reclaim(String space)  {
+        Logger.ANY("Peer", "RECLAIM requested");
+
+        new RequestReclaim(space).start();
+
+        return "Reclaim has executed";
     }
 }

@@ -57,7 +57,6 @@ public class BackupCheck extends TimerTask {
             fileState.addChunk(chunkId, peerList.size());
         });
         Peer.peer_state.updateFileState(fileId, fileState);
-        Peer.peer_state.printState();
 
     }
 }

@@ -38,15 +38,16 @@ public class State implements Serializable {
     }
 
     /**
-     *  Increases the replication degree of a chunkId.
+     *  Updates the replication degree of a chunkId.
      */
-    public void increaseRepDeg(String fileId, String chunkId){
-        FileState fileState =  fileHash.remove(fileId);
-        if (fileState == null) return;
-
-        fileState.increaseChunkRepDeg(chunkId);
-        fileHash.put(fileState.getFileId(), fileState);
+    public void addStoredPeer(String chunkId, String peer){
+        ChunkState chunkState = chunkHash.remove(chunkId);
+        if (chunkState != null){
+            chunkState.addStoredPeer(peer);
+            chunkHash.put(chunkId, chunkState);
+        }
     }
+
 
     /**
      * Updates a FileState by other.

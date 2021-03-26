@@ -25,6 +25,7 @@ public class StoreChunk extends Thread {
         RestoreWaiting.increaseWaitingToRestore(messageParsed.getFileId());
         FileState fileState = Peer.peer_state.fileHash.get(messageParsed.getFileId());
         int chunkNo = fileState.getChunkStateHash().size();
+
         // TODO: change name of waiting to restore.
         if (RestoreWaiting.getWaitingToRestore(messageParsed.getFileId()) == chunkNo ) {
             try {

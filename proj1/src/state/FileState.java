@@ -27,11 +27,6 @@ public class FileState implements Serializable {
         chunkStateHash.put(chunkId, chunkState);
     }
 
-    public void increaseChunkRepDeg(String chunkId){
-        ChunkState chunkState = chunkStateHash.remove(chunkId);
-        chunkState.increasePerceivedRepDeg();
-        chunkStateHash.put(chunkId, chunkState);
-    }
 
     public String toString(){
         String s = "";
