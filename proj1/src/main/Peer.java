@@ -36,8 +36,8 @@ public class Peer implements Services {
     public static String mdr_addr;
     public static int mdr_port;
 
-
     // This is a hashmap that stores the scheduled restores to be done.
+
 
 
     public static void initChannel(String mcast_addr, int mcast_port, String mdb_addr, int mdb_port, String mdr_addr, int mdr_port) throws IOException {
@@ -126,6 +126,7 @@ public class Peer implements Services {
     public String reclaim(String space)  {
         Logger.ANY("Peer", "RECLAIM requested");
 
+        // Process reclaim.
         new RequestReclaim(space).start();
 
         return "Reclaim has executed";

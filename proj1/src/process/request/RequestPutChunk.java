@@ -39,6 +39,7 @@ public class RequestPutChunk extends Thread {
             for (Chunk chunk : chunks) {
                 // Add fileStatus to State.
                 String chunkId = fileId + "-" + chunk.getChunkNo();
+                Logger.REQUEST(this.getClass().getName(), "Requested CHUNK No " + chunk.getChunkNo());
                 fileState.addChunk(chunkId, 0);
                 Peer.peer_state.putFile(fileId, fileState);
 

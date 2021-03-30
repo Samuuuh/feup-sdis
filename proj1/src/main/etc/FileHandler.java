@@ -1,6 +1,7 @@
 package main.etc;
 
 import channel.MessageParser;
+import main.Peer;
 import tasks.restore.RestoreWaiting;
 
 import java.io.File;
@@ -28,6 +29,10 @@ public class FileHandler {
         return null;
     }
 
+    public static void deleteChunk(String chunkId) throws IOException{
+        File file = new File(Singleton.getFilePath(Peer.peer_no) + "/" + chunkId);
+        file.delete();
+    }
 
     public static void deleteChunks(String fileId, String filePath) throws IOException {
         File folder = new File(filePath);

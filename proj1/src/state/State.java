@@ -1,9 +1,14 @@
 package state;
-import java.io.*;
 
+import main.etc.Logger;
+
+import java.io.Serializable;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class State implements Serializable {
+    public static int totalSpace = 1000000;
+    public static int occupiedSpace = 0;
     public final String peer_no;
 
     public ConcurrentHashMap<String, FileState> fileHash = new ConcurrentHashMap<>();
@@ -18,7 +23,13 @@ public class State implements Serializable {
     }
 
     public void putChunk(String key, ChunkState chunkState) {
-        chunkHash.put(key, chunkState);
+        ChunkState previousState = chunkHash.put(key, chunkState);
+        // Increase the occupied size.
+        if (previousState == null) {
+            occupiedSpace += chunkState.getSize();
+            Logger.INFO(this.getClass().getName(), "Current occupied space: " + occupiedSpace);
+        }
+
     }
 
     /**
@@ -36,6 +47,15 @@ public class State implements Serializable {
     public FileState getFileState(String key){
         return fileHash.get(key);
     }
+
+    public Set<String> getChunkKeys(){
+        return chunkHash.keySet();
+    }
+
+    public ChunkState getChunkState(String key){
+        return chunkHash.get(key);
+    }
+
 
     /**
      *  Updates the replication degree of a chunkId.
