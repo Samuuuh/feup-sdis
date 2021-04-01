@@ -5,6 +5,7 @@ import main.etc.Singleton;
 import main.Peer;
 import process.answer.PrepareChunk;
 import process.postAnswer.DeleteChunk;
+import state.ChunkState;
 import state.FileState;
 import tasks.backup.BackupTasks;
 import tasks.backup.BackupTrackFile;
@@ -48,6 +49,16 @@ public class MCChannel extends Channel {
 
                 else if (messageParsed.getMessageType().equals(Singleton.DELETE)) {
                     new DeleteChunk(messageParsed.getFileId()).start();
+                }
+
+                else if (messageParsed.getMessageType().equals(Singleton.REMOVED)){
+                    // TODO: checar se o replication degree ficou abaixo do esperado.
+                    String chunkNo = messageParsed.getChunkNo();
+                    FileState fileState = Peer.peer_state.getFileState(messageParsed.getFileId());
+                    ChunkState chunkState = fileState.getChunkState(chunkNo);
+                    if (chunkState.getPerceivedRepDeg() - 1 < fileState.getRepDeg()){
+
+                    }
                 }
 
 

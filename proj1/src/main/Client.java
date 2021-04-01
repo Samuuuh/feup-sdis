@@ -74,7 +74,7 @@ public class Client {
             delete(file);
         } else if (this.operation.equals("RECLAIM")) {
             if (args.length != 3) {
-                System.out.println("Usage:\n java Client <peer_ap> RECLAIM <file>\n");
+                System.out.println("Usage:\n java Client <peer_ap> RECLAIM <size>\n");
                 return;
             }
 

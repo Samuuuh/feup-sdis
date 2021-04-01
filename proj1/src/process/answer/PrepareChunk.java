@@ -58,6 +58,7 @@ public class PrepareChunk extends Thread {
          return new TimerTask() {
             @Override
             public void run() {
+                Logger.SUC(this.getClass().getName(), "Sent CHUNK, chunkNo: " + Singleton.buildChunkId(fileId, chunkNo));
                 new SendChunk(Singleton.CHUNK, fileId, body, chunkNo).start();
                 this.cancel();      // Do not repeat.
             }

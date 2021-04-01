@@ -26,6 +26,7 @@ public class MDBChannel extends Channel {
                     continue;
 
                 if (messageParsed.getMessageType().equals(Singleton.PUTCHUNK)) {
+                    // If not out of space.
                     if (state.State.totalSpace>= state.State.occupiedSpace+ messageParsed.getData().length) {
                         String chunkId = Singleton.buildChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
                         ChunkState chunkState = new ChunkState(chunkId, Integer.parseInt(messageParsed.getReplicationDeg()), messageParsed.getData().length/1000);

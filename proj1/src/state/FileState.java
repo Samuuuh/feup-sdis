@@ -1,5 +1,7 @@
 package state;
 
+import main.etc.Singleton;
+
 import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -9,7 +11,7 @@ public class FileState implements Serializable {
 
     public ConcurrentHashMap<String, ChunkState> chunkStateHash = new ConcurrentHashMap<>();
 
-    public FileState(String fileId, int desiredRepDeg){
+    public FileState(String fileId, int desiredRepDeg) {
         this.fileId = fileId;
         this.desiredRepDeg = desiredRepDeg;
     }
@@ -18,8 +20,12 @@ public class FileState implements Serializable {
         return chunkStateHash;
     }
 
-    public String getFileId(){
+    public String getFileId() {
         return fileId;
+    }
+
+    public int getRepDeg() {
+        return desiredRepDeg;
     }
 
     public void addChunk(String chunkId, int perceivedRepDeg) {
@@ -27,8 +33,13 @@ public class FileState implements Serializable {
         chunkStateHash.put(chunkId, chunkState);
     }
 
+    public ChunkState getChunkState(String chunkNo) {
+        String chunkId = Singleton.buildChunkId(fileId, chunkNo);
+        return chunkStateHash.get(chunkId);
+    }
 
-    public String toString(){
+
+    public String toString() {
         String s = "";
         s += "FILE STATUS\n";
         s += "REPDEG DESIRED " + desiredRepDeg + "\n";
