@@ -27,7 +27,7 @@ public class PrepareChunk extends Thread {
     @Override
     public void run() {
 
-        String chunkId = Singleton.buildChunkId(fileId, chunkNo);
+        String chunkId = Singleton.getChunkId(fileId, chunkNo);
         String path = Singleton.getFilePath(Peer.peer_no) + chunkId;
         File file = new File(path);
 
@@ -58,7 +58,7 @@ public class PrepareChunk extends Thread {
          return new TimerTask() {
             @Override
             public void run() {
-                Logger.SUC(this.getClass().getName(), "Sent CHUNK, chunkNo: " + Singleton.buildChunkId(fileId, chunkNo));
+                Logger.SUC(this.getClass().getName(), "Sent CHUNK, chunkNo: " + Singleton.getChunkId(fileId, chunkNo));
                 new SendChunk(Singleton.CHUNK, fileId, body, chunkNo).start();
                 this.cancel();      // Do not repeat.
             }

@@ -18,7 +18,7 @@ public class DeleteChunk extends Thread {
     @Override
     public void run() {
         try {
-            ConcurrentHashMap<String, ChunkState> chunkHash = Peer.peer_state.chunkHash;
+            ConcurrentHashMap<String, ChunkState> chunkHash = Peer.peer_state.chunkStored;
 
             for (Map.Entry<String, ChunkState> entry : chunkHash.entrySet()) {
                 if (entry.getKey().matches(fileId + "-\\d+")) {

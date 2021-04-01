@@ -40,8 +40,16 @@ public class Singleton {
     }
 
 
-    public static String buildChunkId(String fileId, String chunkId){
+    public static String getChunkId(String fileId, String chunkId){
         return fileId + "-" + chunkId;
+    }
+
+    public static String extractFileId(String chunkId){
+        return chunkId.split("-")[0];
+    }
+
+    public static int extractChunkNo(String chunkId){
+        return Integer.parseInt(chunkId.split("-")[1]);
     }
 
 

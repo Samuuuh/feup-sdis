@@ -5,10 +5,6 @@ import main.etc.Singleton;
 import main.Peer;
 import process.answer.PrepareChunk;
 import process.postAnswer.DeleteChunk;
-import state.ChunkState;
-import state.FileState;
-import tasks.backup.BackupTasks;
-import tasks.backup.BackupTrackFile;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -33,13 +29,10 @@ public class MCChannel extends Channel {
 
                 if (messageParsed.getMessageType().equals(Singleton.STORED) ) {
                     String fileId = messageParsed.getFileId();
-                    String chunkId = Singleton.buildChunkId(fileId, messageParsed.getChunkNo());
-                    Peer.peer_state.addStoredPeer(chunkId, messageParsed.getChunkNo());
-
-                    if (BackupTasks.getTrackFile(messageParsed.getFileId()) != null) {
-                        BackupTasks.updateTrackFile(fileId, messageParsed.getSenderId(), messageParsed.getChunkNo());
-                    }
-
+                    String chunkId = Singleton.getChunkId(fileId, messageParsed.getChunkNo());
+                    Peer.peer_state.updateChunkState(chunkId, messageParsed.getSenderId());
+                    Peer.peer_state.updateFileState(fileId, messageParsed.getChunkNo(), messageParsed.getSenderId());
+                    Peer.peer_state.printState();
                     Logger.SUC(this.getClass().getName(), "STORED " + chunkId + " on PEER " + messageParsed.getSenderId());
                 }
 
@@ -53,12 +46,7 @@ public class MCChannel extends Channel {
 
                 else if (messageParsed.getMessageType().equals(Singleton.REMOVED)){
                     // TODO: checar se o replication degree ficou abaixo do esperado.
-                    String chunkNo = messageParsed.getChunkNo();
-                    FileState fileState = Peer.peer_state.getFileState(messageParsed.getFileId());
-                    ChunkState chunkState = fileState.getChunkState(chunkNo);
-                    if (chunkState.getPerceivedRepDeg() - 1 < fileState.getRepDeg()){
 
-                    }
                 }
 
 

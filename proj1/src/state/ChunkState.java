@@ -22,19 +22,24 @@ public class ChunkState implements Serializable {
     }
 
     // Used at FileStatus where the size is not necessary.
-    public ChunkState(String id, int repDeg) {
+    public ChunkState(String id, int desiredRepDeg) {
         this.id = id;
         this.size = 0;
-        this.perceivedRepDeg = repDeg;
+        this.desiredRepDeg= desiredRepDeg;
     }
 
     public int getSize(){
         return size;
     }
 
-    public int getPerceivedRepDeg(){
-        return perceivedRepDeg;
+    public int getDesiredRepDeg() {
+        return desiredRepDeg;
     }
+
+    public Boolean haveDesiredRepDeg(){
+        return storedPeers.size() >= desiredRepDeg;
+    }
+
     public void addStoredPeer(String peer){
         if (!storedPeers.contains(peer)){
             storedPeers.add(peer);
@@ -44,6 +49,6 @@ public class ChunkState implements Serializable {
 
     @Override
     public String toString() {
-        return " ID: " + id + " SIZE: " + size + " REPDEG: " + perceivedRepDeg + "\n";
+        return " ID: " + id + " SIZE: " + size + " REPDEG: " + perceivedRepDeg + "\n" + storedPeers;
     }
 }

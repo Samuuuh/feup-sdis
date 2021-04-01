@@ -11,19 +11,19 @@ public class State implements Serializable {
     public static int occupiedSpace = 0;
     public final String peer_no;
 
-    public ConcurrentHashMap<String, FileState> fileHash = new ConcurrentHashMap<>();
-    public ConcurrentHashMap<String, ChunkState> chunkHash = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, FileState> filesBackup = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, ChunkState> chunkStored = new ConcurrentHashMap<>();
 
     public State(String peer_no) {
         this.peer_no = peer_no;
     }
 
     public void putFile(String key, FileState fileState) {
-        fileHash.put(key, fileState);
+        filesBackup.put(key, fileState);
     }
 
     public void putChunk(String key, ChunkState chunkState) {
-        ChunkState previousState = chunkHash.put(key, chunkState);
+        ChunkState previousState = chunkStored.put(key, chunkState);
         // Increase the occupied size.
         if (previousState == null) {
             occupiedSpace += chunkState.getSize();
@@ -32,61 +32,51 @@ public class State implements Serializable {
 
     }
 
-    /**
-     * Removes the fileId from the fileHas.
-     * @param key fileId.
-     */
     public void removeFile(String key) {
-        fileHash.remove(key);
+        filesBackup.remove(key);
     }
 
     public void removeChunk(String key) {
-        chunkHash.remove(key);
+        chunkStored.remove(key);
     }
 
     public FileState getFileState(String key){
-        return fileHash.get(key);
+        return filesBackup.get(key);
+    }
+
+    public ChunkState getChunkState(String chunkId){
+        return chunkStored.get(chunkId);
     }
 
     public Set<String> getChunkKeys(){
-        return chunkHash.keySet();
+        return chunkStored.keySet();
     }
-
-    public ChunkState getChunkState(String key){
-        return chunkHash.get(key);
-    }
-
 
     /**
      *  Updates the replication degree of a chunkId.
      */
-    public void addStoredPeer(String chunkId, String peer){
-        ChunkState chunkState = chunkHash.remove(chunkId);
+    public void updateChunkState(String chunkId, String peer){
+        ChunkState chunkState = chunkStored.get(chunkId);
         if (chunkState != null){
             chunkState.addStoredPeer(peer);
-            chunkHash.put(chunkId, chunkState);
+        }
+    }
+    public void updateFileState(String fileId, String chunkNo, String peer){
+        FileState fileState = filesBackup.get(fileId);
+        if (fileId != null){
+            fileState.getChunkState(chunkNo).addStoredPeer(peer);
         }
     }
 
 
-    /**
-     * Updates a FileState by other.
-     * @param fileId
-     * @param newState New FileState to replace the old one.
-     */
-    public void updateFileState(String fileId, FileState newState){
-        removeFile(fileId);
-        putFile(fileId, newState);
-    }
-
     // Just to test
     public void printState() {
         System.out.println("CHUNK HASH");
-        System.out.println(chunkHash.size());
-        System.out.println(chunkHash.toString());
+        System.out.println(chunkStored.size());
+        System.out.println(chunkStored.toString());
 
         System.out.println("FILE HASH");
-        System.out.println(fileHash.size());
-        System.out.println(fileHash.toString());
+        System.out.println(filesBackup.size());
+        System.out.println(filesBackup.toString());
     }
 }

@@ -28,7 +28,7 @@ public class MDRChannel extends Channel {
 
                 if (messageParsed.getMessageType().equals(Singleton.CHUNK)) {
                     // Abort if exists the task to restore the chunk.
-                    String chunkId = Singleton.buildChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
+                    String chunkId = Singleton.getChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
                     RestoreTasks.abortRestoreSchedule(chunkId);
                     // Store the chunk locally.
                     if (RestoreWaiting.isWaitingToRestore(messageParsed.getFileId()))

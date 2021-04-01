@@ -132,17 +132,16 @@ public class FileHandler {
     public static Chunk getChunk(byte[] fileContent, int chunkNo){
         int numSplits = (int) Math.ceil((float) fileContent.length / (float) Singleton.CHUNK_MAX_SIZE);
         int lastChunkPos = numSplits -1;
-
+        int bytePos = Singleton.CHUNK_MAX_SIZE*chunkNo;
         if (chunkNo == lastChunkPos){
             int remainSize = fileContent.length % Singleton.CHUNK_MAX_SIZE;
             if (remainSize == 0) return new Chunk(Integer.toString(lastChunkPos), new byte[0]);
             else {
-                byte[] data = Arrays.copyOfRange(fileContent, lastChunkPos,lastChunkPos + remainSize);
+                byte[] data = Arrays.copyOfRange(fileContent, bytePos,bytePos + remainSize);
                 return new Chunk(Integer.toString(lastChunkPos), data);
             }
         }
 
-        int bytePos = Singleton.CHUNK_MAX_SIZE*chunkNo;
         byte[] data = Arrays.copyOfRange(fileContent, bytePos, bytePos + Singleton.CHUNK_MAX_SIZE);
         return new Chunk(Integer.toString(chunkNo), data);
 

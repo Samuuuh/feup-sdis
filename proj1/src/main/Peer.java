@@ -103,7 +103,7 @@ public class Peer implements Services {
     // SERVICES
     public String backup(String filePath, int replicationDeg)  {
         Logger.ANY("Peer", "BACKUP requested");
-        new RequestPutChunk(filePath, String.valueOf(replicationDeg)).start();
+        new RequestFilePutChunk(filePath, String.valueOf(replicationDeg)).start();
 
         return "Backup has executed";
     }

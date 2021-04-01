@@ -8,12 +8,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FileState implements Serializable {
     private final String fileId;
     private final int desiredRepDeg;
+    private final String filePath;
 
+    /**
+     * Key: ChunkId
+     */
     public ConcurrentHashMap<String, ChunkState> chunkStateHash = new ConcurrentHashMap<>();
 
-    public FileState(String fileId, int desiredRepDeg) {
+    public FileState(String fileId, int desiredRepDeg, String filePath) {
         this.fileId = fileId;
         this.desiredRepDeg = desiredRepDeg;
+        this.filePath = filePath;
     }
 
     public ConcurrentHashMap<String, ChunkState> getChunkStateHash() {
@@ -28,13 +33,17 @@ public class FileState implements Serializable {
         return desiredRepDeg;
     }
 
-    public void addChunk(String chunkId, int perceivedRepDeg) {
-        ChunkState chunkState = new ChunkState(chunkId, perceivedRepDeg);
+    public String getFilePath(){
+        return filePath;
+    }
+
+    public void addChunk(String chunkId, int desiredRepDeg) {
+        ChunkState chunkState = new ChunkState(chunkId, desiredRepDeg);
         chunkStateHash.put(chunkId, chunkState);
     }
 
     public ChunkState getChunkState(String chunkNo) {
-        String chunkId = Singleton.buildChunkId(fileId, chunkNo);
+        String chunkId = Singleton.getChunkId(fileId, chunkNo);
         return chunkStateHash.get(chunkId);
     }
 
