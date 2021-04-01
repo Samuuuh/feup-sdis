@@ -5,9 +5,14 @@ import main.etc.Singleton;
 import main.Peer;
 import process.answer.PrepareChunk;
 import process.postAnswer.DeleteChunk;
+import process.postAnswer.RemoveCheck;
+import process.request.RequestPutChunk;
+import state.ChunkState;
+import tasks.backup.BackupChunkCheck;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.util.Timer;
 
 // STORED, GETCHUNK, DELETE, REMOVE
 public class MCChannel extends Channel {
@@ -27,9 +32,9 @@ public class MCChannel extends Channel {
                 if (messageParsed.getSenderId().equals(Peer.peer_no))
                     continue;
 
+                String fileId = messageParsed.getFileId();
+                String chunkId = Singleton.getChunkId(fileId, messageParsed.getChunkNo());
                 if (messageParsed.getMessageType().equals(Singleton.STORED) ) {
-                    String fileId = messageParsed.getFileId();
-                    String chunkId = Singleton.getChunkId(fileId, messageParsed.getChunkNo());
                     Peer.peer_state.updateChunkState(chunkId, messageParsed.getSenderId());
                     Peer.peer_state.updateFileState(fileId, messageParsed.getChunkNo(), messageParsed.getSenderId());
                     Peer.peer_state.printState();
@@ -45,8 +50,7 @@ public class MCChannel extends Channel {
                 }
 
                 else if (messageParsed.getMessageType().equals(Singleton.REMOVED)){
-                    // TODO: checar se o replication degree ficou abaixo do esperado.
-
+                    new RemoveCheck(fileId, chunkId, messageParsed.getSenderId()).start();
                 }
 
 

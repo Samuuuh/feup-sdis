@@ -28,7 +28,9 @@ public class MDBChannel extends Channel {
                 if (messageParsed.getMessageType().equals(Singleton.PUTCHUNK)) {
                     // If not out of space.
                     if (state.State.totalSpace>= state.State.occupiedSpace+ messageParsed.getData().length) {
+
                         String chunkId = Singleton.getChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
+                        Peer.reclaimBackupTasks.abortTask(chunkId);
                         ChunkState chunkState = new ChunkState(chunkId, Integer.parseInt(messageParsed.getReplicationDeg()), messageParsed.getData().length/1000);
                         Peer.peer_state.putChunk(chunkId, chunkState);
                         new PrepareStored(messageParsed).start();
@@ -40,4 +42,6 @@ public class MDBChannel extends Channel {
             }
         }
     }
+
+
 }

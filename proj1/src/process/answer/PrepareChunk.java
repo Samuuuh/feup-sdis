@@ -1,6 +1,6 @@
 package process.answer;
 
-import tasks.restore.RestoreTasks;
+import tasks.Tasks;
 import main.etc.FileHandler;
 import main.Peer;
 import main.etc.Logger;
@@ -48,7 +48,7 @@ public class PrepareChunk extends Thread {
     private void scheduleSendMessage(String fileId, byte[] body, String chunkNo, String chunkId){
         Timer timer = new Timer();      // A new thread Timer will be created.
         timer.schedule(createTimerTask(fileId, body, chunkNo), new Random().nextInt(401));
-        RestoreTasks.addRestoreSchedule(chunkId, timer);
+        Peer.restoreTasks.addTask(chunkId, timer);
     }
 
     /**

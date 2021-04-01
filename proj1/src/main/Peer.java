@@ -10,6 +10,7 @@ import main.etc.Singleton;
 import process.request.*;
 import state.SaveState;
 import state.State;
+import tasks.Tasks;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -36,9 +37,10 @@ public class Peer implements Services {
     public static String mdr_addr;
     public static int mdr_port;
 
-    // This is a hashmap that stores the scheduled restores to be done.
-
-
+    // Chunks that are being restored.
+    public static Tasks restoreTasks = new Tasks();
+    // Removed chunks from reclaim that will need to be restored.
+    public static Tasks reclaimBackupTasks = new Tasks();
 
     public static void initChannel(String mcast_addr, int mcast_port, String mdb_addr, int mdb_port, String mdr_addr, int mdr_port) throws IOException {
         new MCChannel(mcast_port, mcast_addr).start();

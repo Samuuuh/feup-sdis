@@ -47,6 +47,9 @@ public class ChunkState implements Serializable {
         }
     }
 
+    public void removePeer(String peer){
+        storedPeers.remove(peer);
+    }
     @Override
     public String toString() {
         return " ID: " + id + " SIZE: " + size + " REPDEG: " + perceivedRepDeg + "\n" + storedPeers;
