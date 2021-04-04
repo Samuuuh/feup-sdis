@@ -32,8 +32,10 @@ public class MCChannel extends Channel {
                 String chunkId = Singleton.getChunkId(fileId, messageParsed.getChunkNo());
                 if (messageParsed.getMessageType().equals(Singleton.STORED) ) {
                     Peer.peer_state.updateChunkState(chunkId, messageParsed.getSenderId());
+
+                    // Operation just possible for peer that has requested a backup for that file.
                     Peer.peer_state.updateFileState(fileId, messageParsed.getChunkNo(), messageParsed.getSenderId());
-                    Peer.peer_state.printState();
+                    //Peer.peer_state.printState();
                     Logger.SUC(this.getClass().getName(), "STORED " + chunkId + " on PEER " + messageParsed.getSenderId());
                 }
 
@@ -46,7 +48,8 @@ public class MCChannel extends Channel {
                 }
 
                 else if (messageParsed.getMessageType().equals(Singleton.REMOVED)){
-                    new RemoveCheck(fileId, chunkId, messageParsed.getSenderId()).start();
+                    if (Peer.peer_state.getFileState(fileId) != null)
+                        new RemoveCheck(fileId, chunkId, messageParsed.getSenderId()).start();
                 }
 
 

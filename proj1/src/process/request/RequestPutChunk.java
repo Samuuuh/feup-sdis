@@ -55,8 +55,7 @@ public class RequestPutChunk extends Thread {
      */
     private void scheduleBackupCheck(String filePath) {
         Timer timer = new Timer();
-        timer.schedule(new BackupChunkCheck(filePath, chunkId, currentTry + 1), 1000);
+        int delay = (int) Math.pow(2, currentTry);
+        timer.schedule(new BackupChunkCheck(filePath, chunkId, currentTry + 1), delay* 1000L);
     }
-
-
 }

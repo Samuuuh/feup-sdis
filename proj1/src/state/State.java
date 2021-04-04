@@ -63,7 +63,7 @@ public class State implements Serializable {
     }
     public void updateFileState(String fileId, String chunkNo, String peer){
         FileState fileState = filesBackup.get(fileId);
-        if (fileId != null){
+        if (fileId != null && fileState != null){
             fileState.getChunkState(chunkNo).addStoredPeer(peer);
         }
     }
