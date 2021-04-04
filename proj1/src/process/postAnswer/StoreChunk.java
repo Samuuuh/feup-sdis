@@ -1,6 +1,7 @@
 package process.postAnswer;
 
 import channel.MessageParser;
+import main.etc.Singleton;
 import tasks.restore.RestoreWaiting;
 import main.etc.FileHandler;
 import main.Peer;
@@ -22,14 +23,15 @@ public class StoreChunk extends Thread {
     @Override
     public void run() {
         FileHandler.saveFileChunks(messageParsed, "peers/peer_" + Peer.peer_no + "/restore/");
-        RestoreWaiting.increaseWaitingToRestore(messageParsed.getFileId());
-        FileState fileState = Peer.peer_state.filesBackup.get(messageParsed.getFileId());
-        int chunkNo = fileState.getChunkStateHash().size();
+        String chunkId = Singleton.getChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
+        RestoreWaiting.restoreReceived(chunkId);
+        int chunkNo = Peer.peer_state.getFileState(messageParsed.getFileId()).chunkStateHash.size();
 
         // TODO: change name of waiting to restore.
-        if (RestoreWaiting.getWaitingToRestore(messageParsed.getFileId()) == chunkNo ) {
+        if (RestoreWaiting.numChunksToRestore(messageParsed.getFileId()) == 0) {
             try {
-                FileHandler.saveFile(messageParsed.getFileId(), "peers/peer_" + Peer.peer_no + "/restore/", chunkNo - 1);
+                FileHandler.saveFile(messageParsed.getFileId(), "peers/peer_" + Peer.peer_no + "/restore/", chunkNo);
+                RestoreWaiting.removeFile(messageParsed.getFileId(), chunkNo);
                 Logger.SUC(this.getClass().getName(), "File " + messageParsed.getFileId() + " has been restored.");
             } catch (IOException e) {
                 e.printStackTrace();

@@ -44,7 +44,6 @@ public class FileState implements Serializable {
 
     public ChunkState getChunkState(String chunkNo) {
         String chunkId = Singleton.getChunkId(fileId, chunkNo);
-        System.out.println(chunkId);
         return chunkStateHash.get(chunkId);
     }
 

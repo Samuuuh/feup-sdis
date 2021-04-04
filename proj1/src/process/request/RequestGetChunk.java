@@ -20,10 +20,8 @@ public class RequestGetChunk extends Thread {
     @Override
     public void run() {
         String fileId = Singleton.hash(fileName);
-
         FileState fileState = Peer.peer_state.getFileState(fileId);
         ConcurrentHashMap<String, ChunkState> chunkHash;
-
         // Case the file is not in the system.
         try {
             chunkHash = fileState.getChunkStateHash();
@@ -32,11 +30,12 @@ public class RequestGetChunk extends Thread {
             return;
         }
 
-            chunkHash.forEach((chunkId, chunkState) -> {
+        chunkHash.forEach((chunkId, chunkState) -> {
             String chunkNo = chunkId.split("-")[1];
-            RestoreWaiting.addWaitingToRestore(fileId);
+            RestoreWaiting.addWaitingToRestore(chunkId);
             new SendChunkNo(Singleton.GETCHUNK, fileId, chunkNo, Peer.mc_addr, Peer.mc_port).start();
         });
+
         Logger.REQUEST(this.getClass().getName(), "Requested GETCHUNK on " + fileId);
     }
 

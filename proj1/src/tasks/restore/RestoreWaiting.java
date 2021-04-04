@@ -1,5 +1,9 @@
 package tasks.restore;
 
+import main.Peer;
+import main.etc.Singleton;
+import state.FileState;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -8,35 +12,62 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RestoreWaiting {
 
     /**
-     * Key: The fileId.
-     * Value: The number of chunks received so far.
+     * Key: The chunkId.
+     * Value: True if received, otherwise false.
      */
-    public static ConcurrentHashMap<String, Integer> waitingToRestore = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, Boolean> waitingToRestore = new ConcurrentHashMap<>();
+    /**
+     * Key: fileID
+     * Value: Number of chunks to restore.
+     */
+    public static ConcurrentHashMap<String, Integer> fileToRestore = new ConcurrentHashMap<>();
 
-    public static void addWaitingToRestore(String fileId) {
-        waitingToRestore.put(fileId, 0);
+    public static void addWaitingToRestore(String chunkId) {
+        waitingToRestore.put(chunkId, false);
+
+        String fileId = Singleton.extractFileId(chunkId);
+        FileState fileState = Peer.peer_state.getFileState(fileId);
+        Integer numChunks = fileState.getChunkStateHash().size();
+        fileToRestore.put(fileId, numChunks);
+
+    }
+
+    public static Integer numChunksToRestore(String fileId){
+        return fileToRestore.get(fileId);
     }
 
     public static void removeWaitingToRestore(String fileId) {
         waitingToRestore.remove(fileId);
+
     }
 
-    public static Integer getWaitingToRestore(String fileId){
-        return waitingToRestore.get(fileId);
-    }
-
-    public static Boolean isWaitingToRestore(String fileId) {
-        return waitingToRestore.get(fileId) != null;
+    public static Boolean isWaitingToRestore(String chunkId) {
+        if (waitingToRestore.get(chunkId) == null) return false;
+        return !waitingToRestore.get(chunkId);
     }
 
     /**
      * Increases the number of chunks received by a file.
-     * @param fileId Related file id.
+     * @param chunkId Related chunk Id.
      */
-    public static void increaseWaitingToRestore(String fileId){
-        int numReceived = waitingToRestore.remove(fileId);
-        numReceived+= 1;
-        waitingToRestore.put(fileId, numReceived);
+    public static void restoreReceived(String chunkId){
+        waitingToRestore.put(chunkId, true);
+        String fileId = Singleton.extractFileId(chunkId);
+        decrementChunkNo(fileId);
+    }
+
+    private static void decrementChunkNo(String fileId){
+        Integer numChunks = fileToRestore.get(fileId);
+        fileToRestore.put(fileId, numChunks -1);
+    }
+
+    public static void removeFile(String fileId, int numChunks){
+        fileToRestore.remove(fileId);
+
+        for (int i = 0 ; i < numChunks; i++) {
+            String chunkId = Singleton.getChunkId(fileId, String.valueOf(i));
+            waitingToRestore.remove(chunkId);
+        }
     }
 
 }

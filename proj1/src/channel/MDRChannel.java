@@ -31,7 +31,8 @@ public class MDRChannel extends Channel {
                     String chunkId = Singleton.getChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
                     Peer.restoreTasks.abortTask(chunkId);
                     // Store the chunk locally.
-                    if (RestoreWaiting.isWaitingToRestore(messageParsed.getFileId()))
+
+                    if (RestoreWaiting.isWaitingToRestore(chunkId))
                         new StoreChunk(messageParsed).start();
                 }
 

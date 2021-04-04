@@ -113,7 +113,6 @@ public class Peer implements Services {
     public String restore(String fileName)  {
         Logger.ANY("Peer", "RESTORE requested");
         new RequestGetChunk(fileName).start();
-
         return "Store has executed";
     }
 

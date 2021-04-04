@@ -41,7 +41,9 @@ public class MessageParser {
             this.messageType = splitHeader[1];
             this.senderId = splitHeader[2];
             this.fileId = splitHeader[3];
-
+            this.chunkNo = "Error";
+            this.replicationDeg = "Error";
+            this.headerString = "Error";
 
             if (this.messageType.equals(Singleton.PUTCHUNK)) {
                 parsePutchunk(splitHeader, message);
