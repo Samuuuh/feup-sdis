@@ -40,7 +40,7 @@ public class BackupChunkCheck extends TimerTask {
 
         if (!chunkState.haveDesiredRepDeg()) {
 
-            Logger.INFO(this.getClass().getName(), "Try No. " + currentTry + "RESEND chunk " + chunkId);
+            Logger.INFO(this.getClass().getName(), "Try No. " + currentTry + " RESEND chunk " + chunkId);
             new RequestPutChunk(chunkId, String.valueOf(chunkState.getDesiredRepDeg()), currentTry).start();
         }else{
             Logger.SUC(this.getClass().getName(), "Chunk has achieved desired replication degree");

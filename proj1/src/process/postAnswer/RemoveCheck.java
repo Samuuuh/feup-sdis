@@ -1,6 +1,7 @@
 package process.postAnswer;
 
 import main.Peer;
+import main.etc.Singleton;
 import process.request.RequestPutChunk;
 import state.ChunkState;
 import state.FileState;
@@ -23,7 +24,8 @@ public class RemoveCheck extends Thread{
     @Override
     public void run(){
         FileState fileState = Peer.peer_state.getFileState(fileId);
-        ChunkState chunkState = fileState.getChunkState(chunkId);
+        int chunkNo= Singleton.extractChunkNo(chunkId);
+        ChunkState chunkState = fileState.getChunkState(String.valueOf(chunkNo));
         String replicationDegree = String.valueOf(chunkState.getDesiredRepDeg());
         chunkState.removePeer(senderId);
         if (!chunkState.haveDesiredRepDeg()){

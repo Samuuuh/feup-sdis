@@ -25,7 +25,7 @@ public class RequestReclaim extends Thread {
         Set<String> getRandom = Peer.peer_state.getChunkKeys();
 
         int remainingSpace = state.State.totalSpace - state.State.occupiedSpace;
-        if (remainingSpace > this.reclaimSpace) {
+        if (this.reclaimSpace != 0 && remainingSpace > this.reclaimSpace) {
             state.State.totalSpace -= this.reclaimSpace;
             Logger.SUC(this.getClass().getName(), "CURRENT TOTAL SPACE " + state.State.totalSpace + " || OCCUPIED SPACE " + state.State.occupiedSpace );
             return;
@@ -33,14 +33,11 @@ public class RequestReclaim extends Thread {
 
         // Shrink the part without files.
         state.State.totalSpace = state.State.occupiedSpace;
-        System.out.println(state.State.occupiedSpace);
         if (this.reclaimSpace == 0) this.spaceAfterReclaim = 0;
         for(String chunkId: getRandom) {
-            if (state.State.totalSpace <= spaceAfterReclaim) {
-                if (state.State.totalSpace < 0) state.State.totalSpace = 0;
-                state.State.occupiedSpace = state.State.totalSpace;
+            if (state.State.totalSpace <= spaceAfterReclaim)
                 break;
-            }
+
             state.State.totalSpace -= Peer.peer_state.getChunkState(chunkId).getSize();
             String[] splitValues = chunkId.split("-");
             String fileId = splitValues[0];
@@ -55,8 +52,9 @@ public class RequestReclaim extends Thread {
             Logger.REQUEST(this.getClass().getName(), "REMOVED " + chunkId);
         }
 
+        if (state.State.totalSpace < 0) state.State.totalSpace = 0;
+        state.State.occupiedSpace = state.State.totalSpace;
+
         Logger.ANY(this.getClass().getName(), "CURRENT TOTAL SPACE " + state.State.totalSpace + " || OCCUPIED SPACE " + state.State.occupiedSpace);
-
-
     }
 };
