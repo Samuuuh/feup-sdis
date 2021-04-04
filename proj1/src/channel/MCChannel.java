@@ -6,13 +6,9 @@ import main.Peer;
 import process.answer.PrepareChunk;
 import process.postAnswer.DeleteChunk;
 import process.postAnswer.RemoveCheck;
-import process.request.RequestPutChunk;
-import state.ChunkState;
-import tasks.backup.BackupChunkCheck;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.util.Timer;
 
 // STORED, GETCHUNK, DELETE, REMOVE
 public class MCChannel extends Channel {
