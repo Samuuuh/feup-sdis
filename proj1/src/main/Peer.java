@@ -7,11 +7,10 @@ import channel.MDBChannel;
 import channel.MDRChannel;
 import main.etc.Logger;
 import main.etc.Singleton;
-import process.request.RequestDelete;
-import process.request.RequestGetChunk;
-import process.request.RequestPutChunk;
+import process.request.*;
 import state.SaveState;
 import state.State;
+import tasks.Tasks;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -38,9 +37,10 @@ public class Peer implements Services {
     public static String mdr_addr;
     public static int mdr_port;
 
-
-    // This is a hashmap that stores the scheduled restores to be done.
-
+    // Chunks that are being restored.
+    public static Tasks restoreTasks = new Tasks();
+    // Removed chunks from reclaim that will need to be restored.
+    public static Tasks reclaimBackupTasks = new Tasks();
 
     public static void initChannel(String mcast_addr, int mcast_port, String mdb_addr, int mdb_port, String mdr_addr, int mdr_port) throws IOException {
         new MCChannel(mcast_port, mcast_addr).start();
@@ -103,19 +103,17 @@ public class Peer implements Services {
 
 
     // SERVICES
-
     public String backup(String filePath, int replicationDeg)  {
         Logger.ANY("Peer", "BACKUP requested");
-        new RequestPutChunk(filePath, String.valueOf(replicationDeg)).start();
+        new RequestFilePutChunk(filePath, String.valueOf(replicationDeg)).start();
 
-        return "Backup has ended";
+        return "Backup has executed";
     }
 
     public String restore(String fileName)  {
         Logger.ANY("Peer", "RESTORE requested");
         new RequestGetChunk(fileName).start();
-
-        return "Store has ended";
+        return "Store has executed";
     }
 
     public String delete(String filename)  {
@@ -123,6 +121,15 @@ public class Peer implements Services {
 
         new RequestDelete(filename).start();
 
-        return "Delete has ended";
+        return "Delete has executed";
+    }
+
+    public String reclaim(String space)  {
+        Logger.ANY("Peer", "RECLAIM requested");
+
+        // Process reclaim.
+        new RequestReclaim(space).start();
+
+        return "Reclaim has executed";
     }
 }

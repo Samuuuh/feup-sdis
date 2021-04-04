@@ -1,10 +1,11 @@
 package channel;
-import main.etc.Singleton;
 import main.Peer;
+import main.etc.Singleton;
 import process.answer.PrepareStored;
-import java.net.DatagramPacket;
+import state.ChunkState;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
 
 // TODO: MDB
 public class MDBChannel extends Channel {
@@ -24,12 +25,23 @@ public class MDBChannel extends Channel {
                 if (messageParsed.getSenderId().equals(Peer.peer_no))
                     continue;
 
-                if (messageParsed.getMessageType().equals(Singleton.PUTCHUNK))
-                    new PrepareStored(messageParsed).start();
+                if (messageParsed.getMessageType().equals(Singleton.PUTCHUNK)) {
+                    // If not out of space.
+                    if (state.State.totalSpace>= state.State.occupiedSpace+ messageParsed.getData().length) {
+
+                        String chunkId = Singleton.getChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
+                        Peer.reclaimBackupTasks.abortTask(chunkId);
+                        ChunkState chunkState = new ChunkState(chunkId, Integer.parseInt(messageParsed.getReplicationDeg()), messageParsed.getData().length/1000);
+                        Peer.peer_state.putChunk(chunkId, chunkState);
+                        new PrepareStored(messageParsed).start();
+                    }
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+
+
 }

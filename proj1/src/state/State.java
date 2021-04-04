@@ -1,57 +1,82 @@
 package state;
-import java.io.*;
 
+import main.etc.Logger;
+
+import java.io.Serializable;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class State implements Serializable {
+    public static int totalSpace = 1000000;
+    public static int occupiedSpace = 0;
     public final String peer_no;
 
-    public ConcurrentHashMap<String, FileState> fileHash = new ConcurrentHashMap<>();
-    public ConcurrentHashMap<String, ChunkState> chunkHash = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, FileState> filesBackup = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, ChunkState> chunkStored = new ConcurrentHashMap<>();
 
     public State(String peer_no) {
         this.peer_no = peer_no;
     }
 
     public void putFile(String key, FileState fileState) {
-        fileHash.put(key, fileState);
+        filesBackup.put(key, fileState);
     }
 
     public void putChunk(String key, ChunkState chunkState) {
-        chunkHash.put(key, chunkState);
+        ChunkState previousState = chunkStored.put(key, chunkState);
+        // Increase the occupied size.
+        if (previousState == null) {
+            occupiedSpace += chunkState.getSize();
+            Logger.INFO(this.getClass().getName(), "Current occupied space: " + occupiedSpace);
+        }
+
     }
 
     public void removeFile(String key) {
-        fileHash.remove(key);
+        filesBackup.remove(key);
     }
 
     public void removeChunk(String key) {
-        chunkHash.remove(key);
+        chunkStored.remove(key);
     }
 
     public FileState getFileState(String key){
-        return fileHash.get(key);
+        return filesBackup.get(key);
+    }
+
+    public ChunkState getChunkState(String chunkId){
+        return chunkStored.get(chunkId);
+    }
+
+    public Set<String> getChunkKeys(){
+        return chunkStored.keySet();
     }
 
     /**
-     *  Increases the replication degree of a chunkId.
+     *  Updates the replication degree of a chunkId.
      */
-    public void increaseRepDeg(String fileId, String chunkId){
-        FileState fileState =  fileHash.remove(fileId);
-        if (fileState == null) return;
-
-        fileState.increaseChunkRepDeg(chunkId);
-        fileHash.put(fileState.getFileId(), fileState);
+    public void updateChunkState(String chunkId, String peer){
+        ChunkState chunkState = chunkStored.get(chunkId);
+        if (chunkState != null){
+            chunkState.addStoredPeer(peer);
+        }
     }
+    public void updateFileState(String fileId, String chunkNo, String peer){
+        FileState fileState = filesBackup.get(fileId);
+        if (fileId != null && fileState != null ){
+            fileState.getChunkState(chunkNo).addStoredPeer(peer);
+        }
+    }
+
 
     // Just to test
     public void printState() {
         System.out.println("CHUNK HASH");
-        System.out.println(chunkHash.size());
-        System.out.println(chunkHash.toString());
+        System.out.println(chunkStored.size());
+        System.out.println(chunkStored.toString());
 
         System.out.println("FILE HASH");
-        System.out.println(fileHash.size());
-        System.out.println(fileHash.toString());
+        System.out.println(filesBackup.size());
+        System.out.println(filesBackup.toString());
     }
 }

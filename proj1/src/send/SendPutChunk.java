@@ -1,6 +1,6 @@
 package send;
 
-import dataStructure.Chunk;
+import main.etc.Chunk;
 import main.etc.Singleton;
 import main.Peer;
 

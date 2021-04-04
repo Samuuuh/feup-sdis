@@ -5,6 +5,7 @@ import main.etc.Singleton;
 import main.Peer;
 import process.answer.PrepareChunk;
 import process.postAnswer.DeleteChunk;
+import process.postAnswer.RemoveCheck;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -27,9 +28,14 @@ public class MCChannel extends Channel {
                 if (messageParsed.getSenderId().equals(Peer.peer_no))
                     continue;
 
-                if (messageParsed.getMessageType().equals(Singleton.STORED)) {
-                    String chunkId = Singleton.buildChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
-                    Peer.peer_state.increaseRepDeg( messageParsed.getFileId(), chunkId);
+                String fileId = messageParsed.getFileId();
+                String chunkId = Singleton.getChunkId(fileId, messageParsed.getChunkNo());
+                if (messageParsed.getMessageType().equals(Singleton.STORED) ) {
+                    Peer.peer_state.updateChunkState(chunkId, messageParsed.getSenderId());
+
+                    // Operation just possible for peer that has requested a backup for that file.
+                    Peer.peer_state.updateFileState(fileId, messageParsed.getChunkNo(), messageParsed.getSenderId());
+                    //Peer.peer_state.printState();
                     Logger.SUC(this.getClass().getName(), "STORED " + chunkId + " on PEER " + messageParsed.getSenderId());
                 }
 
@@ -41,6 +47,11 @@ public class MCChannel extends Channel {
                     new DeleteChunk(messageParsed.getFileId()).start();
                 }
 
+                else if (messageParsed.getMessageType().equals(Singleton.REMOVED)){
+                    if (Peer.peer_state.getFileState(fileId) != null)
+                        new RemoveCheck(fileId, chunkId, messageParsed.getSenderId()).start();
+                }
+
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -48,6 +59,5 @@ public class MCChannel extends Channel {
 
         }
     }
-
 
 }

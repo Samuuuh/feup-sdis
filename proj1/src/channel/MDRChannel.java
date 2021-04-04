@@ -1,7 +1,7 @@
 package channel;
 
-import dataStructure.restore.RestoreTasks;
-import dataStructure.restore.RestoreWaiting;
+import tasks.Tasks;
+import tasks.restore.RestoreWaiting;
 import main.Peer;
 import main.etc.Singleton;
 import process.postAnswer.StoreChunk;
@@ -28,10 +28,11 @@ public class MDRChannel extends Channel {
 
                 if (messageParsed.getMessageType().equals(Singleton.CHUNK)) {
                     // Abort if exists the task to restore the chunk.
-                    String chunkId = Singleton.buildChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
-                    RestoreTasks.abortRestoreSchedule(chunkId);
+                    String chunkId = Singleton.getChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
+                    Peer.restoreTasks.abortTask(chunkId);
                     // Store the chunk locally.
-                    if (RestoreWaiting.isWaitingToRestore(messageParsed.getFileId()))
+
+                    if (RestoreWaiting.isWaitingToRestore(chunkId))
                         new StoreChunk(messageParsed).start();
                 }
 

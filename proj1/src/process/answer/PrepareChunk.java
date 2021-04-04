@@ -1,6 +1,6 @@
 package process.answer;
 
-import dataStructure.restore.RestoreTasks;
+import tasks.Tasks;
 import main.etc.FileHandler;
 import main.Peer;
 import main.etc.Logger;
@@ -27,7 +27,7 @@ public class PrepareChunk extends Thread {
     @Override
     public void run() {
 
-        String chunkId = Singleton.buildChunkId(fileId, chunkNo);
+        String chunkId = Singleton.getChunkId(fileId, chunkNo);
         String path = Singleton.getFilePath(Peer.peer_no) + chunkId;
         File file = new File(path);
 
@@ -48,7 +48,7 @@ public class PrepareChunk extends Thread {
     private void scheduleSendMessage(String fileId, byte[] body, String chunkNo, String chunkId){
         Timer timer = new Timer();      // A new thread Timer will be created.
         timer.schedule(createTimerTask(fileId, body, chunkNo), new Random().nextInt(401));
-        RestoreTasks.addRestoreSchedule(chunkId, timer);
+        Peer.restoreTasks.addTask(chunkId, timer);
     }
 
     /**
@@ -58,6 +58,7 @@ public class PrepareChunk extends Thread {
          return new TimerTask() {
             @Override
             public void run() {
+                Logger.SUC(this.getClass().getName(), "Sent CHUNK, chunkNo: " + Singleton.getChunkId(fileId, chunkNo));
                 new SendChunk(Singleton.CHUNK, fileId, body, chunkNo).start();
                 this.cancel();      // Do not repeat.
             }
