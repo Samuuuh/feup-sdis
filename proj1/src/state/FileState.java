@@ -13,7 +13,7 @@ public class FileState implements Serializable {
     /**
      * Key: ChunkId
      */
-    public ConcurrentHashMap<String, ChunkState> chunkStateHash = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ChunkState> chunkStateHash = new ConcurrentHashMap<>();
 
     public FileState(String fileId, int desiredRepDeg, String filePath) {
         this.fileId = fileId;
@@ -29,10 +29,6 @@ public class FileState implements Serializable {
         return fileId;
     }
 
-    public int getRepDeg() {
-        return desiredRepDeg;
-    }
-
     public String getFilePath(){
         return filePath;
     }
@@ -46,7 +42,6 @@ public class FileState implements Serializable {
         String chunkId = Singleton.getChunkId(fileId, chunkNo);
         return chunkStateHash.get(chunkId);
     }
-
 
     public String toString() {
         String s = "";

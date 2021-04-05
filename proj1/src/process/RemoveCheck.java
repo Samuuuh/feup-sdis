@@ -1,4 +1,4 @@
-package process.postAnswer;
+package process;
 
 import main.Peer;
 import main.etc.Singleton;
@@ -15,17 +15,17 @@ public class RemoveCheck extends Thread{
     String fileId;
     String senderId;
 
-    public RemoveCheck(String fileId, String chunkId, String senderId){
+    public RemoveCheck(String fileId, String chunkId, String senderId) {
         this.fileId = fileId;
         this.chunkId = chunkId;
         this.senderId = senderId;
     }
 
     @Override
-    public void run(){
+    public void run() {
         FileState fileState = Peer.peer_state.getFileState(fileId);
-        int chunkNo= Singleton.extractChunkNo(chunkId);
-        ChunkState chunkState = fileState.getChunkState(String.valueOf(chunkNo));
+        String chunkNo = Singleton.extractChunkNo(chunkId);
+        ChunkState chunkState = fileState.getChunkState(chunkNo);
         String replicationDegree = String.valueOf(chunkState.getDesiredRepDeg());
         chunkState.removePeer(senderId);
         if (!chunkState.haveDesiredRepDeg()){
@@ -33,11 +33,10 @@ public class RemoveCheck extends Thread{
         }
     }
 
-
     /**
      *  Will create Timer to schedule the operation.
      */
-    private void scheduleBackup(String replicationDegree){
+    private void scheduleBackup(String replicationDegree) {
         Timer timer = new Timer();      // A new thread Timer will be created.
         timer.schedule(createTimerTask(replicationDegree), new Random().nextInt(401));
         Peer.reclaimBackupTasks.addTask(chunkId, timer);
@@ -46,7 +45,7 @@ public class RemoveCheck extends Thread{
     /**
      * This method will create the timerTask to be scheduled by the timer.
      */
-    private TimerTask createTimerTask(String replicationDegree){
+    private TimerTask createTimerTask(String replicationDegree) {
         return new TimerTask() {
             @Override
             public void run() {

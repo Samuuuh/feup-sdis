@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Thread saves the state after each 5 seconds.
+ * Thread saves the state after each x seconds.
  */
 public class SaveState extends Thread {
 
@@ -17,7 +17,7 @@ public class SaveState extends Thread {
     public void run() {
         while(true) {
             try {
-                Thread.sleep(5 * 1000);
+                Thread.sleep(Singleton.SAVE_PERIOD * 1000L);
 
                 String pathString = Singleton.getStatePath(Peer.peer_no);
                 String filePathString = pathString + Singleton.STATE_FILE_NAME;

@@ -4,8 +4,8 @@ import main.etc.Logger;
 import main.etc.Singleton;
 import main.Peer;
 import process.answer.PrepareChunk;
-import process.postAnswer.DeleteChunk;
-import process.postAnswer.RemoveCheck;
+import process.DeleteChunk;
+import process.RemoveCheck;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -40,7 +40,7 @@ public class MCChannel extends Channel {
                 }
 
                 else if (messageParsed.getMessageType().equals(Singleton.GETCHUNK)) {
-                    new PrepareChunk(messageParsed.getFileId(), messageParsed.getChunkNo()).start();
+                    new PrepareChunk(chunkId).start();
                 }
 
                 else if (messageParsed.getMessageType().equals(Singleton.DELETE)) {

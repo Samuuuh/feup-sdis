@@ -13,24 +13,27 @@ import static main.etc.FileHandler.saveFileChunks;
  */
 public class PrepareStored extends Thread {
     MessageParser messageParsed;
+    String chunkNo;
+    String fileId;
 
     public PrepareStored(MessageParser messageParsed) {
         this.messageParsed = messageParsed;
+        this.chunkNo = messageParsed.getChunkNo();
+        this.fileId = messageParsed.getFileId();
     }
 
     @Override
     public void run() {
         Boolean fileIsSaved = saveFileChunks(messageParsed, Singleton.getFilePath(Peer.peer_no));
 
-
         if (fileIsSaved) {
-            new SendChunkNo(Singleton.STORED, messageParsed.getFileId(), messageParsed.getChunkNo(), Peer.mc_addr, Peer.mc_port).start();
-            String chunkId = Singleton.getChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
+            new SendChunkNo(Singleton.STORED, fileId, chunkNo, Peer.mc_addr, Peer.mc_port).start();
+            String chunkId = Singleton.getChunkId(fileId, chunkNo);
             // After saving, update the perceived replication degree.
             Peer.peer_state.updateChunkState(chunkId, Peer.peer_no);
             Logger.INFO(this.getClass().getName(), "Sending STORED message on " + chunkId);
         } else {
-            Logger.ERR(this.getClass().getName(), "Chunk " + Singleton.getChunkId(messageParsed.getFileId(), messageParsed.getChunkNo()) + "wasn't stored!");
+            Logger.ERR(this.getClass().getName(), "Chunk " + Singleton.getChunkId(fileId, chunkNo) + "wasn't stored!");
         }
     }
 

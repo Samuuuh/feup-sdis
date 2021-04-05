@@ -1,10 +1,9 @@
 package channel;
 
-import tasks.Tasks;
 import tasks.restore.RestoreWaiting;
 import main.Peer;
 import main.etc.Singleton;
-import process.postAnswer.StoreChunk;
+import process.StoreChunk;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

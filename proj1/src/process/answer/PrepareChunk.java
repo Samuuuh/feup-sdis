@@ -1,6 +1,5 @@
 package process.answer;
 
-import tasks.Tasks;
 import main.etc.FileHandler;
 import main.Peer;
 import main.etc.Logger;
@@ -18,16 +17,15 @@ import java.util.TimerTask;
 public class PrepareChunk extends Thread {
     private final String fileId;
     private final String chunkNo;
-
-    public PrepareChunk(String fileId, String chunkNo) {
-        this.fileId = fileId;
-        this.chunkNo = chunkNo;
+    private final String chunkId;
+    public PrepareChunk(String chunkId) {
+        this.chunkId = chunkId;
+        this.chunkNo = Singleton.extractChunkNo(chunkId);
+        this.fileId = Singleton.extractFileId(chunkId);
     }
 
     @Override
     public void run() {
-
-        String chunkId = Singleton.getChunkId(fileId, chunkNo);
         String path = Singleton.getFilePath(Peer.peer_no) + chunkId;
         File file = new File(path);
 
@@ -35,18 +33,19 @@ public class PrepareChunk extends Thread {
             if (file.exists()) {
                 byte[] body = FileHandler.readFile(path);
                 scheduleSendMessage(fileId, body, chunkNo, chunkId);
-                Logger.INFO(this.getClass().getName(), "SCHEDULED sending " + chunkId);
+                Logger.INFO(this.getClass().getName(), "Scheduled sending " + chunkId);
             }
         } catch (Exception e) {
             Logger.ERR(this.getClass().getName(), "Error restoring chunk " + chunkId);
         }
     }
 
+
     /**
      *  Will create Timer to schedule the operation.
      */
     private void scheduleSendMessage(String fileId, byte[] body, String chunkNo, String chunkId){
-        Timer timer = new Timer();      // A new thread Timer will be created.
+        Timer timer = new Timer();
         timer.schedule(createTimerTask(fileId, body, chunkNo), new Random().nextInt(401));
         Peer.restoreTasks.addTask(chunkId, timer);
     }

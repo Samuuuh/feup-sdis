@@ -19,12 +19,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BackupFileCheck extends TimerTask {
     String fileId;
-    String filePath;
     Integer currentTry;
 
-    public BackupFileCheck(String filePath, Integer currentTry) {
-        this.fileId = Singleton.hash(filePath);
-        this.filePath = filePath;
+    public BackupFileCheck(String fileId, Integer currentTry) {
+        this.fileId = fileId;
         this.currentTry = currentTry;
     }
 

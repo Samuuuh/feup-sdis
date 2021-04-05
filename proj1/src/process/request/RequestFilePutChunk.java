@@ -18,19 +18,22 @@ import java.util.Timer;
 public class RequestFilePutChunk extends Thread {
     String filePath;
     String replicationDeg;
+    String fileId;
 
     public RequestFilePutChunk(String filePath, String replicationDeg) {
         this.filePath = filePath;
         this.replicationDeg = replicationDeg;
+        this.fileId = Singleton.hash(filePath);
     }
 
     @Override
     public void run() {
 
-        String fileId = Singleton.hash(filePath);
         try {
             byte[] fileContent = FileHandler.readFile(filePath);
+            assert fileContent != null;
             Chunk[] chunks = FileHandler.splitFile(fileContent);
+
             FileState fileState = new FileState(fileId, Integer.parseInt(replicationDeg), filePath);
             Peer.peer_state.putFile(fileId, fileState);
 
@@ -47,7 +50,7 @@ public class RequestFilePutChunk extends Thread {
             scheduleBackupCheck();
             Logger.INFO(this.getClass().getName(), "Scheduled backup checking of file " + fileId);
         } catch (IOException e) {
-            Logger.REQUEST(this.getClass().getName(), "Requested PUTCHUNK on " + fileId);
+            Logger.REQUEST(this.getClass().getName(), "Error on Requested PUTCHUNK on " + fileId);
             e.printStackTrace();
         }
 
@@ -58,7 +61,7 @@ public class RequestFilePutChunk extends Thread {
      */
     private void scheduleBackupCheck(){
         Timer timer = new Timer();
-        timer.schedule(new BackupFileCheck(filePath, 0), 1000);
+        timer.schedule(new BackupFileCheck(fileId, 0), 1000);
     }
 
 

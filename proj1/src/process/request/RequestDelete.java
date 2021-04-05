@@ -6,18 +6,16 @@ import main.etc.Singleton;
 import send.SendDelete;
 
 public class RequestDelete extends Thread {
-    protected String fileName;
+    protected String fileId;
 
-    public RequestDelete(String fileName){
-        this.fileName = fileName;
+    public RequestDelete(String filePath){
+        this.fileId = Singleton.hash(filePath);
     }
 
     @Override
     public void run() {
 
-        String fileId = Singleton.hash(fileName);
         try {
-            // TODO: Change the place of this
             Peer.peer_state.removeFile(fileId);
 
             for(int i = 0; i < 5; i++) {

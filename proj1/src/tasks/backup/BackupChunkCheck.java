@@ -19,15 +19,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BackupChunkCheck extends TimerTask {
     String fileId;
-    String filePath;
     Integer currentTry;
     String chunkId ;
 
-    public BackupChunkCheck(String filePath, String chunkId, Integer currentTry) {
-        this.fileId = Singleton.hash(filePath);
-        this.filePath = filePath;
+    public BackupChunkCheck(String chunkId, Integer currentTry) {
         this.currentTry = currentTry;
         this.chunkId = chunkId;
+        this.fileId = Singleton.extractFileId(chunkId);
 
     }
 
@@ -39,7 +37,6 @@ public class BackupChunkCheck extends TimerTask {
         ChunkState chunkState = fileState.getChunkStateHash().get(chunkId);
 
         if (!chunkState.haveDesiredRepDeg()) {
-
             Logger.INFO(this.getClass().getName(), "Try No. " + currentTry + " RESEND chunk " + chunkId);
             new RequestPutChunk(chunkId, String.valueOf(chunkState.getDesiredRepDeg()), currentTry).start();
         }else{

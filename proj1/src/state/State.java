@@ -55,19 +55,23 @@ public class State implements Serializable {
     /**
      *  Updates the replication degree of a chunkId.
      */
-    public void updateChunkState(String chunkId, String peer){
+    public void updateChunkState(String chunkId, String peer) {
         ChunkState chunkState = chunkStored.get(chunkId);
         if (chunkState != null){
             chunkState.addStoredPeer(peer);
         }
     }
-    public void updateFileState(String fileId, String chunkNo, String peer){
+
+
+    /*
+     * Update replication degree of a chunk
+     */
+    public void updateFileState(String fileId, String chunkNo, String peer) {
         FileState fileState = filesBackup.get(fileId);
         if (fileId != null && fileState != null ){
             fileState.getChunkState(chunkNo).addStoredPeer(peer);
         }
     }
-
 
     // Just to test
     public void printState() {

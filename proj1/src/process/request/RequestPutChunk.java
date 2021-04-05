@@ -18,7 +18,7 @@ import java.util.Timer;
 public class RequestPutChunk extends Thread {
     String chunkId;
     String replicationDeg;
-    Integer currentTry = 0;
+    Integer currentTry;
 
     public RequestPutChunk(String chunkId, String replicationDeg, Integer currentTry) {
         this.chunkId = chunkId;
@@ -26,36 +26,41 @@ public class RequestPutChunk extends Thread {
         this.currentTry = currentTry;
     }
 
-
     @Override
     public void run() {
-
         String fileId = Singleton.extractFileId(chunkId);
+        int chunkNo = Integer.parseInt(Singleton.extractChunkNo(chunkId));
+
         try {
             String filePath = Peer.peer_state.getFileState(fileId).getFilePath();
             byte[] fileContent = FileHandler.readFile(filePath);
-            Chunk chunk = FileHandler.getChunk(fileContent, Singleton.extractChunkNo(chunkId));
+            assert fileContent != null;
+            Chunk chunk = FileHandler.getChunk(fileContent, chunkNo);
 
             new SendPutChunk(fileId, replicationDeg, chunk).start();
             Logger.REQUEST(this.getClass().getName(), "Requested PUTCHUNK on " + chunkId);
 
-            if (currentTry < 5){
-                scheduleBackupCheck(filePath);
-                Logger.INFO(this.getClass().getName(), "Scheduled backup checking of file " + fileId);
-            }
+            isFinalTry(filePath, fileId);
+
         } catch (IOException e) {
             Logger.REQUEST(this.getClass().getName(), "Requested PUTCHUNK on " + fileId);
             e.printStackTrace();
         }
+    }
 
+    private void isFinalTry(String filePath, String fileId) {
+        if (currentTry < 5) {
+            scheduleBackupCheck(filePath);
+            Logger.INFO(this.getClass().getName(), "Scheduled backup checking of file " + fileId);
+        }
     }
 
     /**
-     * Set task to check if the replication degree was achieved.
-     */
+    Set task to check if the replication degree was achieved.
+    */
     private void scheduleBackupCheck(String filePath) {
         Timer timer = new Timer();
         int delay = (int) Math.pow(2, currentTry);
-        timer.schedule(new BackupChunkCheck(filePath, chunkId, currentTry + 1), delay* 1000L);
+        timer.schedule(new BackupChunkCheck(chunkId, currentTry + 1), delay* 1000L);
     }
 }

@@ -28,7 +28,7 @@ public class Singleton {
 
     // State
     public static String STATE_FILE_NAME = "state.ser";
-
+    public static int SAVE_PERIOD = 5;
 
     public static String getStatePath(String peer_no) {
         return "peers/peer_" + peer_no + "/savedState/";
@@ -48,8 +48,8 @@ public class Singleton {
         return chunkId.split("-")[0];
     }
 
-    public static int extractChunkNo(String chunkId){
-        return Integer.parseInt(chunkId.split("-")[1]);
+    public static String extractChunkNo(String chunkId){
+        return chunkId.split("-")[1];
     }
 
 
