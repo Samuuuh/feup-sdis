@@ -6,12 +6,14 @@ import main.etc.Logger;
 import main.etc.Singleton;
 import send.SendChunkNo;
 
+import java.util.TimerTask;
+
 import static main.etc.FileHandler.saveFileChunks;
 
 /**
  * Saves the chunk and prepares to send the STORED message.
  */
-public class PrepareStored extends Thread {
+public class PrepareStored extends TimerTask {
     MessageParser messageParsed;
     String chunkNo;
     String fileId;

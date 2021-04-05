@@ -12,13 +12,11 @@ import java.net.MulticastSocket;
  */
 public class Send extends Thread {
     protected String type;
-    protected String fileId;
     protected String addr;
     protected int port;
 
-    public Send(String type, String fileId, String addr, int port) {
+    public Send(String type, String addr, int port) {
         this.type = type;
-        this.fileId = fileId;
         this.addr = addr;
         this.port = port;
     }
@@ -29,7 +27,7 @@ public class Send extends Thread {
             MulticastSocket socket = new MulticastSocket();
 
             // Build message.
-            MessageBuilder messageBuilder = new MessageBuilder(type, fileId);
+            MessageBuilder messageBuilder = new MessageBuilder(type);
             byte[] message = buildMessage(messageBuilder);
 
             // Send message

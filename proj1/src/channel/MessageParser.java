@@ -40,10 +40,7 @@ public class MessageParser {
             this.version = splitHeader[0];
             this.messageType = splitHeader[1];
             this.senderId = splitHeader[2];
-            this.fileId = splitHeader[3];
-            this.chunkNo = "Error";
-            this.replicationDeg = "Error";
-            this.headerString = "Error";
+            if (!this.messageType.equals(Singleton.BOOT)) this.fileId = splitHeader[3];
 
             if (this.messageType.equals(Singleton.PUTCHUNK)) {
                 parsePutchunk(splitHeader, message);
@@ -55,11 +52,8 @@ public class MessageParser {
 
             } else if (this.messageType.equals(Singleton.CHUNK)) {
                 parseChunk(splitHeader, message);
-
-            } else {
-                System.out.println("MessageParser\t::Not a valid header");
-
             }
+
 
         } catch (Exception e) {
             System.out.println(e);

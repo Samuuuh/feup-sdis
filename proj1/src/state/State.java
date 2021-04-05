@@ -3,6 +3,7 @@ package state;
 import main.etc.Logger;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,6 +14,12 @@ public class State implements Serializable {
 
     public ConcurrentHashMap<String, FileState> filesBackup = new ConcurrentHashMap<>();
     public ConcurrentHashMap<String, ChunkState> chunkStored = new ConcurrentHashMap<>();
+
+    /**
+     * Key: fileId;
+     * Value: List of Peers.
+     */
+    public ConcurrentHashMap<String, List<String>> filesToDelete = new ConcurrentHashMap<>();
 
     public State(String peer_no) {
         this.peer_no = peer_no;

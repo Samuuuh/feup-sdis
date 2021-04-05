@@ -8,6 +8,7 @@ import channel.MDRChannel;
 import main.etc.Logger;
 import main.etc.Singleton;
 import process.request.*;
+import send.Send;
 import state.SaveState;
 import state.State;
 import tasks.Tasks;
@@ -42,6 +43,9 @@ public class Peer implements Services {
     // Removed chunks from reclaim that will need to be restored.
     public static Tasks reclaimBackupTasks = new Tasks();
 
+    // The store will be canceled if chunk achieve the replication degree.
+    public static Tasks storeTasks = new Tasks();
+
     public static void initChannel(String mcast_addr, int mcast_port, String mdb_addr, int mdb_port, String mdr_addr, int mdr_port) throws IOException {
         new MCChannel(mcast_port, mcast_addr).start();
         new MDBChannel(mdb_port, mdb_addr).start();
@@ -59,6 +63,7 @@ public class Peer implements Services {
         restoreState();
         initChannel(mc_addr, mc_port, mdb_addr, mdb_port, mdr_addr, mdr_port);
 
+
         // Bind Services.
         Peer obj = new Peer();
         Services stub = (Services) UnicastRemoteObject.exportObject(obj, 0);
@@ -72,6 +77,8 @@ public class Peer implements Services {
             Registry registry = LocateRegistry.createRegistry(Singleton.REGISTER_PORT);
             registry.rebind(peer_no, stub);
         }
+
+        sendBoot();
         Logger.ANY("Peer", "Server is running");
     }
 
@@ -99,6 +106,13 @@ public class Peer implements Services {
             peer_state = new State(peer_no);
         }
         new SaveState().start();
+    }
+
+
+    // Send message saying that the peer is on.
+    public static void sendBoot(){
+        new Send(Singleton.BOOT, Peer.mc_addr, Peer.mc_port).start();
+        Logger.ANY("main", "Sent BOOT message");
     }
 
 
@@ -132,4 +146,7 @@ public class Peer implements Services {
 
         return "Reclaim has executed";
     }
+
+
+
 }

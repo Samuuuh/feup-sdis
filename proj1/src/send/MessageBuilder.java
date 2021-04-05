@@ -12,24 +12,28 @@ import java.util.Arrays;
 public class MessageBuilder {
     String header;
 
-    public MessageBuilder(String type, String fileId){
-        buildCommonHeader(type, fileId);
+    public MessageBuilder(String type) {
+        buildCommonHeader(type);
     }
 
 
-    private void buildCommonHeader(String type, String fileId){
-        header = Peer.version + " " + type + " " + Peer.peer_no + " " + fileId;
+    private void buildCommonHeader(String type) {
+        header = Peer.version + " " + type + " " + Peer.peer_no;
     }
 
-    public void addChunkNo(String chunkNo){
+    public void addFileId(String fileId) {
+        header += " " + fileId;
+    }
+
+    public void addChunkNo(String chunkNo) {
         header += " " + chunkNo;
     }
 
-    public void addRepDeg(String repDeg){
+    public void addRepDeg(String repDeg) {
         header += " " + repDeg;
     }
 
-    public byte[] buildWithBody(byte[] bodyBytes){
+    public byte[] buildWithBody(byte[] bodyBytes) {
         header += "\r\n";
         byte[] headerBytes = header.getBytes();
         byte[] merge = Arrays.copyOf(headerBytes, headerBytes.length + bodyBytes.length);
@@ -37,11 +41,10 @@ public class MessageBuilder {
         return merge;
     }
 
-    public byte[] build(){
+    public byte[] build() {
         header += "\r\n";
         return header.getBytes();
     }
-
 
 
 }
