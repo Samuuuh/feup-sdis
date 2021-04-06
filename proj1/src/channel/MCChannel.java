@@ -57,6 +57,7 @@ public class MCChannel extends Channel {
                 else if (messageParsed.getMessageType().equals(Singleton.REMOVED)){
                     if (Peer.peer_state.getFileState(fileId) != null)
                         new RemoveCheck(fileId, chunkId, messageParsed.getSenderId()).start();
+
                 }
                 else if (messageParsed.getMessageType().equals(Singleton.BOOT)){
                     System.out.println("RECEIVED BOOT " + messageParsed.getSenderId() );

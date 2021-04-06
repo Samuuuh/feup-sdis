@@ -5,6 +5,7 @@ package main;
 import channel.MCChannel;
 import channel.MDBChannel;
 import channel.MDRChannel;
+import channel.TCPChannel;
 import main.etc.Logger;
 import main.etc.Singleton;
 import process.request.*;
@@ -50,6 +51,7 @@ public class Peer implements Services {
         new MCChannel(mcast_port, mcast_addr).start();
         new MDBChannel(mdb_port, mdb_addr).start();
         new MDRChannel(mdr_port, mdr_addr).start();
+        new TCPChannel().start();
     }
 
     public static void main(String[] args) throws IOException {
@@ -127,6 +129,12 @@ public class Peer implements Services {
     public String restore(String fileName)  {
         Logger.ANY("Peer", "RESTORE requested");
         new RequestGetChunk(fileName).start();
+        return "Store has executed";
+    }
+
+    public String restoreEnhance(String fileName)  {
+        Logger.ANY("Peer", "RESTORE requested");
+        new RequestGetChunkEnhance(fileName).start();
         return "Store has executed";
     }
 
