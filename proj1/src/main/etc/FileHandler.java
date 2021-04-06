@@ -50,7 +50,6 @@ public class FileHandler {
         File mainFile = new File(filePath + fileId);
         mainFile.createNewFile();
 
-        System.out.println(chunkNo);
         FileOutputStream outputFile = new FileOutputStream(filePath + fileId, true);
         for (int i = 0; i < chunkNo; i++) {
             byte[] message = readFile(filePath + fileId + '-' + i);

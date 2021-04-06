@@ -22,7 +22,6 @@ public class Tasks {
     public void abortTask(String chunkId) {
         try {
             Timer restoredTimer = tasks.remove(chunkId);
-            System.out.println("ABORT "+ restoredTimer);
             if (restoredTimer != null) {
                 restoredTimer.cancel();
                 Logger.ABORT_SEND("dataStructure.restore.RestoreTasks", "Abort task " + chunkId);

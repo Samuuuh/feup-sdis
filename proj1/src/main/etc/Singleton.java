@@ -22,15 +22,20 @@ public class Singleton {
 
     // <Version> CHUNK <SenderId> <FileId> <ChunkNo> <CRLF><CRLF><Body>
     public static String CHUNK = "CHUNK";
+    // <Version> CHUNKDELETE <SenderId> <FileId> <ChunkNo>
 
     // <Version> DELETE <SenderId> <FileId> <CRLF><CRLF>
     public static String DELETE = "DELETE";
     // <Version> BOOT <SenderId>
     public static String BOOT = "BOOT";
+
     // <Version> SINGLEDELETE <SenderId> <FileId> <DestinationId>
-    public static String SINGLEDELETE = "SINGLEDELETE";
+    public static String SINGLEDELETEFILE = "SINGLEDELETEFILE";
+    // <Version> SINGLEDELETECHUNK <SenderId> <FileId> <ChunkNo> <DestinationId>
+    public static String SINGLEDELETECHUNK = "SINGLEDELETECHUNK";
     // <version> RCVDELETE <SenderId> <FileId>
     public static String RCVDELETE = "RCVDELETE";
+
 
     // State
     public static String STATE_FILE_NAME = "state.ser";

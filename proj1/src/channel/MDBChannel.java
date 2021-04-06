@@ -44,7 +44,7 @@ public class MDBChannel extends Channel {
     }
 
     private void scheduleStore(MessageParser messageParsed, String chunkId){
-        double delay = Math.random() * 2000 + 1;
+        double delay = Math.random() * 400 + 1;
         Timer storeTimer = new Timer();
         storeTimer.schedule(new PrepareStored(messageParsed), (long) delay);
         Peer.storeTasks.addTask(chunkId, storeTimer);

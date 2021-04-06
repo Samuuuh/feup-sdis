@@ -117,6 +117,6 @@ public class State implements Serializable {
         System.out.println(filesBackup.size());
         System.out.println(filesBackup.toString());*/
 
-        System.out.println(filesToDelete);
+        // System.out.println(filesToDelete);
     }
 }
