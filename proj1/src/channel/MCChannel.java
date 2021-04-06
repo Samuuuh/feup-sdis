@@ -4,8 +4,10 @@ import main.etc.Logger;
 import main.etc.Singleton;
 import main.Peer;
 import process.answer.PrepareChunk;
-import process.DeleteChunk;
+import process.DeleteChunks;
 import process.RemoveCheck;
+import process.request.RequestDeleteOnBoot;
+import send.SendWithFileId;
 import state.ChunkState;
 
 import java.io.IOException;
@@ -46,7 +48,10 @@ public class MCChannel extends Channel {
                 }
 
                 else if (messageParsed.getMessageType().equals(Singleton.DELETE)) {
-                    new DeleteChunk(messageParsed.getFileId()).start();
+                    //if version 2
+                    new SendWithFileId(Singleton.RCVDELETE, fileId, Peer.mc_addr, Peer.mc_port).start();
+                    new DeleteChunks(messageParsed.getFileId()).start();
+
                 }
 
                 else if (messageParsed.getMessageType().equals(Singleton.REMOVED)){
@@ -55,8 +60,17 @@ public class MCChannel extends Channel {
                 }
                 else if (messageParsed.getMessageType().equals(Singleton.BOOT)){
                     System.out.println("RECEIVED BOOT " + messageParsed.getSenderId() );
-                }
+                    new RequestDeleteOnBoot(messageParsed.getSenderId()).start();
 
+                } else if (messageParsed.getMessageType().equals(Singleton.SINGLEDELETE)){
+                    if (!messageParsed.getDestinationId().equals(Peer.peer_no)) continue;
+                    System.out.println("RECEIVED SINGLE DELETE ");
+                    new DeleteChunks(messageParsed.getFileId()).start();
+                }else if (messageParsed.getMessageType().equals(Singleton.RCVDELETE)){
+                    // TODO: if version 2.
+                    Logger.INFO(this.getClass().getName(), "RCVDELETE from peer " + messageParsed.getSenderId());
+                    Peer.peer_state.removeFileToDelete(messageParsed.getSenderId(), messageParsed.getFileId());
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();

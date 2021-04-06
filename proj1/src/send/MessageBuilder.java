@@ -33,6 +33,8 @@ public class MessageBuilder {
         header += " " + repDeg;
     }
 
+    public void addDestinationId(String destinationId){ header += " " + destinationId; }
+
     public byte[] buildWithBody(byte[] bodyBytes) {
         header += "\r\n";
         byte[] headerBytes = header.getBytes();

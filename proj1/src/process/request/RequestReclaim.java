@@ -4,7 +4,7 @@ import main.Peer;
 import main.etc.FileHandler;
 import main.etc.Logger;
 import main.etc.Singleton;
-import send.SendChunkNo;
+import send.SendWithChunkNo;
 
 import java.io.IOException;
 import java.util.Set;
@@ -44,7 +44,7 @@ public class RequestReclaim extends Thread {
                 Logger.ERR(this.getClass().getName(), "Not able to remove " + chunkId);
             }
 
-            new SendChunkNo(Singleton.REMOVED, fileId, chunkNo, Peer.mc_addr, Peer.mc_port).start();
+            new SendWithChunkNo(Singleton.REMOVED, fileId, chunkNo, Peer.mc_addr, Peer.mc_port).start();
             Logger.REQUEST(this.getClass().getName(), "REMOVED " + chunkId);
         }
 

@@ -1,9 +1,9 @@
 package send;
 
-public class SendDelete extends Send {
+public class SendWithFileId extends Send {
     String fileId;
 
-    public SendDelete(String type, String fileId, String addr, int port) {
+    public SendWithFileId(String type, String fileId, String addr, int port) {
         super(type, addr, port);
         this.fileId = fileId;
 

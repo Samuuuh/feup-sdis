@@ -36,6 +36,10 @@ public class ChunkState implements Serializable {
         return desiredRepDeg;
     }
 
+    public List<String> getStoredPeers(){
+        return storedPeers;
+    }
+
     public Boolean haveDesiredRepDeg() {
         return storedPeers.size() >= desiredRepDeg;
     }

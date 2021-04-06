@@ -3,6 +3,7 @@ package state;
 import main.etc.Logger;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,8 +17,8 @@ public class State implements Serializable {
     public ConcurrentHashMap<String, ChunkState> chunkStored = new ConcurrentHashMap<>();
 
     /**
-     * Key: fileId;
-     * Value: List of Peers.
+     * Key: Peer
+     * Value: List of FileIds.
      */
     public ConcurrentHashMap<String, List<String>> filesToDelete = new ConcurrentHashMap<>();
 
@@ -47,6 +48,17 @@ public class State implements Serializable {
         chunkStored.remove(key);
     }
 
+    public void removeFileToDelete(String peer_no, String fileId){
+        List<String> filesId = filesToDelete.get(peer_no);
+        if (filesId != null){
+            filesId.remove(fileId);
+        }
+    }
+
+    public void removeDeletesOfPeer(String peer_no){
+        filesToDelete.remove(peer_no);
+    }
+
     public FileState getFileState(String key){
         return filesBackup.get(key);
     }
@@ -69,7 +81,6 @@ public class State implements Serializable {
         }
     }
 
-
     /*
      * Update replication degree of a chunk
      */
@@ -80,14 +91,32 @@ public class State implements Serializable {
         }
     }
 
+    public void addFileToDelete(String peer_no, String fileId){
+        List<String> filesId = filesToDelete.get(peer_no);
+        if (filesId == null){
+            List<String> newFilesId = new ArrayList<>();
+            newFilesId.add(fileId);
+            filesToDelete.put(peer_no, newFilesId);
+        }
+        else filesId.add(fileId);
+    }
+
+
+
+    public List<String> getFilesToDelete(String peer_no){
+        return filesToDelete.get(peer_no);
+    }
+
     // Just to test
     public void printState() {
-        System.out.println("CHUNK HASH");
+        /*System.out.println("CHUNK HASH");
         System.out.println(chunkStored.size());
         System.out.println(chunkStored.toString());
 
         System.out.println("FILE HASH");
         System.out.println(filesBackup.size());
-        System.out.println(filesBackup.toString());
+        System.out.println(filesBackup.toString());*/
+
+        System.out.println(filesToDelete);
     }
 }

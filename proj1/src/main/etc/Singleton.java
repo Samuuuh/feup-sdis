@@ -25,9 +25,12 @@ public class Singleton {
 
     // <Version> DELETE <SenderId> <FileId> <CRLF><CRLF>
     public static String DELETE = "DELETE";
-
     // <Version> BOOT <SenderId>
     public static String BOOT = "BOOT";
+    // <Version> SINGLEDELETE <SenderId> <FileId> <DestinationId>
+    public static String SINGLEDELETE = "SINGLEDELETE";
+    // <version> RCVDELETE <SenderId> <FileId>
+    public static String RCVDELETE = "RCVDELETE";
 
     // State
     public static String STATE_FILE_NAME = "state.ser";

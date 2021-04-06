@@ -4,7 +4,7 @@ import tasks.restore.RestoreWaiting;
 import main.Peer;
 import main.etc.Logger;
 import main.etc.Singleton;
-import send.SendChunkNo;
+import send.SendWithChunkNo;
 import state.ChunkState;
 import state.FileState;
 
@@ -39,7 +39,7 @@ public class RequestGetChunk extends Thread {
         chunksState.forEach((chunkId,chunkState)->{
             String chunkNo = Singleton.extractChunkNo(chunkId);
             RestoreWaiting.addWaitingToRestore(chunkId);
-            new SendChunkNo(Singleton.GETCHUNK, fileId, chunkNo, Peer.mc_addr, Peer.mc_port).start();
+            new SendWithChunkNo(Singleton.GETCHUNK, fileId, chunkNo, Peer.mc_addr, Peer.mc_port).start();
         });
     }
 

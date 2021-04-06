@@ -21,6 +21,7 @@ public class MessageParser {
     private String chunkNo;
     private String replicationDeg;
     private String headerString;
+    private String destinationId;       // Identification of the peer as destination.
 
     // Body
     private byte[] data;
@@ -40,7 +41,7 @@ public class MessageParser {
             this.version = splitHeader[0];
             this.messageType = splitHeader[1];
             this.senderId = splitHeader[2];
-            if (!this.messageType.equals(Singleton.BOOT)) this.fileId = splitHeader[3];
+
 
             if (this.messageType.equals(Singleton.PUTCHUNK)) {
                 parsePutchunk(splitHeader, message);
@@ -48,10 +49,14 @@ public class MessageParser {
             } else if (this.messageType.equals(Singleton.STORED) ||
                     this.messageType.equals(Singleton.REMOVED) ||
                     this.messageType.equals(Singleton.GETCHUNK)) {
-               parseWithChunkNo(splitHeader);
+                parseWithChunkNo(splitHeader);
 
             } else if (this.messageType.equals(Singleton.CHUNK)) {
                 parseChunk(splitHeader, message);
+            } else if (this.messageType.equals(Singleton.DELETE) || this.messageType.equals(Singleton.RCVDELETE)) {
+                this.fileId = splitHeader[3];
+            } else if (this.messageType.equals(Singleton.SINGLEDELETE)) {
+                parseSingleDelete(splitHeader);
             }
 
 
@@ -92,6 +97,10 @@ public class MessageParser {
         return data;
     }
 
+    public String getDestinationId() {
+        return destinationId;
+    }
+
     static int splitHeader(byte[] bytes) {
         int i = 0;
         while (true) {
@@ -110,7 +119,7 @@ public class MessageParser {
     }
 
     void parsePutchunk(String[] splitHeader, byte[] messageByte) throws IOException {
-
+        this.fileId = splitHeader[3];
         if (splitHeader.length != 6) {
             System.err.println("Invalid Header");
             throw new IOException();
@@ -126,16 +135,23 @@ public class MessageParser {
         }
     }
 
-    void parseWithChunkNo(String[] splitHeader){
+    void parseWithChunkNo(String[] splitHeader) {
+        this.fileId = splitHeader[3];
         this.chunkNo = splitHeader[4];
     }
 
     void parseChunk(String[] splitHeader, byte[] messageParsed) {
+        this.fileId = splitHeader[3];
         this.chunkNo = splitHeader[4];
-        if (messageParsed.length == 0)  {
+        if (messageParsed.length == 0) {
             this.data = new byte[0];
         } else {
             this.data = trim(messageParsed);
         }
+    }
+
+    void parseSingleDelete(String[] splitHeader) {
+        this.fileId = splitHeader[3];
+        this.destinationId = splitHeader[4];
     }
 }

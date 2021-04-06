@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DeleteChunk extends Thread {
+public class DeleteChunks extends Thread {
     private final String fileId;
-    public DeleteChunk(String fileId) {
+    public DeleteChunks(String fileId) {
         this.fileId = fileId;
     }
 
@@ -20,7 +20,6 @@ public class DeleteChunk extends Thread {
         try {
             deleteMatchChunks();
 
-            FileHandler.deleteChunks(fileId, "peers/peer_" + Peer.peer_no + "/chunks/");
             //if (chunkHash.size() != 0)
             Logger.SUC(this.getClass().getName(), "File " + fileId + " was deleted.");
         } catch (IOException e) {
@@ -28,12 +27,14 @@ public class DeleteChunk extends Thread {
         }
     }
 
-    private void deleteMatchChunks() {
+    private void deleteMatchChunks() throws IOException {
         ConcurrentHashMap<String, ChunkState> chunksState = Peer.peer_state.chunkStored;
-
+        if (chunksState == null) return;
         for (Map.Entry<String, ChunkState> chunkState : chunksState.entrySet()) {
-            if (chunkState.getKey().matches(fileId + "-\\d+"))
+            if (chunkState.getKey().matches(fileId + "-\\d+")) {
                 Peer.peer_state.removeChunk(chunkState.getKey());
+                FileHandler.deleteChunk(chunkState.getKey());
+            }
         }
     }
 }
