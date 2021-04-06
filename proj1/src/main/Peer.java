@@ -132,12 +132,6 @@ public class Peer implements Services {
         return "Store has executed";
     }
 
-    public String restoreEnhance(String fileName)  {
-        Logger.ANY("Peer", "RESTORE requested");
-        new RequestGetChunkEnhance(fileName).start();
-        return "Store has executed";
-    }
-
     public String delete(String filename)  {
         Logger.ANY("Peer", "DELETE requested");
 

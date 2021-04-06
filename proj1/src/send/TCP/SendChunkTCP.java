@@ -1,14 +1,14 @@
-package send;
+package send.TCP;
 
 import main.Peer;
+import send.MessageBuilder;
 
-
-public class SendChunk extends Send {
+public class SendChunkTCP extends SendTCP {
     String chunkNo;
     byte[] body;
     String fileId;
 
-    public SendChunk(String type, String fileId, byte[] body, String chunkNo) {
+    public SendChunkTCP(String type, String fileId, byte[] body, String chunkNo) {
         super(type, Peer.mdr_addr, Peer.mdr_port);
         this.fileId = fileId;
         this.body = body;

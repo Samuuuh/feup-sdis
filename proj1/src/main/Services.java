@@ -10,8 +10,6 @@ public interface Services extends Remote {
 
     String restore(String filePath) throws IOException;
 
-    String restoreEnhance(String filePath) throws IOException;
-
     String delete(String filePath) throws IOException;
 
     String reclaim(String space) throws IOException;

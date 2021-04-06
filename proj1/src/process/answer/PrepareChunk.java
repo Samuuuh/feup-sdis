@@ -5,6 +5,7 @@ import main.Peer;
 import main.etc.Logger;
 import main.etc.Singleton;
 import send.SendChunk;
+import send.TCP.SendChunkTCP;
 
 import java.io.File;
 import java.util.Random;
@@ -32,14 +33,18 @@ public class PrepareChunk extends Thread {
         try {
             if (file.exists()) {
                 byte[] body = FileHandler.readFile(path);
-                scheduleSendMessage(fileId, body, chunkNo, chunkId);
+                // TODO: VERSION HERE
+                if(false) {
+                    scheduleSendMessage(fileId, body, chunkNo, chunkId);
+                } else {
+                    scheduleSendMessageTCP(fileId, body, chunkNo, chunkId);
+                }
                 Logger.INFO(this.getClass().getName(), "Scheduled sending " + chunkId);
             }
         } catch (Exception e) {
             Logger.ERR(this.getClass().getName(), "Error restoring chunk " + chunkId);
         }
     }
-
 
     /**
      *  Will create Timer to schedule the operation.
@@ -59,6 +64,23 @@ public class PrepareChunk extends Thread {
             public void run() {
                 Logger.SUC(this.getClass().getName(), "Sent CHUNK, chunkNo: " + Singleton.getChunkId(fileId, chunkNo));
                 new SendChunk(Singleton.CHUNK, fileId, body, chunkNo).start();
+                this.cancel();      // Do not repeat.
+            }
+        };
+    }
+
+    private void scheduleSendMessageTCP(String fileId, byte[] body, String chunkNo, String chunkId){
+        Timer timer = new Timer();
+        timer.schedule(createTimerTaskTCP(fileId, body, chunkNo), new Random().nextInt(401));
+        Peer.restoreTasks.addTask(chunkId, timer);
+    }
+
+    private TimerTask createTimerTaskTCP(String fileId, byte[] body, String chunkNo){
+        return new TimerTask() {
+            @Override
+            public void run() {
+                Logger.SUC(this.getClass().getName(), "Sent CHUNK, chunkNo: " + Singleton.getChunkId(fileId, chunkNo));
+                new SendChunkTCP(Singleton.CHUNK, fileId, body, chunkNo).start();
                 this.cancel();      // Do not repeat.
             }
         };

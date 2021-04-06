@@ -104,7 +104,7 @@ public class Client {
     private void restore(String filePath) {
         try {
             Services stub = (Services) this.registry.lookup(this.peerAccessPoint);
-            String response = stub.restoreEnhance(filePath);
+            String response = stub.restore(filePath);
             System.out.println(response);
         }catch (IOException | NotBoundException e) {
             e.printStackTrace();

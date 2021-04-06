@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.Timer;
 
-// TODO: MDB
 public class MDBChannel extends Channel {
     public MDBChannel(int mcast_port, String mcast_addr) throws IOException {
         super(mcast_port, mcast_addr);
@@ -27,7 +26,6 @@ public class MDBChannel extends Channel {
                     continue;
 
                 if (messageParsed.getMessageType().equals(Singleton.PUTCHUNK)) {
-                    // If not out of space.
                     if (state.State.totalSpace>= state.State.occupiedSpace + messageParsed.getData().length) {
                         String chunkId = Singleton.getChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
                         Peer.reclaimBackupTasks.abortTask(chunkId);

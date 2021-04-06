@@ -1,7 +1,8 @@
-package send;
+package send.TCP;
+
+import send.MessageBuilder;
 
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.net.*;
 
 public class SendTCP extends Thread{
@@ -17,8 +18,9 @@ public class SendTCP extends Thread{
 
     @Override
     public void run() {
-        System.out.println("SendTCP");
         try {
+            // TODO: host: Peer IP
+            // TODO: port: Received on message
             Socket socket = new Socket("127.0.0.1", 6666);
             DataOutputStream channelSend = new DataOutputStream(socket.getOutputStream());
 

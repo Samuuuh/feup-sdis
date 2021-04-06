@@ -43,12 +43,11 @@ public class MCChannel extends Channel {
                     Logger.SUC(this.getClass().getName(), "STORED " + chunkId + " on PEER " + messageParsed.getSenderId());
                 }
 
+                // Receive server IP
                 else if (messageParsed.getMessageType().equals(Singleton.GETCHUNK)) {
                     new PrepareChunk(chunkId).start();
                 }
-
                 else if (messageParsed.getMessageType().equals(Singleton.DELETE)) {
-                    //if version 2
                     new SendWithFileId(Singleton.RCVDELETE, fileId, Peer.mc_addr, Peer.mc_port).start();
                     new DeleteChunks(messageParsed.getFileId()).start();
 
