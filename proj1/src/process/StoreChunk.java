@@ -30,7 +30,10 @@ public class StoreChunk extends Thread {
         String chunkId = Singleton.getChunkId(fileId,chunkNo);
         RestoreWaiting.restoreReceived(chunkId);
 
-        if (RestoreWaiting.numChunksToRestore(fileId) == 0) {
+        if (RestoreWaiting.numChunksToRestore(fileId) == 0 ) {
+            try {
+                Thread.sleep(400);
+            }catch (Exception e){}
             joinChunks();
         }
     }
@@ -46,4 +49,5 @@ public class StoreChunk extends Thread {
             e.printStackTrace();
         }
     }
+
 }

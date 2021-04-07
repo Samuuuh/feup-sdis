@@ -8,6 +8,7 @@ import send.SendChunk;
 import send.TCP.SendChunkTCP;
 
 import java.io.File;
+import java.net.InetAddress;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -19,7 +20,10 @@ public class PrepareChunk extends Thread {
     private final String fileId;
     private final String chunkNo;
     private final String chunkId;
-    public PrepareChunk(String chunkId) {
+    private InetAddress address;
+
+    public PrepareChunk(InetAddress address, String chunkId) {
+        this.address = address;
         this.chunkId = chunkId;
         this.chunkNo = Singleton.extractChunkNo(chunkId);
         this.fileId = Singleton.extractFileId(chunkId);
@@ -33,7 +37,6 @@ public class PrepareChunk extends Thread {
         try {
             if (file.exists()) {
                 byte[] body = FileHandler.readFile(path);
-                // TODO: VERSION HERE
                 if(false) {
                     scheduleSendMessage(fileId, body, chunkNo, chunkId);
                 } else {
@@ -80,7 +83,7 @@ public class PrepareChunk extends Thread {
             @Override
             public void run() {
                 Logger.SUC(this.getClass().getName(), "Sent CHUNK, chunkNo: " + Singleton.getChunkId(fileId, chunkNo));
-                new SendChunkTCP(Singleton.CHUNK, fileId, body, chunkNo).start();
+                new SendChunkTCP(Singleton.CHUNK, fileId, body, chunkNo, address).start();
                 this.cancel();      // Do not repeat.
             }
         };

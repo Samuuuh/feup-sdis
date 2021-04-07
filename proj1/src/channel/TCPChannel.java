@@ -14,13 +14,11 @@ import java.net.Socket;
 public class TCPChannel extends Thread {
     @Override
     public void run() {
-        ServerSocket serverSocket = null;
+        ServerSocket serverSocket;
         try {
-            // TODO: Send Port on Message?
-            // TODO: Send peer IP
             serverSocket = new ServerSocket(6666);
-        } catch (IOException e){
-            Logger.ERR(this.getClass().getName(),"Error on TCP Channel. Not initializating");
+        } catch (IOException e) {
+            System.out.println("Cannot initialize ServerSocket");
             return;
         }
 
@@ -32,6 +30,10 @@ public class TCPChannel extends Thread {
                 MessageParser messageParsed = new MessageParser(in.readAllBytes());
                 in.close();
 
+                if (messageParsed.getSenderId().equals(Peer.peer_no))
+                    continue;
+
+                System.out.println(messageParsed.getChunkNo());
                 if (messageParsed.getMessageType().equals(Singleton.CHUNK)) {
                     // Abort if exists the task to restore the chunk.
                     String chunkId = Singleton.getChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());

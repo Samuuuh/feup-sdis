@@ -18,23 +18,19 @@ public class DeleteChunks extends Thread {
     @Override
     public void run() {
         try {
-            deleteMatchChunks();
-
-            //if (chunkHash.size() != 0)
+            ConcurrentHashMap<String, ChunkState> chunksState = Peer.peer_state.chunkStored;
+            if (chunksState == null) return;
+            for (Map.Entry<String, ChunkState> chunkState : chunksState.entrySet()) {
+                if (chunkState.getKey().matches(fileId + "-\\d+")) {
+                    Peer.peer_state.removeChunk(chunkState.getKey());
+                    FileHandler.deleteChunk(chunkState.getKey());
+                }
+            }
             Logger.SUC(this.getClass().getName(), "File " + fileId + " was deleted.");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void deleteMatchChunks() throws IOException {
-        ConcurrentHashMap<String, ChunkState> chunksState = Peer.peer_state.chunkStored;
-        if (chunksState == null) return;
-        for (Map.Entry<String, ChunkState> chunkState : chunksState.entrySet()) {
-            if (chunkState.getKey().matches(fileId + "-\\d+")) {
-                Peer.peer_state.removeChunk(chunkState.getKey());
-                FileHandler.deleteChunk(chunkState.getKey());
-            }
-        }
-    }
 }

@@ -41,6 +41,11 @@ public class Singleton {
     public static String STATE_FILE_NAME = "state.ser";
     public static int SAVE_PERIOD = 5;
 
+    // Versions
+    public static String VERSION_BACKUP_ENH = "4.0";
+    public static String VERSION_TCP_ENH = "3.0";
+    public static String VERSION_DELETE_ENH = "2.0";
+
     public static String getStatePath(String peer_no) {
         return "peers/peer_" + peer_no + "/savedState/";
     }

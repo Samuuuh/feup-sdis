@@ -24,7 +24,7 @@ public class Tasks {
             Timer restoredTimer = tasks.remove(chunkId);
             if (restoredTimer != null) {
                 restoredTimer.cancel();
-                Logger.ABORT_SEND("dataStructure.restore.RestoreTasks", "Abort task " + chunkId);
+                Logger.ABORT_SEND(this.getClass().getName(), "Abort task " + chunkId);
             }
         } catch (NullPointerException ignored) {
         }

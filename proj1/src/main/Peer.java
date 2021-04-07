@@ -111,19 +111,20 @@ public class Peer implements Services {
     }
 
 
-    // Send message saying that the peer is on.
-    public static void sendBoot(){
-        new Send(Singleton.BOOT, Peer.mc_addr, Peer.mc_port).start();
-        Logger.ANY("main", "Sent BOOT message");
-    }
-
 
     // SERVICES
-    public String backup(String filePath, int replicationDeg)  {
-        Logger.ANY("Peer", "BACKUP requested");
-        new RequestFilePutChunk(filePath, String.valueOf(replicationDeg)).start();
+    // Send message saying that the peer is on.
+    public static void sendBoot(){
 
-        return "Backup has executed";
+        if (version.equals(Singleton.VERSION_DELETE_ENH)) {
+            new Send(Singleton.BOOT, Peer.mc_addr, Peer.mc_port).start();
+            Logger.REQUEST("Peer", "BOOT requested");
+        }
+    }
+    public String backup(String filePath, int replicationDeg)  {
+        Logger.REQUEST("Peer", "BACKUP requested");
+        new RequestFilePutChunk(filePath, String.valueOf(replicationDeg)).start();
+        return "Backup started";
     }
 
     public String restore(String fileName)  {
