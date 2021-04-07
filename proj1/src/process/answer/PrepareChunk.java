@@ -37,10 +37,10 @@ public class PrepareChunk extends Thread {
         try {
             if (file.exists()) {
                 byte[] body = FileHandler.readFile(path);
-                if(false) {
-                    scheduleSendMessage(fileId, body, chunkNo, chunkId);
-                } else {
+                if(Peer.version.equals(Singleton.VERSION_TCP_ENH)) {
                     scheduleSendMessageTCP(fileId, body, chunkNo, chunkId);
+                } else {
+                    scheduleSendMessage(fileId, body, chunkNo, chunkId);
                 }
                 Logger.INFO(this.getClass().getName(), "Scheduled sending " + chunkId);
             }
@@ -79,11 +79,12 @@ public class PrepareChunk extends Thread {
     }
 
     private TimerTask createTimerTaskTCP(String fileId, byte[] body, String chunkNo){
+        // TODO: Receive port 6666 from message parser
         return new TimerTask() {
             @Override
             public void run() {
                 Logger.SUC(this.getClass().getName(), "Sent CHUNK, chunkNo: " + Singleton.getChunkId(fileId, chunkNo));
-                new SendChunkTCP(Singleton.CHUNK, fileId, body, chunkNo, address).start();
+                new SendChunkTCP(Singleton.CHUNK, fileId, body, chunkNo, address, 6666).start();
                 this.cancel();      // Do not repeat.
             }
         };

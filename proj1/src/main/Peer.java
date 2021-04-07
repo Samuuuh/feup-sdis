@@ -39,6 +39,9 @@ public class Peer implements Services {
     public static String mdr_addr;
     public static int mdr_port;
 
+    // TCP
+    public static int tcp_port;
+
     // Chunks that are being restored.
     public static Tasks restoreTasks = new Tasks();
     // Removed chunks from reclaim that will need to be restored.

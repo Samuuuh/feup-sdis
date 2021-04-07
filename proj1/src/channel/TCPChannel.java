@@ -12,15 +12,21 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class TCPChannel extends Thread {
-    @Override
-    public void run() {
-        ServerSocket serverSocket;
+    private ServerSocket serverSocket;
+
+    public TCPChannel() {
+        serverSocket = null;
         try {
+            // TODO: ASK TEACHER
             serverSocket = new ServerSocket(6666);
+            Peer.tcp_port = 6666;
         } catch (IOException e) {
             System.out.println("Cannot initialize ServerSocket");
-            return;
         }
+    }
+    @Override
+    public void run() {
+        if (serverSocket == null) return;
 
         while (true) {
             try {

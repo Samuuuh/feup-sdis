@@ -10,8 +10,8 @@ public class SendChunkTCP extends SendTCP {
     byte[] body;
     String fileId;
 
-    public SendChunkTCP(String type, String fileId, byte[] body, String chunkNo, InetAddress address) {
-        super(type, address, 6666);
+    public SendChunkTCP(String type, String fileId, byte[] body, String chunkNo, InetAddress address, int port) {
+        super(type, address, port);
         this.fileId = fileId;
         this.body = body;
         this.chunkNo = chunkNo;
