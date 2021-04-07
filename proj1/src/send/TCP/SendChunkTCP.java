@@ -1,15 +1,17 @@
-package send;
+package send.TCP;
 
 import main.Peer;
+import send.MessageBuilder;
 
+import java.net.InetAddress;
 
-public class SendChunk extends Send {
+public class SendChunkTCP extends SendTCP {
     String chunkNo;
     byte[] body;
     String fileId;
 
-    public SendChunk(String type, String fileId, byte[] body, String chunkNo) {
-        super(type, Peer.mdr_addr, Peer.mdr_port);
+    public SendChunkTCP(String type, String fileId, byte[] body, String chunkNo, InetAddress address, int port) {
+        super(type, address, port);
         this.fileId = fileId;
         this.body = body;
         this.chunkNo = chunkNo;

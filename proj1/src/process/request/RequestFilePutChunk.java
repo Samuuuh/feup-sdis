@@ -46,7 +46,7 @@ public class RequestFilePutChunk extends Thread {
                 new SendPutChunk(fileId, replicationDeg, chunk).start();
             }
 
-            Logger.REQUEST(this.getClass().getName(), "Requested PUTCHUNK on " + fileId);
+            Logger.REQUEST(this.getClass().getName(), "Finished requesting PUTCHUNK on " + fileId);
             scheduleBackupCheck();
             Logger.INFO(this.getClass().getName(), "Scheduled backup checking of file " + fileId);
         } catch (IOException e) {

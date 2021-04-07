@@ -26,6 +26,10 @@ public class State implements Serializable {
         this.peer_no = peer_no;
     }
 
+    public Boolean canPutFile(Integer chunkSize){
+        return state.State.totalSpace>= state.State.occupiedSpace + chunkSize;
+    }
+
     public void putFile(String key, FileState fileState) {
         filesBackup.put(key, fileState);
     }
@@ -48,6 +52,12 @@ public class State implements Serializable {
         chunkStored.remove(key);
     }
 
+    public void removeChunkFromFileState(String fileId, String chunkId){
+        FileState fileState = getFileState(fileId);
+        if (fileState != null) {
+            fileState.removeChunkState(chunkId);
+        }
+    }
     public void removeFileToDelete(String peer_no, String fileId){
         List<String> filesId = filesToDelete.get(peer_no);
         if (filesId != null){
@@ -117,6 +127,6 @@ public class State implements Serializable {
         System.out.println(filesBackup.size());
         System.out.println(filesBackup.toString());*/
 
-        System.out.println(filesToDelete);
+        // System.out.println(filesToDelete);
     }
 }

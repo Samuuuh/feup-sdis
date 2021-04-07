@@ -44,6 +44,9 @@ public class ChunkState implements Serializable {
         return storedPeers.size() >= desiredRepDeg;
     }
 
+    public int getPerceivedRepDeg() {
+        return storedPeers.size();
+    }
     public void addStoredPeer(String peer) {
         if (!storedPeers.contains(peer)) {
             storedPeers.add(peer);

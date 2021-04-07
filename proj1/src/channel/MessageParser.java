@@ -50,13 +50,14 @@ public class MessageParser {
                     this.messageType.equals(Singleton.REMOVED) ||
                     this.messageType.equals(Singleton.GETCHUNK)) {
                 parseWithChunkNo(splitHeader);
-
             } else if (this.messageType.equals(Singleton.CHUNK)) {
                 parseChunk(splitHeader, message);
             } else if (this.messageType.equals(Singleton.DELETE) || this.messageType.equals(Singleton.RCVDELETE)) {
                 this.fileId = splitHeader[3];
-            } else if (this.messageType.equals(Singleton.SINGLEDELETE)) {
+            } else if (this.messageType.equals(Singleton.SINGLEDELETEFILE)) {
                 parseSingleDelete(splitHeader);
+            }else if (this.messageType.equals(Singleton.SINGLEDELETECHUNK)){
+                parseSingleDeleteChunk(splitHeader);
             }
 
 
@@ -153,5 +154,11 @@ public class MessageParser {
     void parseSingleDelete(String[] splitHeader) {
         this.fileId = splitHeader[3];
         this.destinationId = splitHeader[4];
+    }
+
+    void parseSingleDeleteChunk(String[] splitHeader){
+        this.fileId = splitHeader[3];
+        this.chunkNo = splitHeader[4];
+        this.destinationId = splitHeader[5];
     }
 }

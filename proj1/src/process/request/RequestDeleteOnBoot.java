@@ -19,7 +19,7 @@ public class RequestDeleteOnBoot extends Thread {
         if (filesToDelete == null) return;
 
         for (String fileId: filesToDelete){
-            new SendSingleDelete(Singleton.SINGLEDELETE, peer_no, fileId, Peer.mc_addr, Peer.mc_port).start();
+            new SendSingleDelete(Singleton.SINGLEDELETEFILE, peer_no, fileId, Peer.mc_addr, Peer.mc_port).start();
         }
 
         Peer.peer_state.removeDeletesOfPeer(peer_no);

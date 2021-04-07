@@ -5,6 +5,7 @@ package main;
 import channel.MCChannel;
 import channel.MDBChannel;
 import channel.MDRChannel;
+import channel.TCPChannel;
 import main.etc.Logger;
 import main.etc.Singleton;
 import process.request.*;
@@ -38,6 +39,9 @@ public class Peer implements Services {
     public static String mdr_addr;
     public static int mdr_port;
 
+    // TCP
+    public static int tcp_port;
+
     // Chunks that are being restored.
     public static Tasks restoreTasks = new Tasks();
     // Removed chunks from reclaim that will need to be restored.
@@ -50,6 +54,7 @@ public class Peer implements Services {
         new MCChannel(mcast_port, mcast_addr).start();
         new MDBChannel(mdb_port, mdb_addr).start();
         new MDRChannel(mdr_port, mdr_addr).start();
+        new TCPChannel().start();
     }
 
     public static void main(String[] args) throws IOException {
@@ -109,19 +114,20 @@ public class Peer implements Services {
     }
 
 
-    // Send message saying that the peer is on.
-    public static void sendBoot(){
-        new Send(Singleton.BOOT, Peer.mc_addr, Peer.mc_port).start();
-        Logger.ANY("main", "Sent BOOT message");
-    }
-
 
     // SERVICES
-    public String backup(String filePath, int replicationDeg)  {
-        Logger.ANY("Peer", "BACKUP requested");
-        new RequestFilePutChunk(filePath, String.valueOf(replicationDeg)).start();
+    // Send message saying that the peer is on.
+    public static void sendBoot(){
 
-        return "Backup has executed";
+        if (version.equals(Singleton.VERSION_DELETE_ENH)) {
+            new Send(Singleton.BOOT, Peer.mc_addr, Peer.mc_port).start();
+            Logger.REQUEST("Peer", "BOOT requested");
+        }
+    }
+    public String backup(String filePath, int replicationDeg)  {
+        Logger.REQUEST("Peer", "BACKUP requested");
+        new RequestFilePutChunk(filePath, String.valueOf(replicationDeg)).start();
+        return "Backup started";
     }
 
     public String restore(String fileName)  {

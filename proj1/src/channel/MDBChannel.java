@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.Timer;
 
-// TODO: MDB
 public class MDBChannel extends Channel {
     public MDBChannel(int mcast_port, String mcast_addr) throws IOException {
         super(mcast_port, mcast_addr);
@@ -26,13 +25,12 @@ public class MDBChannel extends Channel {
                 if (messageParsed.getSenderId().equals(Peer.peer_no))
                     continue;
 
+
                 if (messageParsed.getMessageType().equals(Singleton.PUTCHUNK)) {
-                    // If not out of space.
-                    if (state.State.totalSpace>= state.State.occupiedSpace + messageParsed.getData().length) {
+                    if (Peer.peer_state.canPutFile(messageParsed.getData().length)) {
                         String chunkId = Singleton.getChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());
                         Peer.reclaimBackupTasks.abortTask(chunkId);
-                        ChunkState chunkState = new ChunkState(chunkId, Integer.parseInt(messageParsed.getReplicationDeg()), messageParsed.getData().length/1000);
-                        Peer.peer_state.putChunk(chunkId, chunkState);
+                        updateState(messageParsed, chunkId);
                         scheduleStore(messageParsed, chunkId);
                     }
                 }
@@ -44,9 +42,14 @@ public class MDBChannel extends Channel {
     }
 
     private void scheduleStore(MessageParser messageParsed, String chunkId){
-        double delay = Math.random() * 2000 + 1;
+        double delay = Math.random() * 400 + 1;
         Timer storeTimer = new Timer();
         storeTimer.schedule(new PrepareStored(messageParsed), (long) delay);
         Peer.storeTasks.addTask(chunkId, storeTimer);
+    }
+
+    private void updateState(MessageParser messageParsed, String chunkId){
+        ChunkState chunkState = new ChunkState(chunkId, Integer.parseInt(messageParsed.getReplicationDeg()), messageParsed.getData().length/1000);
+        Peer.peer_state.putChunk(chunkId, chunkState);
     }
 }

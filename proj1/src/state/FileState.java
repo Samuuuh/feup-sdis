@@ -32,16 +32,20 @@ public class FileState implements Serializable {
     public String getFilePath(){
         return filePath;
     }
-
     public void addChunk(String chunkId, int desiredRepDeg) {
         ChunkState chunkState = new ChunkState(chunkId, desiredRepDeg);
         chunkStateHash.put(chunkId, chunkState);
+    }
+
+    public void removeChunkState(String chunkId){
+        chunkStateHash.remove(chunkId);
     }
 
     public ChunkState getChunkState(String chunkNo) {
         String chunkId = Singleton.getChunkId(fileId, chunkNo);
         return chunkStateHash.get(chunkId);
     }
+
 
 
     public String toString() {

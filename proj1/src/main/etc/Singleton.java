@@ -22,19 +22,29 @@ public class Singleton {
 
     // <Version> CHUNK <SenderId> <FileId> <ChunkNo> <CRLF><CRLF><Body>
     public static String CHUNK = "CHUNK";
+    // <Version> CHUNKDELETE <SenderId> <FileId> <ChunkNo>
 
     // <Version> DELETE <SenderId> <FileId> <CRLF><CRLF>
     public static String DELETE = "DELETE";
     // <Version> BOOT <SenderId>
     public static String BOOT = "BOOT";
+
     // <Version> SINGLEDELETE <SenderId> <FileId> <DestinationId>
-    public static String SINGLEDELETE = "SINGLEDELETE";
+    public static String SINGLEDELETEFILE = "SINGLEDELETEFILE";
+    // <Version> SINGLEDELETECHUNK <SenderId> <FileId> <ChunkNo> <DestinationId>
+    public static String SINGLEDELETECHUNK = "SINGLEDELETECHUNK";
     // <version> RCVDELETE <SenderId> <FileId>
     public static String RCVDELETE = "RCVDELETE";
+
 
     // State
     public static String STATE_FILE_NAME = "state.ser";
     public static int SAVE_PERIOD = 5;
+
+    // Versions
+    public static String VERSION_BACKUP_ENH = "4.0";
+    public static String VERSION_TCP_ENH = "3.0";
+    public static String VERSION_DELETE_ENH = "2.0";
 
     public static String getStatePath(String peer_no) {
         return "peers/peer_" + peer_no + "/savedState/";
