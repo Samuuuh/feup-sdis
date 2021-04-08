@@ -119,7 +119,7 @@ public class Peer implements Services {
     // Send message saying that the peer is on.
     public static void sendBoot(){
 
-        if (version.equals(Singleton.VERSION_DELETE_ENH)) {
+        if (version.equals(Singleton.VERSION_ENH)) {
             new Send(Singleton.BOOT, Peer.mc_addr, Peer.mc_port).start();
             Logger.REQUEST("Peer", "BOOT requested");
         }

@@ -20,7 +20,7 @@ public class PrepareChunk extends Thread {
     private final String fileId;
     private final String chunkNo;
     private final String chunkId;
-    private InetAddress address;
+    private final InetAddress address;
 
     public PrepareChunk(InetAddress address, String chunkId) {
         this.address = address;
@@ -37,7 +37,7 @@ public class PrepareChunk extends Thread {
         try {
             if (file.exists()) {
                 byte[] body = FileHandler.readFile(path);
-                if(Peer.version.equals(Singleton.VERSION_TCP_ENH)) {
+                if(Peer.version.equals(Singleton.VERSION_ENH)) {
                     scheduleSendMessageTCP(fileId, body, chunkNo, chunkId);
                 } else {
                     scheduleSendMessage(fileId, body, chunkNo, chunkId);

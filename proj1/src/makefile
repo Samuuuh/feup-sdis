@@ -4,7 +4,7 @@ CC = javac
 
 find_dir = $(wildcard $(dir)/*.java)
 find_class = $(wildcard $(dir)/*.class)
-PACKAGES := channel main main/etc process/answer process/request process/postAnswer send state tasks tasks/restore tasks/backup process
+PACKAGES := channel main main/etc process/answer process/request process/postAnswer send/TCP state tasks tasks/restore tasks/backup process
 CLASSES = $(foreach dir, $(PACKAGES), $(find_class))
 FILES = $(foreach dir, $(PACKAGES), $(find_dir))
 

@@ -5,17 +5,16 @@ import main.etc.FileHandler;
 import main.etc.Logger;
 import main.etc.Singleton;
 import send.SendWithChunkNo;
+import state.State;
 
 import java.io.IOException;
 import java.util.Set;
 
 public class RequestReclaim extends Thread {
     protected int reclaimSpace;
-    private int spaceAfterReclaim;
 
     public RequestReclaim(String space) {
         this.reclaimSpace = Integer.parseInt(space)*1000;
-        this.spaceAfterReclaim = state.State.totalSpace - this.reclaimSpace;
     }
 
 
@@ -25,15 +24,13 @@ public class RequestReclaim extends Thread {
 
         if (reclaimWithoutDelete()) return;
 
-        // Shrink the part without files.
-        state.State.totalSpace = state.State.occupiedSpace;
-        if (this.reclaimSpace == 0) this.spaceAfterReclaim = 0;
+        state.State.totalSpace = this.reclaimSpace;
 
         for(String chunkId: chunksId) {
-            if (state.State.totalSpace <= spaceAfterReclaim)
+            if (state.State.occupiedSpace <= state.State.totalSpace)
                 break;
 
-            state.State.totalSpace -= Peer.peer_state.getChunkState(chunkId).getSize();
+            state.State.occupiedSpace -= Peer.peer_state.getChunkState(chunkId).getSize();
             String fileId = Singleton.extractFileId(chunkId);
             String chunkNo = Singleton.extractChunkNo(chunkId);
 
@@ -48,17 +45,15 @@ public class RequestReclaim extends Thread {
             Logger.REQUEST(this.getClass().getName(), "REMOVED " + chunkId);
         }
 
-        if (state.State.totalSpace < 0) state.State.totalSpace = 0;
-        state.State.occupiedSpace = state.State.totalSpace;
+        if (state.State.occupiedSpace < 0) state.State.occupiedSpace = 0;
 
         Logger.ANY(this.getClass().getName(), "CURRENT TOTAL SPACE " + state.State.totalSpace + " || OCCUPIED SPACE " + state.State.occupiedSpace);
     }
 
     private Boolean reclaimWithoutDelete() {
-        int currentSpace = state.State.totalSpace - state.State.occupiedSpace;
-        if (this.reclaimSpace != 0 && currentSpace > this.reclaimSpace) {
-            state.State.totalSpace -= this.reclaimSpace;
-            Logger.SUC(this.getClass().getName(), "CURRENT TOTAL SPACE " + state.State.totalSpace + " || OCCUPIED SPACE " + state.State.occupiedSpace );
+        if (this.reclaimSpace != 0 && this.reclaimSpace > state.State.occupiedSpace) {
+            state.State.totalSpace = this.reclaimSpace;
+            Logger.SUC(this.getClass().getName(), "CURRENT TOTAL SPACE " + state.State.totalSpace + " KB || OCCUPIED SPACE " + state.State.occupiedSpace + "KB");
             return true;
         }
         return false;
