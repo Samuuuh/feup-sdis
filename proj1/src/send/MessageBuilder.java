@@ -35,8 +35,11 @@ public class MessageBuilder {
 
     public void addDestinationId(String destinationId){ header += " " + destinationId; }
 
+    public void addTcpPort(String port){
+        header += "\r\n" + port ;
+    }
     public byte[] buildWithBody(byte[] bodyBytes) {
-        header += "\r\n";
+        header += "\r\n\r\n";
         byte[] headerBytes = header.getBytes();
         byte[] merge = Arrays.copyOf(headerBytes, headerBytes.length + bodyBytes.length);
         System.arraycopy(bodyBytes, 0, merge, headerBytes.length, bodyBytes.length);
@@ -44,7 +47,7 @@ public class MessageBuilder {
     }
 
     public byte[] build() {
-        header += "\r\n";
+        header += "\r\n\r\n";
         return header.getBytes();
     }
 

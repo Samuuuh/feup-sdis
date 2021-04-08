@@ -17,9 +17,9 @@ public class TCPChannel extends Thread {
     public TCPChannel() {
         serverSocket = null;
         try {
-            // TODO: ASK TEACHER
-            serverSocket = new ServerSocket(6666);
-            Peer.tcp_port = 6666;
+            serverSocket = new ServerSocket(0);
+            Peer.tcp_port = serverSocket.getLocalPort();
+            System.out.println(Peer.tcp_port);
         } catch (IOException e) {
             System.out.println("Cannot initialize ServerSocket");
         }

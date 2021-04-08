@@ -21,6 +21,7 @@ public class SendChunkTCP extends SendTCP {
     protected byte[] buildMessage(MessageBuilder messageBuilder) {
         messageBuilder.addFileId(fileId);
         messageBuilder.addChunkNo(chunkNo);
+        System.out.println(port);
         return messageBuilder.buildWithBody(body);
     }
 }

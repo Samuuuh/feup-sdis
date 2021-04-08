@@ -1,5 +1,6 @@
 package process.request;
 
+import send.TCP.SendGetChunkEnh;
 import tasks.restore.RestoreWaiting;
 import main.Peer;
 import main.etc.Logger;
@@ -29,7 +30,6 @@ public class RequestGetChunk extends Thread {
             Logger.ERR(this.getClass().getName(), "Failed REQUESTING GETCHUNK on " + fileId);
             return;
         }
-
         addToWaitingList(chunksState);
 
         Logger.REQUEST(this.getClass().getName(), "Requested GETCHUNK on " + fileId);
@@ -39,8 +39,15 @@ public class RequestGetChunk extends Thread {
         chunksState.forEach((chunkId,chunkState)->{
             String chunkNo = Singleton.extractChunkNo(chunkId);
             RestoreWaiting.addWaitingToRestore(chunkId);
-            new SendWithChunkNo(Singleton.GETCHUNK, fileId, chunkNo, Peer.mc_addr, Peer.mc_port).start();
+            sendRequest(chunkNo);
         });
+    }
+
+    private void sendRequest(String chunkNo){
+        if (Peer.version.equals(Singleton.VERSION_ENH))
+            new SendGetChunkEnh(Singleton.GETCHUNK, fileId, chunkNo, Peer.mc_addr, Peer.mc_port, String.valueOf(Peer.tcp_port)).start();
+        else
+            new SendWithChunkNo(Singleton.GETCHUNK, fileId, chunkNo, Peer.mc_addr, Peer.mc_port).start();
     }
 
 };

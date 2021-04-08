@@ -70,7 +70,6 @@ public class Singleton {
         return chunkId.split("-")[1];
     }
 
-
     public static String hash(String filePath) {
         File file = new File(filePath);
         String identifier = file.getName() + "/" + file.length() + "/" + file.lastModified();

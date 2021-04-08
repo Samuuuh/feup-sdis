@@ -1,5 +1,6 @@
 package process.answer;
 
+import channel.MessageParser;
 import main.etc.FileHandler;
 import main.Peer;
 import main.etc.Logger;
@@ -21,12 +22,23 @@ public class PrepareChunk extends Thread {
     private final String chunkNo;
     private final String chunkId;
     private final InetAddress address;
+    private final int portTcp;
 
-    public PrepareChunk(InetAddress address, String chunkId) {
+    public  PrepareChunk(InetAddress address, String chunkId) {
         this.address = address;
         this.chunkId = chunkId;
         this.chunkNo = Singleton.extractChunkNo(chunkId);
         this.fileId = Singleton.extractFileId(chunkId);
+        this.portTcp = 0;
+    }
+
+    public PrepareChunk(InetAddress address, String chunkId, int portTcp){
+        this.address = address;
+        this.chunkId = chunkId;
+        this.chunkNo = Singleton.extractChunkNo(chunkId);
+        this.fileId = Singleton.extractFileId(chunkId);
+        this.portTcp = portTcp;
+
     }
 
     @Override
@@ -65,7 +77,7 @@ public class PrepareChunk extends Thread {
          return new TimerTask() {
             @Override
             public void run() {
-                Logger.SUC(this.getClass().getName(), "Sent CHUNK, chunkNo: " + Singleton.getChunkId(fileId, chunkNo));
+                Logger.SUC(this.getClass().getName(), "Sent GETCHUNK, chunkNo: " + Singleton.getChunkId(fileId, chunkNo));
                 new SendChunk(Singleton.CHUNK, fileId, body, chunkNo).start();
                 this.cancel();      // Do not repeat.
             }
@@ -83,8 +95,8 @@ public class PrepareChunk extends Thread {
         return new TimerTask() {
             @Override
             public void run() {
-                Logger.SUC(this.getClass().getName(), "Sent CHUNK, chunkNo: " + Singleton.getChunkId(fileId, chunkNo));
-                new SendChunkTCP(Singleton.CHUNK, fileId, body, chunkNo, address, 6666).start();
+                Logger.SUC(this.getClass().getName(), "Sent GETCHUNK, chunkNo: " + Singleton.getChunkId(fileId, chunkNo));
+                new SendChunkTCP(Singleton.CHUNK, fileId, body, chunkNo, address, portTcp).start();
                 this.cancel();      // Do not repeat.
             }
         };

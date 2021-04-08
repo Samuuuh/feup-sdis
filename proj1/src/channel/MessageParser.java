@@ -1,8 +1,10 @@
 package channel;
 
+import main.Peer;
 import main.etc.Singleton;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 
@@ -22,6 +24,7 @@ public class MessageParser {
     private String replicationDeg;
     private String headerString;
     private String destinationId;       // Identification of the peer as destination.
+    private int tcpPort;
 
     // Body
     private byte[] data;
@@ -45,7 +48,8 @@ public class MessageParser {
 
             if (this.messageType.equals(Singleton.PUTCHUNK)) {
                 parsePutchunk(splitHeader, message);
-
+            } else if (this.messageType.equals(Singleton.GETCHUNK) && Peer.version.equals(Singleton.VERSION_ENH)) {
+                parseTcpPort(byteMessage);
             } else if (this.messageType.equals(Singleton.STORED) ||
                     this.messageType.equals(Singleton.REMOVED) ||
                     this.messageType.equals(Singleton.GETCHUNK)) {
@@ -56,14 +60,16 @@ public class MessageParser {
                 this.fileId = splitHeader[3];
             } else if (this.messageType.equals(Singleton.SINGLEDELETEFILE)) {
                 parseSingleDelete(splitHeader);
-            }else if (this.messageType.equals(Singleton.SINGLEDELETECHUNK)){
+            } else if (this.messageType.equals(Singleton.SINGLEDELETECHUNK)) {
                 parseSingleDeleteChunk(splitHeader);
             }
 
 
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             System.out.println(e);
         }
+
     }
 
     public String getVersion() {
@@ -94,6 +100,10 @@ public class MessageParser {
         return data;
     }
 
+    public int getTcpPort(){
+        return tcpPort;
+    }
+
     public String getDestinationId() {
         return destinationId;
     }
@@ -101,11 +111,10 @@ public class MessageParser {
     static int splitHeader(byte[] bytes) {
         int i = 0;
         while (true) {
-            if (((bytes[i] == (byte) 0x0D) && (bytes[i + 1] == (byte) 0x0A)) || i >= bytes.length) break;
+            if (((bytes[i] == (byte) 0x0D) && (bytes[i + 1] == (byte) 0x0A) && (bytes[i+2] == (byte) 0x0D) && (bytes[i+3] == (byte)0x0A)) || i >= bytes.length) break;
             i++;
         }
-
-        return i + 1;
+        return i + 3;
     }
 
     static byte[] trim(byte[] bytes) {
@@ -152,9 +161,17 @@ public class MessageParser {
         this.destinationId = splitHeader[4];
     }
 
-    void parseSingleDeleteChunk(String[] splitHeader){
+    void parseSingleDeleteChunk(String[] splitHeader) {
         this.fileId = splitHeader[3];
         this.chunkNo = splitHeader[4];
         this.destinationId = splitHeader[5];
+    }
+
+    void parseTcpPort(byte[] header) throws UnsupportedEncodingException {
+        System.out.println("Parse Tcp Port ");
+        String messageHeader = new String(header, "ISO-8859-1");
+        String[] splitHeader = messageHeader.split("\r\n");
+        parseWithChunkNo(splitHeader[0].split(" "));
+        tcpPort = Integer.parseInt(splitHeader[1]);
     }
 }

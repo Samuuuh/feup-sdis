@@ -38,8 +38,14 @@ public class MCChannel extends Channel {
                 if (messageParsed.getMessageType().equals(Singleton.STORED))
                     handleStored(messageParsed, chunkId);
 
-                else if (messageParsed.getMessageType().equals(Singleton.GETCHUNK))
-                    new PrepareChunk(packet.getAddress(), chunkId).start();
+
+                else if (messageParsed.getMessageType().equals(Singleton.GETCHUNK)) {
+                    // TODO: check get Address
+                    if (Peer.version.equals(Singleton.VERSION_ENH))
+                        new PrepareChunk(packet.getAddress(), chunkId, messageParsed.getTcpPort()).start();
+                    else
+                        new PrepareChunk(packet.getAddress(), chunkId).start();
+                }
 
                 else if (messageParsed.getMessageType().equals(Singleton.DELETE))
                     handleDelete(messageParsed, chunkId);
@@ -65,7 +71,6 @@ public class MCChannel extends Channel {
                     Logger.INFO(this.getClass().getName(), "Received " + Singleton.SINGLEDELETECHUNK + " for peer " + messageParsed.getDestinationId() + "\n");
                     if (messageParsed.getDestinationId().equals(Peer.peer_no))
                         new DeleteSingleChunk(chunkId).start();
-
                 }
 
             } catch (Exception e) {
