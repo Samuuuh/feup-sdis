@@ -9,8 +9,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class State implements Serializable {
-    public static int totalSpace = 1000000;
-    public static int occupiedSpace = 0;
+    public int totalSpace = 1000000;
+    public int occupiedSpace = 0;
     public final String peer_no;
 
     public ConcurrentHashMap<String, FileState> filesBackup = new ConcurrentHashMap<>();
@@ -27,7 +27,7 @@ public class State implements Serializable {
     }
 
     public Boolean canPutFile(Integer chunkSize) {
-        return state.State.totalSpace >= state.State.occupiedSpace + chunkSize;
+        return totalSpace >= occupiedSpace + chunkSize;
     }
 
     public void putFile(String key, FileState fileState) {
@@ -123,7 +123,7 @@ public class State implements Serializable {
         StringBuilder s = new StringBuilder("Files that peer " + peer_no + " has initiated backup: \n");
         Set<String> setOfFileIds = filesBackup.keySet();
 
-        if (setOfFileIds.size() == 0)  s.append("--------\n\n"); 
+        if (setOfFileIds.size() == 0)  s.append("--------\n\n");
             for (String fileId : setOfFileIds)
             s.append(getFileState(fileId));
 

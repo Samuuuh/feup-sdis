@@ -5,7 +5,6 @@ import main.etc.FileHandler;
 import main.etc.Logger;
 import main.etc.Singleton;
 import send.SendWithChunkNo;
-import state.State;
 
 import java.io.IOException;
 import java.util.Set;
@@ -24,13 +23,13 @@ public class RequestReclaim extends Thread {
 
         if (reclaimWithoutDelete()) return;
 
-        state.State.totalSpace = this.reclaimSpace;
+        Peer.peer_state.totalSpace = this.reclaimSpace;
 
         for(String chunkId: chunksId) {
-            if (state.State.occupiedSpace <= state.State.totalSpace)
+            if (Peer.peer_state.occupiedSpace <= Peer.peer_state.totalSpace)
                 break;
 
-            state.State.occupiedSpace -= Peer.peer_state.getChunkState(chunkId).getSize();
+            Peer.peer_state.occupiedSpace -= Peer.peer_state.getChunkState(chunkId).getSize();
             String fileId = Singleton.extractFileId(chunkId);
             String chunkNo = Singleton.extractChunkNo(chunkId);
 
@@ -45,15 +44,15 @@ public class RequestReclaim extends Thread {
             Logger.REQUEST(this.getClass().getName(), "REMOVED " + chunkId);
         }
 
-        if (state.State.occupiedSpace < 0) state.State.occupiedSpace = 0;
+        if (Peer.peer_state.occupiedSpace < 0) Peer.peer_state.occupiedSpace = 0;
 
-        Logger.ANY(this.getClass().getName(), "CURRENT TOTAL SPACE " + state.State.totalSpace + " || OCCUPIED SPACE " + state.State.occupiedSpace);
+        Logger.ANY(this.getClass().getName(), "CURRENT TOTAL SPACE " + Peer.peer_state.totalSpace + " || OCCUPIED SPACE " + Peer.peer_state.occupiedSpace);
     }
 
     private Boolean reclaimWithoutDelete() {
-        if (this.reclaimSpace != 0 && this.reclaimSpace > state.State.occupiedSpace) {
-            state.State.totalSpace = this.reclaimSpace;
-            Logger.SUC(this.getClass().getName(), "CURRENT TOTAL SPACE " + state.State.totalSpace + " KB || OCCUPIED SPACE " + state.State.occupiedSpace + "KB");
+        if (this.reclaimSpace != 0 && this.reclaimSpace > Peer.peer_state.occupiedSpace) {
+            Peer.peer_state.totalSpace = this.reclaimSpace;
+            Logger.SUC(this.getClass().getName(), "CURRENT TOTAL SPACE " + Peer.peer_state.totalSpace + " KB || OCCUPIED SPACE " + Peer.peer_state.occupiedSpace + "KB");
             return true;
         }
         return false;
