@@ -29,18 +29,16 @@ public class MessageParser {
     // Body
     private byte[] data;
 
-    public MessageParser(byte[] byteMessage) {
+    public MessageParser(byte[] byteMessage, int length) {
         try {
             int endHeaderByte = splitHeader(byteMessage);
             byte[] header = Arrays.copyOfRange(byteMessage, 0, endHeaderByte);
-            byte[] message = trim(Arrays.copyOfRange(byteMessage, endHeaderByte + 1, byteMessage.length));
-
+            byte[] message = Arrays.copyOfRange(byteMessage, endHeaderByte + 1, length);
             String messageHeader = new String(header, "ISO-8859-1");
 
             // Header Parser
             this.headerString = messageHeader.replaceAll("\\s+", " ");
             String[] splitHeader = this.headerString.split(" ");
-
             this.version = splitHeader[0];
             this.messageType = splitHeader[1];
             this.senderId = splitHeader[2];
@@ -100,7 +98,7 @@ public class MessageParser {
         return data;
     }
 
-    public int getTcpPort(){
+    public int getTcpPort() {
         return tcpPort;
     }
 
@@ -111,7 +109,8 @@ public class MessageParser {
     static int splitHeader(byte[] bytes) {
         int i = 0;
         while (true) {
-            if (((bytes[i] == (byte) 0x0D) && (bytes[i + 1] == (byte) 0x0A) && (bytes[i+2] == (byte) 0x0D) && (bytes[i+3] == (byte)0x0A)) || i >= bytes.length) break;
+            if (((bytes[i] == (byte) 0x0D) && (bytes[i + 1] == (byte) 0x0A) && (bytes[i + 2] == (byte) 0x0D) && (bytes[i + 3] == (byte) 0x0A)) || i >= bytes.length)
+                break;
             i++;
         }
         return i + 3;
@@ -137,7 +136,7 @@ public class MessageParser {
         if (messageByte.length == 0) {
             this.data = new byte[0];
         } else {
-            this.data = trim(messageByte);
+            this.data = messageByte;
         }
     }
 
@@ -152,7 +151,7 @@ public class MessageParser {
         if (messageParsed.length == 0) {
             this.data = new byte[0];
         } else {
-            this.data = trim(messageParsed);
+            this.data = messageParsed;
         }
     }
 
@@ -168,10 +167,10 @@ public class MessageParser {
     }
 
     void parseTcpPort(byte[] header) throws UnsupportedEncodingException {
-        System.out.println("Parse Tcp Port ");
         String messageHeader = new String(header, "ISO-8859-1");
         String[] splitHeader = messageHeader.split("\r\n");
         parseWithChunkNo(splitHeader[0].split(" "));
         tcpPort = Integer.parseInt(splitHeader[1]);
+        System.out.println(tcpPort);
     }
 }

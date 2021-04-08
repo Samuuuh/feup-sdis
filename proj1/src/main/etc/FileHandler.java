@@ -100,14 +100,17 @@ public class FileHandler {
         byte[] data;
 
         // Includes the last chunk be it zero or not.
-        int numSplits = (int) Math.ceil((float) fileContent.length / (float) Singleton.CHUNK_MAX_SIZE);
+        int numSplits = (int) Math.ceil((float) fileContent.length / (float) Singleton.CHUNK_MAX_SIZE); // 1
         int lastChunkPos = numSplits - 1;
+
         int bytePos = 0;
 
         int remainSize = fileContent.length % Singleton.CHUNK_MAX_SIZE;   // Size of the last chunk.
         int emptyChunk = 0;
-        if (remainSize == 0)
+        if (remainSize == 0) {
             emptyChunk = 1;
+            lastChunkPos ++;
+        }
 
         Chunk[] chunks = new Chunk[numSplits + emptyChunk];
 
@@ -119,8 +122,9 @@ public class FileHandler {
         }
 
         // Last chunk computation.
-        if (emptyChunk == 1)
+        if (emptyChunk == 1) {
             chunks[lastChunkPos] = new Chunk(Integer.toString(lastChunkPos), new byte[0]);
+        }
         else {
             data = Arrays.copyOfRange(fileContent, bytePos, bytePos + remainSize);
             chunks[lastChunkPos] = new Chunk(Integer.toString(lastChunkPos), data);

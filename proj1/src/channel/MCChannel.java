@@ -27,7 +27,7 @@ public class MCChannel extends Channel {
                 byte[] buf = new byte[83648];
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, group, mcast_port);
                 mcast_socket.receive(packet);
-                messageParsed = new MessageParser(packet.getData());
+                messageParsed = new MessageParser(packet.getData(), packet.getLength());
 
                 if (messageParsed.getSenderId().equals(Peer.peer_no))
                     continue;

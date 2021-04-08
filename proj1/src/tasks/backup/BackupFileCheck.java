@@ -20,10 +20,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BackupFileCheck extends TimerTask {
     String fileId;
     Integer currentTry;
-    boolean backupFinished = true;
+    boolean backupFinished;
     public BackupFileCheck(String fileId, Integer currentTry) {
         this.fileId = fileId;
         this.currentTry = currentTry;
+        this.backupFinished = true;
     }
 
     @Override

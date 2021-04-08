@@ -19,7 +19,6 @@ public class TCPChannel extends Thread {
         try {
             serverSocket = new ServerSocket(0);
             Peer.tcp_port = serverSocket.getLocalPort();
-            System.out.println(Peer.tcp_port);
         } catch (IOException e) {
             System.out.println("Cannot initialize ServerSocket");
         }
@@ -33,7 +32,8 @@ public class TCPChannel extends Thread {
                 Socket clientSocket = serverSocket.accept();
 
                 DataInputStream in = new DataInputStream(clientSocket.getInputStream());
-                MessageParser messageParsed = new MessageParser(in.readAllBytes());
+                byte[] message = in.readAllBytes();
+                MessageParser messageParsed = new MessageParser(message, message.length);
                 in.close();
 
                 if (messageParsed.getSenderId().equals(Peer.peer_no))
