@@ -29,12 +29,16 @@ public class Singleton {
     // <Version> BOOT <SenderId>
     public static String BOOT = "BOOT";
 
+
+    // Enhancements:
+    // Delete enh:
     // <Version> SINGLEDELETE <SenderId> <FileId> <DestinationId>
     public static String SINGLEDELETEFILE = "SINGLEDELETEFILE";
-    // <Version> SINGLEDELETECHUNK <SenderId> <FileId> <ChunkNo> <DestinationId>
-    public static String SINGLEDELETECHUNK = "SINGLEDELETECHUNK";
     // <version> RCVDELETE <SenderId> <FileId>
     public static String RCVDELETE = "RCVDELETE";
+    // Backup enh:
+    // <Version> SINGLEDELETECHUNK <SenderId> <FileId> <ChunkNo> <DestinationId>
+    public static String SINGLEDELETECHUNK = "SINGLEDELETECHUNK";
 
 
     // State

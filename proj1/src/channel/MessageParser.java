@@ -66,10 +66,6 @@ public class MessageParser {
         }
     }
 
-    public String getHeader() {
-        return headerString;
-    }
-
     public String getVersion() {
         return version;
     }

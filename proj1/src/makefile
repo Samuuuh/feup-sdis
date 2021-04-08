@@ -10,8 +10,8 @@ FILES = $(foreach dir, $(PACKAGES), $(find_dir))
 
 .PHONY: all
 # Main compilation.
-all: $(CLASSES)    
-	@$(CC) $(FILES) -d build    
+all: $(CLASSES)
+	@$(CC) $(FILES) -d build
 	@echo Folders built
 
 .PHONY: clean

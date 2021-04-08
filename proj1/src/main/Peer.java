@@ -27,6 +27,7 @@ public class Peer implements Services {
     // Peer Version
     public static String version;
     public static String peer_no;
+    public static String peer_ap;
 
     // Peer State
     public static State peer_state;
@@ -44,6 +45,7 @@ public class Peer implements Services {
 
     // Chunks that are being restored.
     public static Tasks restoreTasks = new Tasks();
+
     // Removed chunks from reclaim that will need to be restored.
     public static Tasks reclaimBackupTasks = new Tasks();
 
@@ -59,8 +61,8 @@ public class Peer implements Services {
 
     public static void main(String[] args) throws IOException {
 
-        if (args.length != 8) {
-            System.out.println("Usage:\n java Peer version peer_no mcast_addr mcast_port mdb_addr mdb_port mdr_addr mdr_port");
+        if (args.length != 9) {
+            System.out.println("Usage:\n java Peer version peer_id peer_ap mcast_addr mcast_port mdb_addr mdb_port mdr_addr mdr_port");
             return;
         }
 
@@ -75,12 +77,12 @@ public class Peer implements Services {
 
         try {
             Registry registry = LocateRegistry.getRegistry(Singleton.REGISTER_PORT);
-            registry.rebind(peer_no, stub);
+            registry.rebind(peer_ap, stub);
 
         } catch (Exception e) {
             Logger.ANY("Peer", "Registry does not exist. Creating a new one...");
             Registry registry = LocateRegistry.createRegistry(Singleton.REGISTER_PORT);
-            registry.rebind(peer_no, stub);
+            registry.rebind(peer_ap, stub);
         }
 
         sendBoot();
@@ -90,13 +92,14 @@ public class Peer implements Services {
     private static void setVariables(String[] args) {
         version = args[0];
         peer_no = args[1];
+        peer_ap = args[2];
 
-        mc_addr = args[2];
-        mc_port = Integer.parseInt(args[3]);
-        mdb_addr = args[4];
-        mdb_port = Integer.parseInt(args[5]);
-        mdr_addr = args[6];
-        mdr_port = Integer.parseInt(args[7]);
+        mc_addr = args[3];
+        mc_port = Integer.parseInt(args[4]);
+        mdb_addr = args[5];
+        mdb_port = Integer.parseInt(args[6]);
+        mdr_addr = args[7];
+        mdr_port = Integer.parseInt(args[8]);
     }
 
     private static void restoreState() {
