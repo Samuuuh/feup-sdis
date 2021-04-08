@@ -47,7 +47,6 @@ public class RequestDelete extends Thread {
         peers.forEach((peer_no) ->{
             Peer.peer_state.addFileToDelete(peer_no, fileId);
         });
-        Peer.peer_state.printState();
     }
 
 }

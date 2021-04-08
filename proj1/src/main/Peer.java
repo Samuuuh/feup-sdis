@@ -153,6 +153,10 @@ public class Peer implements Services {
         return "Reclaim has executed";
     }
 
+    public State state(){
+        return peer_state;
+    }
+
 
 
 }

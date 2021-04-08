@@ -47,6 +47,7 @@ public class ChunkState implements Serializable {
     public int getPerceivedRepDeg() {
         return storedPeers.size();
     }
+
     public void addStoredPeer(String peer) {
         if (!storedPeers.contains(peer)) {
             storedPeers.add(peer);
@@ -60,6 +61,12 @@ public class ChunkState implements Serializable {
 
     @Override
     public String toString() {
-        return " ID: " + id + " SIZE: " + size + " REPDEG: " + perceivedRepDeg + "\n" + storedPeers;
+        StringBuilder s = new StringBuilder("\t ChunkId: " + id + "\n");
+        s.append("Size: ").append(size).append(" KBytes\n");
+        s.append("Desired replication degree: ").append(desiredRepDeg).append("\n");
+        s.append("Perceived replication degree: ").append(perceivedRepDeg).append("\n\n");
+
+        return s.toString();
+
     }
 }

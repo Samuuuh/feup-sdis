@@ -1,23 +1,24 @@
 package main;
 
 import main.etc.Singleton;
+import state.State;
 
 import java.io.*;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
 import java.rmi.NotBoundException;
- 
+
 public class Client {
     private String peerAccessPoint;
     private String operation;
     private Registry registry;
 
     public static void main(String[] args) throws IOException {
-       if (args.length < 2) {
-             System.out.println("Usage:\n java Client <peer_ap> <sub_protocol> <opnd_1> <opnd_2>\n" +
-                                "Where <sub_protocol can be one of the following: BACKUP RESTORE DELETE RECLAIM STATE");
-             return;
+        if (args.length < 2) {
+            System.out.println("Usage:\n java Client <peer_ap> <sub_protocol> <opnd_1> <opnd_2>\n" +
+                    "Where <sub_protocol can be one of the following: BACKUP RESTORE DELETE RECLAIM STATE");
+            return;
         }
 
         Client client = new Client(args);
@@ -35,7 +36,7 @@ public class Client {
             e.printStackTrace();
         }
 
-        if(this.operation.equals("BACKUP")) {
+        if (this.operation.equals("BACKUP")) {
             if (args.length != 4) {
                 System.out.println("Usage:\n java Client <peer_ap> BACKUP <file> <replication_degree>\n");
                 return;
@@ -45,7 +46,7 @@ public class Client {
             String replication_degree = args[3];
             boolean isNumber = replication_degree.matches("\\d+");
 
-            if(!isNumber) {
+            if (!isNumber) {
                 System.out.println("Replication degree should be an Integer");
                 return;
             }
@@ -55,7 +56,7 @@ public class Client {
                 System.err.println("Client exception: " + e.toString());
                 e.printStackTrace();
             }
-            
+
         } else if (this.operation.equals("RESTORE")) {
             if (args.length != 3) {
                 System.out.println("Usage:\n java Client <peer_ap> RESTORE <file>\n");
@@ -89,7 +90,7 @@ public class Client {
             state();
         } else {
             System.out.println("Usage:\n java Client <peer_ap> <sub_protocol> <opnd_1> <opnd_2>\n" +
-                                "Where <sub_protocol can be one of the following: BACKUP RESTORE DELETE RECLAIM STATE");  
+                    "Where <sub_protocol can be one of the following: BACKUP RESTORE DELETE RECLAIM STATE");
         }
     }
 
@@ -99,14 +100,14 @@ public class Client {
         String response = stub.backup(filePath, replication);
 
         System.out.println(response);
-    }   
+    }
 
     private void restore(String filePath) {
         try {
             Services stub = (Services) this.registry.lookup(this.peerAccessPoint);
             String response = stub.restore(filePath);
             System.out.println(response);
-        }catch (IOException | NotBoundException e) {
+        } catch (IOException | NotBoundException e) {
             e.printStackTrace();
         }
     }
@@ -116,7 +117,7 @@ public class Client {
             Services stub = (Services) this.registry.lookup(this.peerAccessPoint);
             String response = stub.delete(filePath);
             System.out.println(response);
-        }catch (IOException | NotBoundException e) {
+        } catch (IOException | NotBoundException e) {
             e.printStackTrace();
         }
     }
@@ -126,12 +127,20 @@ public class Client {
             Services stub = (Services) this.registry.lookup(this.peerAccessPoint);
             String response = stub.reclaim(space);
             System.out.println(response);
-        }catch (IOException | NotBoundException e) {
+        } catch (IOException | NotBoundException e) {
             e.printStackTrace();
         }
     }
 
     private void state() {
-        System.out.println("state");
-    }      
+        try {
+            Services stub = (Services) this.registry.lookup(this.peerAccessPoint);
+            State state = stub.state();
+            System.out.println(state);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

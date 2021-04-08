@@ -26,8 +26,8 @@ public class State implements Serializable {
         this.peer_no = peer_no;
     }
 
-    public Boolean canPutFile(Integer chunkSize){
-        return state.State.totalSpace>= state.State.occupiedSpace + chunkSize;
+    public Boolean canPutFile(Integer chunkSize) {
+        return state.State.totalSpace >= state.State.occupiedSpace + chunkSize;
     }
 
     public void putFile(String key, FileState fileState) {
@@ -52,41 +52,42 @@ public class State implements Serializable {
         chunkStored.remove(key);
     }
 
-    public void removeChunkFromFileState(String fileId, String chunkId){
+    public void removeChunkFromFileState(String fileId, String chunkId) {
         FileState fileState = getFileState(fileId);
         if (fileState != null) {
             fileState.removeChunkState(chunkId);
         }
     }
-    public void removeFileToDelete(String peer_no, String fileId){
+
+    public void removeFileToDelete(String peer_no, String fileId) {
         List<String> filesId = filesToDelete.get(peer_no);
-        if (filesId != null){
+        if (filesId != null) {
             filesId.remove(fileId);
         }
     }
 
-    public void removeDeletesOfPeer(String peer_no){
+    public void removeDeletesOfPeer(String peer_no) {
         filesToDelete.remove(peer_no);
     }
 
-    public FileState getFileState(String key){
+    public FileState getFileState(String key) {
         return filesBackup.get(key);
     }
 
-    public ChunkState getChunkState(String chunkId){
+    public ChunkState getChunkState(String chunkId) {
         return chunkStored.get(chunkId);
     }
 
-    public Set<String> getChunkKeys(){
+    public Set<String> getChunkKeys() {
         return chunkStored.keySet();
     }
 
     /**
-     *  Updates the replication degree of a chunkId.
+     * Updates the replication degree of a chunkId.
      */
     public void updateChunkState(String chunkId, String peer) {
         ChunkState chunkState = chunkStored.get(chunkId);
-        if (chunkState != null){
+        if (chunkState != null) {
             chunkState.addStoredPeer(peer);
         }
     }
@@ -96,37 +97,47 @@ public class State implements Serializable {
      */
     public void updateFileState(String fileId, String chunkNo, String peer) {
         FileState fileState = filesBackup.get(fileId);
-        if (fileId != null && fileState != null ){
+        if (fileId != null && fileState != null) {
             fileState.getChunkState(chunkNo).addStoredPeer(peer);
         }
     }
 
-    public void addFileToDelete(String peer_no, String fileId){
+    public void addFileToDelete(String peer_no, String fileId) {
         List<String> filesId = filesToDelete.get(peer_no);
-        if (filesId == null){
+        if (filesId == null) {
             List<String> newFilesId = new ArrayList<>();
             newFilesId.add(fileId);
             filesToDelete.put(peer_no, newFilesId);
-        }
-        else filesId.add(fileId);
+        } else filesId.add(fileId);
     }
 
 
-
-    public List<String> getFilesToDelete(String peer_no){
+    public List<String> getFilesToDelete(String peer_no) {
         return filesToDelete.get(peer_no);
     }
 
-    // Just to test
-    public void printState() {
-        /*System.out.println("CHUNK HASH");
-        System.out.println(chunkStored.size());
-        System.out.println(chunkStored.toString());
 
-        System.out.println("FILE HASH");
-        System.out.println(filesBackup.size());
-        System.out.println(filesBackup.toString());*/
+    @Override
+    public String toString() {
 
-        // System.out.println(filesToDelete);
+        StringBuilder s = new StringBuilder("Files that peer " + peer_no + " has initiated backup: \n");
+        Set<String> setOfFileIds = filesBackup.keySet();
+
+        if (setOfFileIds.size() == 0)  s.append("--------\n\n"); 
+            for (String fileId : setOfFileIds)
+            s.append(getFileState(fileId));
+
+        Set<String> setOfChunkIds = chunkStored.keySet();
+        s.append("Chunk that peer ").append(peer_no).append(" has stored: \n");
+
+        if (setOfChunkIds.size() == 0) s.append("--------\n\n");
+        for (String chunkId : setOfChunkIds)
+            s.append(chunkStored.get(chunkId));
+
+        s.append("TOTAL SPACE ").append(totalSpace).append(" KB\n");
+        s.append("OCCUPIED SPACE: ").append(occupiedSpace).append(" KB\n");
+
+        return s.toString();
     }
 }
+

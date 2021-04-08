@@ -3,6 +3,7 @@ package state;
 import main.etc.Singleton;
 
 import java.io.Serializable;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FileState implements Serializable {
@@ -29,15 +30,16 @@ public class FileState implements Serializable {
         return fileId;
     }
 
-    public String getFilePath(){
+    public String getFilePath() {
         return filePath;
     }
+
     public void addChunk(String chunkId, int desiredRepDeg) {
         ChunkState chunkState = new ChunkState(chunkId, desiredRepDeg);
         chunkStateHash.put(chunkId, chunkState);
     }
 
-    public void removeChunkState(String chunkId){
+    public void removeChunkState(String chunkId) {
         chunkStateHash.remove(chunkId);
     }
 
@@ -47,14 +49,21 @@ public class FileState implements Serializable {
     }
 
 
-
     public String toString() {
-        String s = "";
-        s += "FILE STATUS\n";
-        s += "REPDEG DESIRED " + desiredRepDeg + "\n";
-        s += "FILEID = " + this.fileId + "\n";
-        s += chunkStateHash.toString();
 
-        return s;
+        StringBuilder s = new StringBuilder("\t File Path: " +filePath + "\n");
+
+        s.append("\t FileId: ").append(fileId).append("\n");
+        s.append("\t Desired replication degree: ").append(desiredRepDeg).append("\n");
+        s.append("\t Chunks: \n");
+        Set<String> chunkIds = chunkStateHash.keySet();
+        for (String chunkId: chunkIds){
+            s.append("\t\t Id: ").append(chunkId).append("\n");
+            s.append("\t\tPerceived replication degree: ").append(chunkStateHash.get(chunkId).getPerceivedRepDeg()).append("\n\n");
+        }
+
+
+
+        return s.toString();
     }
 }
