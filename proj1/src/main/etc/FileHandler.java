@@ -47,6 +47,8 @@ public class FileHandler {
     }
 
     public static void saveFile(String fileId, String filePath, int chunkNo) throws IOException {
+        RestoreWaiting.removeWaitingToRestore(fileId);
+
         File mainFile = new File(filePath + fileId);
         mainFile.createNewFile();
 
@@ -57,8 +59,6 @@ public class FileHandler {
         }
 
         outputFile.close();
-
-        RestoreWaiting.removeWaitingToRestore(fileId);
         deleteChunks(fileId, filePath);
     }
 

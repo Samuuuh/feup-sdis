@@ -39,7 +39,6 @@ public class TCPChannel extends Thread {
                 if (messageParsed.getSenderId().equals(Peer.peer_no))
                     continue;
 
-                System.out.println(messageParsed.getChunkNo());
                 if (messageParsed.getMessageType().equals(Singleton.CHUNK)) {
                     // Abort if exists the task to restore the chunk.
                     String chunkId = Singleton.getChunkId(messageParsed.getFileId(), messageParsed.getChunkNo());

@@ -171,6 +171,5 @@ public class MessageParser {
         String[] splitHeader = messageHeader.split("\r\n");
         parseWithChunkNo(splitHeader[0].split(" "));
         tcpPort = Integer.parseInt(splitHeader[1]);
-        System.out.println(tcpPort);
     }
 }

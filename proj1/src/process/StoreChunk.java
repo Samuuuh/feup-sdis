@@ -29,7 +29,7 @@ public class StoreChunk extends Thread {
         FileHandler.saveFileChunks(messageParsed, "peers/peer_" + Peer.peer_no + "/restore/");
         String chunkId = Singleton.getChunkId(fileId,chunkNo);
         RestoreWaiting.restoreReceived(chunkId);
-        System.out.println("RESTORE WAITING " + RestoreWaiting.numChunksToRestore(fileId));
+
         if (RestoreWaiting.numChunksToRestore(fileId) == 0 ) {
             try {
                 Thread.sleep(400);
