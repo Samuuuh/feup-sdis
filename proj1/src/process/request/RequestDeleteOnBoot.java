@@ -23,5 +23,6 @@ public class RequestDeleteOnBoot extends Thread {
         }
 
         Peer.peer_state.removeDeletesOfPeer(peer_no);
+
     }
 }

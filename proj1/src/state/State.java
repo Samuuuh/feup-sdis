@@ -1,6 +1,7 @@
 package state;
 
 import main.etc.Logger;
+import main.etc.Singleton;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -50,6 +51,25 @@ public class State implements Serializable {
 
     public void removeChunk(String key) {
         chunkStored.remove(key);
+    }
+
+    public void removePeerOfFileChunk(String chunkId, String peer_no){
+        String fileId = Singleton.extractFileId(chunkId);
+        String chunkNo = String.valueOf(Singleton.extractChunkNo(chunkId));
+        FileState fileState = getFileState(fileId);
+
+        if (fileState == null) return;
+
+        ChunkState chunkState = fileState.getChunkState(chunkNo);
+        if (chunkState == null) return;
+
+        chunkState.removePeer(peer_no);
+
+    }
+    public void removePeerOfChunk(String chunkId, String peer_no){
+        ChunkState chunkState = chunkStored.get(chunkId);
+        if (chunkState == null) return;
+        chunkState.removePeer(peer_no);
     }
 
     public void removeChunkFromFileState(String fileId, String chunkId) {

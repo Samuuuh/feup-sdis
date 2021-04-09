@@ -11,6 +11,7 @@ import process.request.RequestDeleteOnBoot;
 import process.request.RequestDeleteOnRepDeg;
 import send.SendWithFileId;
 import state.ChunkState;
+import state.FileState;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -40,7 +41,6 @@ public class MCChannel extends Channel {
 
 
                 else if (messageParsed.getMessageType().equals(Singleton.GETCHUNK)) {
-                    // TODO: check get Address
                     if (Peer.version.equals(Singleton.VERSION_ENH))
                         new PrepareChunk(packet.getAddress(), chunkId, messageParsed.getTcpPort()).start();
                     else
@@ -51,8 +51,7 @@ public class MCChannel extends Channel {
                     handleDelete(messageParsed, chunkId);
 
                 else if (messageParsed.getMessageType().equals(Singleton.REMOVED)) {
-                    if (Peer.peer_state.getFileState(fileId) != null)
-                        new RemoveCheck(fileId, chunkId, messageParsed.getSenderId()).start();
+                    new RemoveCheck(fileId, chunkId, messageParsed.getSenderId()).start();
 
                 } else if (Peer.version.equals(Singleton.VERSION_ENH) && messageParsed.getMessageType().equals(Singleton.BOOT)) {
                     new RequestDeleteOnBoot(messageParsed.getSenderId()).start();
@@ -67,10 +66,13 @@ public class MCChannel extends Channel {
                     Peer.peer_state.removeFileToDelete(messageParsed.getSenderId(), messageParsed.getFileId());
 
                 } else if (Peer.version.equals(Singleton.VERSION_ENH) && messageParsed.getMessageType().equals(Singleton.SINGLEDELETECHUNK)) {
-                    // TODO: update the state.
                     Logger.INFO(this.getClass().getName(), "Received " + Singleton.SINGLEDELETECHUNK + " for peer " + messageParsed.getDestinationId() + "\n");
                     if (messageParsed.getDestinationId().equals(Peer.peer_no))
                         new DeleteSingleChunk(chunkId).start();
+                    else {
+                        Peer.peer_state.removePeerOfChunk(chunkId, messageParsed.getDestinationId());
+                        Peer.peer_state.removePeerOfFileChunk(chunkId, messageParsed.getDestinationId());
+                    }
                 }
 
             } catch (Exception e) {
@@ -84,9 +86,9 @@ public class MCChannel extends Channel {
         Peer.peer_state.updateChunkState(chunkId, messageParsed.getSenderId());
         Peer.peer_state.updateFileState(messageParsed.getFileId(), messageParsed.getChunkNo(), messageParsed.getSenderId());
 
-        if (Peer.version.equals(Singleton.VERSION_ENH))
+        if (Peer.version.equals(Singleton.VERSION_ENH)) {
             new RequestDeleteOnRepDeg(chunkId, messageParsed.getSenderId()).start();
-
+        }
         cancelStoreChunk(chunkId);
         Logger.SUC(this.getClass().getName(), "STORED " + chunkId + " on PEER " + messageParsed.getSenderId());
     }

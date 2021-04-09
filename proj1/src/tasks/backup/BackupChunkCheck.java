@@ -34,7 +34,12 @@ public class BackupChunkCheck extends TimerTask {
         Logger.INFO(this.getClass().getName(), "Backup check executing...");
         // For every chunk that didn't achieved desired replication degree, request again.
         FileState fileState =  Peer.peer_state.getFileState(fileId);
-        ChunkState chunkState = fileState.getChunkStateHash().get(chunkId);
+        ChunkState chunkState;
+        if (fileState == null){
+            chunkState = Peer.peer_state.getChunkState(chunkId);
+        }else {
+            chunkState = fileState.getChunkStateHash().get(chunkId);
+        }
 
         if (!chunkState.haveDesiredRepDeg()) {
             Logger.INFO(this.getClass().getName(), "Try No. " + currentTry + " RESEND chunk " + chunkId);

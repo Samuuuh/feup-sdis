@@ -24,7 +24,7 @@ public class FileHandler {
             return readAllBytes(file.toPath());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.INFO("main.etc.FileHandler", "File does not exist, skiping...");
         }
         return null;
     }

@@ -57,7 +57,6 @@ public class Singleton {
         return "peers/peer_" + peer_no + "/chunks/";
     }
 
-
     public static String getChunkId(String fileId, String chunkId){
         return fileId + "-" + chunkId;
     }

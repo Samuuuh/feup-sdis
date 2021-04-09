@@ -19,8 +19,7 @@ public class RequestDeleteOnRepDeg extends Thread {
     }
 
     @Override
-    public void run(){
-
+    public void run() {
         FileState fileState = Peer.peer_state.getFileState(fileId);
 
         if (fileState == null) return;
@@ -31,9 +30,8 @@ public class RequestDeleteOnRepDeg extends Thread {
         if (chunkState == null) return;
 
         if (chunkState.getPerceivedRepDeg() > chunkState.getDesiredRepDeg()) {
+            chunkState.removePeer(peer_no);
             new SendSingleDeleteChunk(peer_no, fileId, chunkNo).start();
         }
-
     }
-
 }
