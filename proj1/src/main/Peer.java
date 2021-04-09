@@ -56,7 +56,8 @@ public class Peer implements Services {
         new MCChannel(mcast_port, mcast_addr).start();
         new MDBChannel(mdb_port, mdb_addr).start();
         new MDRChannel(mdr_port, mdr_addr).start();
-        new TCPChannel().start();
+        if (version.equals(Singleton.VERSION_ENH))
+            new TCPChannel().start();
     }
 
     public static void main(String[] args) throws IOException {
