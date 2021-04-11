@@ -5,6 +5,7 @@ import main.Peer;
 import main.etc.Logger;
 import main.etc.Singleton;
 import send.SendWithChunkNo;
+import state.ChunkState;
 
 import java.util.TimerTask;
 
@@ -26,17 +27,25 @@ public class PrepareStored extends TimerTask {
 
     @Override
     public void run() {
+        String chunkId = Singleton.getChunkId(fileId, chunkNo);
+        updateState(messageParsed, chunkId);
+        Peer.peer_state.updateChunkState(chunkId, Peer.peer_no);
         Boolean fileIsSaved = saveFileChunks(messageParsed, Singleton.getFilePath(Peer.peer_no));
 
         if (fileIsSaved) {
             new SendWithChunkNo(Singleton.STORED, fileId, chunkNo, Peer.mc_addr, Peer.mc_port).start();
-            String chunkId = Singleton.getChunkId(fileId, chunkNo);
             // After saving, update the perceived replication degree.
-            Peer.peer_state.updateChunkState(chunkId, Peer.peer_no);
             Logger.INFO(this.getClass().getName(), "Sending STORED message on " + chunkId);
         } else {
             Logger.ERR(this.getClass().getName(), "Chunk " + Singleton.getChunkId(fileId, chunkNo) + "wasn't stored!");
         }
+        Peer.reclaimBackupTasks.removeTask(chunkId);
+    }
+
+
+    private void updateState(MessageParser messageParsed, String chunkId){
+        ChunkState chunkState = new ChunkState(chunkId, Integer.parseInt(messageParsed.getReplicationDeg()), messageParsed.getData().length/1000);
+        Peer.peer_state.putChunk(chunkId, chunkState);
     }
 
 }

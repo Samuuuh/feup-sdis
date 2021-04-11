@@ -33,4 +33,8 @@ public class Tasks {
 
     }
 
+    public void removeTask(String chunkId){
+        tasks.remove(chunkId);
+    }
+
 }
