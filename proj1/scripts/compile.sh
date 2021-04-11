@@ -6,5 +6,5 @@
 # Compiled code is placed under ./build/
 # Modify it if needed to suite your purpose
 
-make -C ./src
+make
 
