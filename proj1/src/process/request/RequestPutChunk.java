@@ -28,7 +28,6 @@ abstract public class RequestPutChunk extends Thread {
 
     @Override
     public void run() {
-
         new SendPutChunk(fileId, replicationDeg, chunk).start();
         Logger.REQUEST(this.getClass().getName(), "Requested PUTCHUNK on " + chunkId);
 

@@ -22,8 +22,6 @@ public class DeleteSingleChunk extends Thread {
             Peer.peer_state.removeChunk(chunkId);
             FileHandler.deleteChunk(chunkId);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException e) {}
     }
 }

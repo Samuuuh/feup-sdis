@@ -28,7 +28,6 @@ public class RequestFilePutChunk extends Thread {
 
     @Override
     public void run() {
-
         try {
             byte[] fileContent = FileHandler.readFile(filePath);
             assert fileContent != null;

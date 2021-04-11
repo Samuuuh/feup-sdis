@@ -37,4 +37,7 @@ public class Tasks {
         tasks.remove(chunkId);
     }
 
+    public Boolean isEmpty(){
+        return tasks.isEmpty();
+    }
 }
