@@ -85,7 +85,7 @@ public class Peer implements Services {
             Registry registry = LocateRegistry.createRegistry(Singleton.REGISTER_PORT);
             registry.rebind(peer_ap, stub);
         }
-
+        handleSignal();
         sendBoot();
         Logger.ANY("Peer", "Server is running");
     }
@@ -117,6 +117,16 @@ public class Peer implements Services {
         new SaveState().start();
     }
 
+    private static void handleSignal(){
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                Peer.peer_state.saveState();
+                Logger.SUC("Peer", "State saved with success");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }));
+    }
 
 
     // SERVICES

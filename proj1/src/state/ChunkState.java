@@ -9,7 +9,6 @@ import java.util.List;
 public class ChunkState implements Serializable {
     private final String id;
     private final int size;
-    private int perceivedRepDeg;
     private final int desiredRepDeg;
     private final List<String> storedPeers = new ArrayList<>();
 
@@ -17,7 +16,6 @@ public class ChunkState implements Serializable {
         this.id = id;
         this.size = size;
         this.desiredRepDeg = desiredRepDeg;
-        this.perceivedRepDeg = 0;
         Logger.SUC(this.getClass().getName(), "SAVED IN STATE CHUNK " + id);
     }
 
@@ -51,7 +49,6 @@ public class ChunkState implements Serializable {
     public void addStoredPeer(String peer) {
         if (!storedPeers.contains(peer)) {
             storedPeers.add(peer);
-            perceivedRepDeg = storedPeers.size();
         }
     }
 
@@ -64,7 +61,7 @@ public class ChunkState implements Serializable {
         StringBuilder s = new StringBuilder("\t ChunkId: " + id + "\n");
         s.append("Size: ").append(size).append(" KBytes\n");
         s.append("Desired replication degree: ").append(desiredRepDeg).append("\n");
-        s.append("Perceived replication degree: ").append(perceivedRepDeg).append("\n\n");
+        s.append("Perceived replication degree: ").append(getPerceivedRepDeg()).append("\n\n");
 
         return s.toString();
 

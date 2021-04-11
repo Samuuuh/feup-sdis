@@ -39,7 +39,6 @@ public class RequestFilePutChunk extends Thread {
 
             for (Chunk chunk : chunks) {
                 // Add fileStatus to State.
-                System.out.println(chunk.getChunkData().length);
                 String chunkId = Singleton.getChunkId(fileId, chunk.getChunkNo());
                 Logger.REQUEST(this.getClass().getName(), "Requested CHUNK No " + chunk.getChunkNo());
                 Peer.peer_state.getFileState(fileId).addChunk(chunkId, Integer.parseInt(replicationDeg));

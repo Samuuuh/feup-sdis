@@ -38,9 +38,9 @@ public class RequestReclaim extends Thread {
                 Peer.peer_state.removeChunk(chunkId);
                 if (!file.delete())
                     Logger.ERR(this.getClass().getName(), "Not able to remove " + file);
-
                 new SendWithChunkNo(Singleton.REMOVED, fileId, chunkNo, Peer.mc_addr, Peer.mc_port).start();
                 Logger.REQUEST(this.getClass().getName(), "REMOVED " + chunkId);
+                Peer.peer_state.occupiedSpace = 0; 
             }
 
         }else {

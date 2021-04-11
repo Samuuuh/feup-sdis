@@ -1,6 +1,8 @@
 package tasks;
 
+import main.Peer;
 import main.etc.Logger;
+import state.ChunkState;
 
 import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;

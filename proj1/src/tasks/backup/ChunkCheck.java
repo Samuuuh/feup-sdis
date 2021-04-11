@@ -5,6 +5,7 @@ import main.etc.Logger;
 import main.etc.Singleton;
 import process.request.RequestFilePutChunk;
 import process.request.RequestPutChunk;
+import process.request.RequestPutChunkBackup;
 import state.ChunkState;
 import state.FileState;
 
@@ -17,12 +18,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * If yes, end the process.
  * Case not repeat try to send again the backup.
  */
-public class BackupChunkCheck extends TimerTask {
+public class ChunkCheck extends TimerTask {
     String fileId;
     Integer currentTry;
     String chunkId ;
 
-    public BackupChunkCheck(String chunkId, Integer currentTry) {
+    public ChunkCheck(String chunkId, Integer currentTry) {
         this.currentTry = currentTry;
         this.chunkId = chunkId;
         this.fileId = Singleton.extractFileId(chunkId);
@@ -33,20 +34,23 @@ public class BackupChunkCheck extends TimerTask {
     public void run() {
         Logger.INFO(this.getClass().getName(), "Backup check executing...");
         // For every chunk that didn't achieved desired replication degree, request again.
-        FileState fileState =  Peer.peer_state.getFileState(fileId);
-        ChunkState chunkState;
-        if (fileState == null){
-            chunkState = Peer.peer_state.getChunkState(chunkId);
-        }else {
-            chunkState = fileState.getChunkStateHash().get(chunkId);
-        }
+        ChunkState chunkState = getChunkState();
 
         if (!chunkState.haveDesiredRepDeg()) {
             Logger.INFO(this.getClass().getName(), "Try No. " + currentTry + " RESEND chunk " + chunkId);
-            new RequestPutChunk(chunkId, String.valueOf(chunkState.getDesiredRepDeg()), currentTry).start();
+            RequestPutChunk(chunkState);
         }else{
             Logger.SUC(this.getClass().getName(), "Chunk has achieved desired replication degree");
         }
+    }
+
+    public void RequestPutChunk(ChunkState chunkState){
+        new RequestPutChunkBackup(chunkId, String.valueOf(chunkState.getDesiredRepDeg()), currentTry).start();
+    }
+
+    public ChunkState getChunkState(){
+        FileState fileState =  Peer.peer_state.getFileState(fileId);
+        return fileState.getChunkStateHash().get(chunkId);
     }
 
 }

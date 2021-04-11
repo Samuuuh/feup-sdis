@@ -43,7 +43,7 @@ public class Singleton {
 
     // State
     public static String STATE_FILE_NAME = "state.ser";
-    public static int SAVE_PERIOD = 5;
+    public static int SAVE_PERIOD = 30;
 
     // Versions
     public static String VERSION_ENH = "2.0";

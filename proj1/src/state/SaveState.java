@@ -19,18 +19,7 @@ public class SaveState extends Thread {
             try {
                 Thread.sleep(Singleton.SAVE_PERIOD * 1000L);
 
-                String pathString = Singleton.getStatePath(Peer.peer_no);
-                String filePathString = pathString + Singleton.STATE_FILE_NAME;
-
-                Path path = Paths.get(pathString);
-                Files.createDirectories(path);
-
-                FileOutputStream fileOutputStream = new FileOutputStream(filePathString);
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-                objectOutputStream.writeObject(Peer.peer_state);
-                objectOutputStream.close();
-                fileOutputStream.close();
-                //Peer.peer_state.printState();
+                Peer.peer_state.saveState();
             } catch (IOException | InterruptedException i) {
                 i.printStackTrace();
             }

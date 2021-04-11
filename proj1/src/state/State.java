@@ -1,9 +1,16 @@
 package state;
 
+import main.Peer;
 import main.etc.Logger;
 import main.etc.Singleton;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -50,7 +57,7 @@ public class State implements Serializable {
     }
 
     public void removeChunk(String key) {
-        chunkStored.remove(key);
+        ChunkState chunkState = chunkStored.remove(key);
     }
 
     public void removePeerOfFileChunk(String chunkId, String peer_no){
@@ -136,7 +143,19 @@ public class State implements Serializable {
         return filesToDelete.get(peer_no);
     }
 
+    public void saveState() throws IOException {
+        String pathString = Singleton.getStatePath(Peer.peer_no);
+        String filePathString = pathString + Singleton.STATE_FILE_NAME;
 
+        Path path = Paths.get(pathString);
+        Files.createDirectories(path);
+
+        FileOutputStream fileOutputStream = new FileOutputStream(filePathString);
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+        objectOutputStream.writeObject(Peer.peer_state);
+        objectOutputStream.close();
+        fileOutputStream.close();
+    }
     @Override
     public String toString() {
 

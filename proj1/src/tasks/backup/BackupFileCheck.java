@@ -5,6 +5,7 @@ import main.etc.Logger;
 import main.etc.Singleton;
 import process.request.RequestFilePutChunk;
 import process.request.RequestPutChunk;
+import process.request.RequestPutChunkBackup;
 import state.ChunkState;
 import state.FileState;
 
@@ -37,7 +38,7 @@ public class BackupFileCheck extends TimerTask {
         chunksState.forEach((chunkId, chunkState)->{
             if (!chunkState.haveDesiredRepDeg()){
                 Logger.INFO(this.getClass().getName(), "Try No. " + currentTry + "RESEND chunk " + chunkId);
-                new RequestPutChunk(chunkId, String.valueOf(chunkState.getDesiredRepDeg()), currentTry+1).start();
+                new RequestPutChunkBackup(chunkId, String.valueOf(chunkState.getDesiredRepDeg()), currentTry+1).start();
                 backupFinished = false;
             }
         });
