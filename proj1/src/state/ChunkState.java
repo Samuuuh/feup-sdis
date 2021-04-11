@@ -10,7 +10,8 @@ public class ChunkState implements Serializable {
     private final String id;
     private final int size;
     private final int desiredRepDeg;
-    private final List<String> storedPeers = new ArrayList<>();
+    // TODO: private
+    public final List<String> storedPeers = new ArrayList<>();
 
     public ChunkState(String id, int desiredRepDeg, int size) {
         this.id = id;
@@ -42,6 +43,10 @@ public class ChunkState implements Serializable {
         return storedPeers.size() >= desiredRepDeg;
     }
 
+    public Boolean aboveDesiredRepDeg(){
+        return storedPeers.size() > desiredRepDeg;
+    }
+
     public int getPerceivedRepDeg() {
         return storedPeers.size();
     }
@@ -54,6 +59,10 @@ public class ChunkState implements Serializable {
 
     public void removePeer(String peer) {
         storedPeers.remove(peer);
+    }
+
+    public Boolean contains(String peer){
+        return storedPeers.contains(peer);
     }
 
     @Override

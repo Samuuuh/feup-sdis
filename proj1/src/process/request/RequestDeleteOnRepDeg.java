@@ -21,10 +21,10 @@ public class RequestDeleteOnRepDeg extends Thread {
     @Override
     public void run() {
         FileState fileState = Peer.peer_state.getFileState(fileId);
-
-        if (fileState == null) return;
-
         String chunkNo = Singleton.extractChunkNo(chunkId);
+
+        if (fileState == null)  return;
+
         ChunkState chunkState = fileState.getChunkState(chunkNo);
 
         if (chunkState == null) return;
