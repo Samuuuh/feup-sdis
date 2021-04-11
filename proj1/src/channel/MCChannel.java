@@ -100,13 +100,14 @@ public class MCChannel extends Channel {
         Peer.peer_state.removeChunkFromFileState(fileId, chunkId);
         new DeleteChunks(messageParsed.getFileId()).start();
     }
+
     private void cancelStoreChunk(String chunkId) {
         ChunkState chunkState = Peer.peer_state.getChunkState(chunkId);
-        // TODO: to delet
         if (chunkState != null)
             System.out.println(chunkState.storedPeers + chunkId);
         if (chunkState != null && chunkState.haveDesiredRepDeg() && !chunkState.contains(Peer.peer_no))  {
             System.out.println(chunkState.storedPeers);
+            Peer.peer_state.removeChunk(chunkId);
             Peer.storeTasks.abortTask(chunkId);
         }
     }
