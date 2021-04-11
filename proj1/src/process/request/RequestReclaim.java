@@ -14,7 +14,7 @@ public class RequestReclaim extends Thread {
     protected int reclaimSpace;
 
     public RequestReclaim(String space) {
-        this.reclaimSpace = Integer.parseInt(space)*1000;
+        this.reclaimSpace = Integer.parseInt(space);
     }
 
 
