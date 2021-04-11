@@ -28,11 +28,9 @@ public class PrepareStored extends TimerTask {
     @Override
     public void run() {
         String chunkId = Singleton.getChunkId(fileId, chunkNo);
+        Peer.peer_state.updateChunkState(chunkId, Peer.peer_no);
         Boolean fileIsSaved = saveFileChunks(messageParsed, Singleton.getFilePath(Peer.peer_no));
 
-        ChunkState chunkState = new ChunkState(chunkId, Integer.parseInt(messageParsed.getReplicationDeg()), messageParsed.getData().length/1000);
-        Peer.peer_state.putChunk(chunkId, chunkState);
-        Peer.peer_state.updateChunkState(chunkId, Peer.peer_no);
         if (fileIsSaved) {
             System.out.println("sending STORED chunkNo " + chunkNo);
             new SendWithChunkNo(Singleton.STORED, fileId, chunkNo, Peer.mc_addr, Peer.mc_port).start();
@@ -43,8 +41,4 @@ public class PrepareStored extends TimerTask {
         }
         Peer.reclaimBackupTasks.removeTask(chunkId);
     }
-
-
-
-
 }
