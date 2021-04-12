@@ -32,7 +32,6 @@ public class PrepareStored extends TimerTask {
         Boolean fileIsSaved = saveFileChunks(messageParsed, Singleton.getFilePath(Peer.peer_no));
 
         if (fileIsSaved) {
-            System.out.println("sending STORED chunkNo " + chunkNo);
             new SendWithChunkNo(Singleton.STORED, fileId, chunkNo, Peer.mc_addr, Peer.mc_port).start();
             // After saving, update the perceived replication degree.
             Logger.INFO(this.getClass().getName(), "Sending STORED message on " + chunkId);

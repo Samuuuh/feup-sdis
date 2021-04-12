@@ -103,10 +103,7 @@ public class MCChannel extends Channel {
 
     private void cancelStoreChunk(String chunkId) {
         ChunkState chunkState = Peer.peer_state.getChunkState(chunkId);
-        if (chunkState != null)
-            System.out.println(chunkState.storedPeers + chunkId);
         if (chunkState != null && chunkState.haveDesiredRepDeg() && !chunkState.contains(Peer.peer_no))  {
-            System.out.println(chunkState.storedPeers);
             Peer.peer_state.removeChunk(chunkId);
             Peer.storeTasks.abortTask(chunkId);
         }
