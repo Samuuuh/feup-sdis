@@ -91,7 +91,6 @@ public class PrepareChunk extends Thread {
     }
 
     private TimerTask createTimerTaskTCP(String fileId, byte[] body, String chunkNo){
-        // TODO: Receive port 6666 from message parser
         return new TimerTask() {
             @Override
             public void run() {

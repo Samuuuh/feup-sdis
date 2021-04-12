@@ -29,10 +29,8 @@ public class RemoveCheck extends Thread {
     public void run() {
         Peer.peer_state.removePeerOfFileChunk(chunkId, senderId);
         Peer.peer_state.removePeerOfChunk(chunkId, senderId);
-        // TODO: remove
-        System.out.println(Peer.peer_state.getChunkState(chunkId));
+ 
         ChunkState chunkState = Peer.peer_state.getChunkState(chunkId);
-
 
         if (chunkState != null && !chunkState.haveDesiredRepDeg()) {
             storedBackup(chunkState);

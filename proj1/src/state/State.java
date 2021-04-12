@@ -59,6 +59,7 @@ public class State implements Serializable {
 
     public void removeChunk(String key) {
         ChunkState chunkState = chunkStored.remove(key);
+        occupiedSpace -= chunkState.getSize();
     }
 
     public void removePeerOfFileChunk(String chunkId, String peer_no){

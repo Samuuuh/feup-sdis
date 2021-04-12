@@ -10,7 +10,7 @@ public class ChunkState implements Serializable {
     private final String id;
     private final int size;
     private final int desiredRepDeg;
-    // TODO: private
+    
     public final List<String> storedPeers = new ArrayList<>();
 
     public ChunkState(String id, int desiredRepDeg, int size) {
