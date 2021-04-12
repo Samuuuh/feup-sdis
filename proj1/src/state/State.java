@@ -35,7 +35,7 @@ public class State implements Serializable {
     }
 
     public Boolean canPutFile(Integer chunkSize) {
-        return totalSpace >= occupiedSpace + chunkSize;
+        return totalSpace > occupiedSpace + chunkSize;
     }
 
     public void putFile(String key, FileState fileState) {
@@ -43,6 +43,7 @@ public class State implements Serializable {
     }
 
     public void putChunk(String key, ChunkState chunkState) {
+        if (chunkStored.get(key) != null) return;
         ChunkState previousState = chunkStored.put(key, chunkState);
         // Increase the occupied size.
         if (previousState == null) {
@@ -58,6 +59,7 @@ public class State implements Serializable {
 
     public void removeChunk(String key) {
         ChunkState chunkState = chunkStored.remove(key);
+        occupiedSpace -= chunkState.getSize();
     }
 
     public void removePeerOfFileChunk(String chunkId, String peer_no){

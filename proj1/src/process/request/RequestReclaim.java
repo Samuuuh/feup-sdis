@@ -14,7 +14,7 @@ public class RequestReclaim extends Thread {
     protected int reclaimSpace;
 
     public RequestReclaim(String space) {
-        this.reclaimSpace = Integer.parseInt(space)*1000;
+        this.reclaimSpace = Integer.parseInt(space);
     }
 
 
@@ -49,13 +49,12 @@ public class RequestReclaim extends Thread {
                 if (Peer.peer_state.occupiedSpace <= Peer.peer_state.totalSpace)
                     break;
 
-                Peer.peer_state.occupiedSpace -= Peer.peer_state.getChunkState(chunkId).getSize();
                 String fileId = Singleton.extractFileId(chunkId);
                 String chunkNo = Singleton.extractChunkNo(chunkId);
-
+            
                 try {
                     FileHandler.deleteChunk(chunkId);
-                    Peer.peer_state.removeChunk(chunkId);
+                    Peer.peer_state.removeChunk(chunkId); 
                 } catch (IOException e) {
                     Logger.ERR(this.getClass().getName(), "Not able to remove " + chunkId);
                 }

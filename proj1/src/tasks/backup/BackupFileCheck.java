@@ -43,7 +43,9 @@ public class BackupFileCheck extends TimerTask {
             }
         });
 
-        if (backupFinished) Logger.SUC(this.getClass().getName(), "FINISHED backup file " + fileId);
+        if (backupFinished){
+            Logger.SUC(this.getClass().getName(), "FINISHED backup file " + fileId);
+        }
 
 
 

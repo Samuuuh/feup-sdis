@@ -52,6 +52,7 @@ public class Peer implements Services {
     // The store will be canceled if chunk achieve the replication degree.
     public static Tasks storeTasks = new Tasks();
 
+
     public static void initChannel(String mcast_addr, int mcast_port, String mdb_addr, int mdb_port, String mdr_addr, int mdr_port) throws IOException {
         new MCChannel(mcast_port, mcast_addr).start();
         new MDBChannel(mdb_port, mdb_addr).start();
