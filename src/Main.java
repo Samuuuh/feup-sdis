@@ -2,9 +2,8 @@ import java.io.IOException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-
-import etc.*;
 import node.*;
+import etc.*;
 
 public class Main implements Services {
     public static void main(String[] args) throws IOException {

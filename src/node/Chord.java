@@ -1,10 +1,14 @@
 package node;
 
+import java.math.BigInteger;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class Chord {
   public int id;
   private String ip;
   private String port;
-
+  // TODO: Ask about Integer or BigInteger.
+  private ConcurrentHashMap<Integer,  ChordInfo> fingerTable = new ConcurrentHashMap<>();
   public Chord(String ip, String port) {
     this.id = 1; // ID MOD M
 
@@ -17,8 +21,8 @@ public class Chord {
   } 
 
   public void startFingers(){
-      // TODO
-  } 
+
+  }
 
   public void leaveRing(){
       // TODO

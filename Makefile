@@ -2,10 +2,9 @@ VERSION = 1
 
 CC = javac
 
-SRC := src  
-find_dir = $(wildcard $(($(SRC)dir)/*.java)
-find_class = $(wildcard $($(SRC)dir)/*.class)
-PACKAGES := 
+find_dir = $(wildcard $(dir)/*.java)
+find_class = $(wildcard $(dir)/*.class)
+PACKAGES := src/etc src/node src/Server
 CLASSES = $(foreach dir, $(PACKAGES), $(find_class))
 FILES = $(foreach dir, $(PACKAGES), $(find_dir))
 
@@ -19,3 +18,4 @@ all: $(CLASSES)
 clean:
 	@rm -r build
 	@echo Build folder removed with success!
+
