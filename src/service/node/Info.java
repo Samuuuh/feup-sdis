@@ -1,4 +1,4 @@
-package node;
+package service.node;
 
 public class Info {
     String ip; 

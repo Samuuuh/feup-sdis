@@ -1,4 +1,4 @@
-package node;
+package service.node;
 
 /**
  * Class responsible for storing chord information.

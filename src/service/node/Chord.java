@@ -1,6 +1,5 @@
-package node;
+package service.node;
 
-import java.math.BigInteger;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Chord {
