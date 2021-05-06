@@ -1,12 +1,8 @@
 package service.server.com;
 
-import etc.Logger;
-import service.message.MessageHello;
-import service.server.com.SSLServerConnection;
+import service.etc.Logger;
 
-import javax.net.ssl.SSLSocket;
 import java.io.*;
-import java.net.InetAddress;
 
 public class TCPChannel extends Thread {
     SSLServerConnection connectionSocket;

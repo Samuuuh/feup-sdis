@@ -17,7 +17,6 @@ public class SSLServerConnection implements Connection {
 
         SSLServerSocketFactory sslServerSocketFactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
         sslServerSocket = (SSLServerSocket) sslServerSocketFactory.createServerSocket(port);
-
     }
 
 

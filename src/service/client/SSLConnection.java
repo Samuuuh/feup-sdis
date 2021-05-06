@@ -41,5 +41,12 @@ public class SSLConnection implements Connection {
         return (Message) in.readObject();
     }
 
+    public void closeOut() throws IOException {
+        out.close();
+    }
+
+    public void closeIn() throws IOException {
+        in.close();
+    }
 
 }

@@ -1,7 +1,7 @@
 package service.server.com;
 
 
-import etc.Logger;
+import service.etc.Logger;
 
 import javax.net.ssl.SSLSocket;
 import java.io.DataOutputStream;
