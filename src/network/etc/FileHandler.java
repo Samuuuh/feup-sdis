@@ -1,4 +1,4 @@
-package service.utils;
+package service.etc;
 
 import service.etc.Logger;
 

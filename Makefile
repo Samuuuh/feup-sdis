@@ -2,16 +2,14 @@ VERSION = 1
 
 CC = javac
 
-find_dir = $(wildcard $(dir)/*.java)
-find_class = $(wildcard $(dir)/*.class)
-PACKAGES := src/ src/app/ src/service src/service/etc src/service/client src/service/message src/service/node src/service/server/com src/service/utils
-CLASSES = $(foreach dir, $(PACKAGES), $(find_class))
-FILES = $(foreach dir, $(PACKAGES), $(find_dir))
+SRC = src
+JAVA_FILES = $(wildcard $(SRC)/*.java $(SRC)/*/*.java $(SRC)/*/*/*.java $(SRC)/*/*/*/*.java)
+CLASSES = $(patsubst %.java, %.class, $(JAVA_FILES))
 
 .PHONY: all
 # App.Main compilation.
-all: $(CLASSES)
-	@$(CC) $(FILES) -d out
+all: $(JAVA_FILES)
+	@$(CC) $(JAVA_FILES) -d out
 	@echo Folders built
 
 .PHONY: clean

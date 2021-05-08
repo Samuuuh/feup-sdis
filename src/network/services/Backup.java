@@ -1,10 +1,10 @@
-package app;
+package network.services;
 
-import service.client.SSLConnection;
-import service.message.Message;
-import service.message.MessageBackup;
-import service.message.MessageHello;
-import service.utils.FileHandler;
+import network.client.SSLConnection;
+import network.message.Message;
+import network.message.MessageBackup;
+import network.message.MessageLookup;
+import network.etc.FileHandler;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -33,7 +33,7 @@ public class Backup {
 
         // TODO: create a for loop for the replication degree
         sslConnection.sendMessage(messageBackup);
-        MessageHello response = (MessageHello) sslConnection.readMessage();
+        MessageLookup response = (MessageLookup) sslConnection.readMessage();
         System.out.println(response.getType());
         sslConnection.closeIn();
 

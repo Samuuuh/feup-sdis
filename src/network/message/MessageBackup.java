@@ -1,4 +1,4 @@
-package service.message;
+package network.message;
 
 public class MessageBackup extends Message{
 

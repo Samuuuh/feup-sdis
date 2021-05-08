@@ -1,4 +1,4 @@
-package service.etc;
+package network.node;
 
 import java.util.concurrent.ConcurrentHashMap;
 

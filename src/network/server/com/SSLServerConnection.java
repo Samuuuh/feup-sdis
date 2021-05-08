@@ -1,7 +1,7 @@
-package service.server.com;
+package network.server.com;
 
 
-import service.Connection;
+import network.Connection;
 
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;

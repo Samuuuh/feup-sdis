@@ -1,4 +1,4 @@
-package app;
+package network.services;
 
 import java.io.IOException;
 import java.rmi.Remote;

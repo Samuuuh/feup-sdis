@@ -1,13 +1,13 @@
 package app;
 
-import service.etc.Logger;
-import service.etc.Singleton;
+import network.etc.Logger;
+import network.etc.Singleton;
+import network.services.Services;
 
 import java.io.IOException;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
-import java.rmi.NotBoundException;
 
 
 public class Client {
@@ -69,7 +69,6 @@ public class Client {
     private void backup(String filePath, String replication_degree)  {
         try {
             Services stub = (Services) this.registry.lookup(this.accessPoint);
-
             int replication = Integer.parseInt(replication_degree);
             String response = stub.backup(filePath, replication);
             System.out.println(response);
