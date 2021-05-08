@@ -28,7 +28,7 @@ public class SendMessage implements Runnable {
     @Override
     public void run() {
         try {
-            System.out.println("Nois é burro");
+            //System.out.println("Nois é burro");
             //SSLSocket socket = connectionSocket.accept();
             //ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             //out.writeObject(this.message);

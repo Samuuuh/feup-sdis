@@ -24,7 +24,7 @@ public class ChordServer extends Thread {
 
     @Override
     public void run() {
-        /*
+        
         SSLServerConnection con = null;
 
         try {
@@ -53,7 +53,7 @@ public class ChordServer extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        */
+        
     }
 
     public int getPort() {

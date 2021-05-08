@@ -16,12 +16,23 @@ public class SSLConnection implements Connection {
     public SSLConnection(InetAddress ip, int port) throws IOException {
         System.out.println("before constructor");
         SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-        System.out.println(port);
-        this.sslSocket = (SSLSocket) sslSocketFactory.createSocket(ip, port);
 
-        this.out = new ObjectOutputStream(sslSocket.getOutputStream());
-        this.in = new ObjectInputStream(sslSocket.getInputStream());
+        this.sslSocket = (SSLSocket) sslSocketFactory.createSocket(ip, 7000);
+
+        //this.out = new ObjectOutputStream(sslSocket.getOutputStream());
+        //this.in = new ObjectInputStream(sslSocket.getInputStream());
+
+        this.out = null;
+        this.in = null;
+
+        //BufferedReader reader = new BufferedReader(new InputStreamReader(sslSocket.getInputStream()));
+        //PrintWriter writer = new PrintWriter(sslSocket.getOutputStream(), true);
+
         System.out.println("after constructor");
+    }
+
+    public SSLSocket accept() {
+        return sslSocket;
     }
 
     @Override
