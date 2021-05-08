@@ -1,5 +1,7 @@
 package network.message;
 
+import network.node.InfoNode;
+
 import java.math.BigInteger;
 
 public class MessageLookup extends Message{
@@ -12,8 +14,12 @@ public class MessageLookup extends Message{
      * @param port Port of the sender.
      * @param targetId Id of which we wanna find out the successor.
      */
-    public MessageLookup(String ip, int port, BigInteger targetId){
-        super(ip, port, "lookup");
+    public MessageLookup(InfoNode originNode, BigInteger targetId){
+        super(originNode, "lookup");
         this.targetId = targetId;
+    }
+
+    public BigInteger getTargetId(){
+        return targetId;
     }
 }

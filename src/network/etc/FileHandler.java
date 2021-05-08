@@ -1,6 +1,4 @@
-package service.etc;
-
-import service.etc.Logger;
+package network.etc;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,8 +1,6 @@
 package network.services;
 
-import network.client.SSLConnection;
-import network.message.Message;
-import network.message.MessageBackup;
+import network.server.com.SSLConnection;
 import network.message.MessageLookup;
 import network.etc.FileHandler;
 
@@ -28,11 +26,11 @@ public class Backup {
     public void request() throws IOException, ClassNotFoundException {
         InetAddress inetIp = InetAddress.getByName(ip);
         byte[] fileBytes = FileHandler.readFile(this.filePath);
-        Message messageBackup = new MessageBackup(ip, port, fileBytes);
+        //Message messageBackup = new MessageBackup(ip, port, fileBytes);
         SSLConnection sslConnection = new SSLConnection(inetIp, port);
 
         // TODO: create a for loop for the replication degree
-        sslConnection.sendMessage(messageBackup);
+        //sslConnection.sendMessage(messageBackup);
         MessageLookup response = (MessageLookup) sslConnection.readMessage();
         System.out.println(response.getType());
         sslConnection.closeIn();

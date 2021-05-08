@@ -1,5 +1,7 @@
 package network.node;
 
+import network.etc.Singleton;
+
 import java.math.BigInteger;
 
 public class InfoNode {
@@ -8,10 +10,17 @@ public class InfoNode {
     String ip;
     int port;
 
-    public InfoNode(BigInteger id, int port, String ip){
+    public InfoNode(String ip,int port,  BigInteger id ){
         this.ip = ip;
         this.id = id;
         this.port = port;
+    }
+
+    public InfoNode(String ip, int port){
+        this.port = port;
+        this.ip = ip;
+        String uncodedId = Singleton.getIdUncoded(ip, port);
+        id = Singleton.encode(uncodedId);
     }
 
     public BigInteger getId(){

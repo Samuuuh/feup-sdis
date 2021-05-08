@@ -1,18 +1,21 @@
-package service.server.com;
+package network.server.com;
 
 
-import service.etc.Logger;
+import network.etc.Logger;
+import network.message.Message;
 
 import javax.net.ssl.SSLSocket;
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 
-public class Send extends Thread{
+public class SendServer implements Runnable {
     SSLServerConnection connectionSocket;
+    Message message;
 
-    public Send(int port) {
+    public SendServer(int port, Message message) {
         try {
             this.connectionSocket = new SSLServerConnection(port);
+            this.message = message;
         }catch(IOException e){
             Logger.ERR(this.getClass().getName(), "Not possible to initialize SSLSocket");
         }
@@ -22,7 +25,8 @@ public class Send extends Thread{
     public void run() {
         try {
             SSLSocket socket = connectionSocket.accept();
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            out.writeObject(this.message);
             out.close();
         }
         catch(Exception e) {

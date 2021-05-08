@@ -1,7 +1,6 @@
-package service.client;
+package network.server.com;
 
-import service.Connection;
-import service.message.Message;
+import network.message.Message;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -16,11 +15,13 @@ public class SSLConnection implements Connection {
 
     public SSLConnection(InetAddress ip, int port) throws IOException {
 
+        System.out.println("before constructor");
         SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
         this.sslSocket = (SSLSocket) sslSocketFactory.createSocket(ip, port);
 
         this.out = new ObjectOutputStream(sslSocket.getOutputStream());
         this.in = new ObjectInputStream(sslSocket.getInputStream());
+        System.out.println("after constructor");
     }
 
     @Override
@@ -34,7 +35,9 @@ public class SSLConnection implements Connection {
     }
 
     public void sendMessage(Message message) throws IOException {
+        System.out.println("Object written before");
         out.writeObject(message);
+        System.out.println("Object written after");
     }
 
     public Message readMessage() throws IOException, ClassNotFoundException {
@@ -47,6 +50,10 @@ public class SSLConnection implements Connection {
 
     public void closeIn() throws IOException {
         in.close();
+    }
+
+    public void closeSocket() throws IOException {
+        this.sslSocket.close();
     }
 
 }

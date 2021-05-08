@@ -30,6 +30,7 @@ public class ChordServer extends Thread {
         try {
             con = new SSLServerConnection(port);
             while (true) {
+                System.out.println("here");
                 SSLSocket socket = con.accept();
                 var in = new ObjectInputStream(socket.getInputStream());
 

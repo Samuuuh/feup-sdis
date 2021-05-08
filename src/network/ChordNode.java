@@ -1,11 +1,11 @@
 package network;
 
+import network.message.MessageLookup;
 import network.node.InfoNode;
 import network.server.com.ChordServer;
+import network.server.com.SendMessage;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -26,24 +26,39 @@ public class ChordNode {
         server.start();
     }
 
-    public ChordNode(InfoNode chordInfo) {
+    /**
+     * First node of the network.
+     * @param infoNode Information about the own node.
+     */
+    public ChordNode(InfoNode infoNode) {
+        fingerTable = new ConcurrentHashMap<>();
+        predecessor = null;
+        this.infoNode = infoNode;
+        this.successor = infoNode;      // The first element of the network is it's own successor.
+        initNetworkChannel();
+
+    }
+
+    /**
+     * It 's not the first node of the network. It receives another node.d
+     * @param randomNode Other node of the network.
+     * @param infoNode Information about the own node.
+     */
+    public ChordNode(InfoNode infoNode, InfoNode randomNode ) {
         fingerTable = new ConcurrentHashMap<>();
         predecessor = null;
         successor = null;
-        this.infoNode = chordInfo;
+        this.infoNode = infoNode;
         initNetworkChannel();
-
-    }
-
-    public ChordNode(InfoNode node, InfoNode chordInfo ) {
-        fingerTable = new ConcurrentHashMap<>();
-        predecessor = null;
-        successor = node;
-        this.infoNode = chordInfo;
-        initNetworkChannel();
+        lookup(infoNode, randomNode, infoNode.getId());
     }
 
 
+    public void lookup(InfoNode originNode, InfoNode randomNode , BigInteger targetId){
+        System.out.println("HERE");
+        MessageLookup message = new MessageLookup(originNode, targetId);
+        new SendMessage(randomNode.getIp(), randomNode.getPort(), message).run();
+    }
 
     public ConcurrentHashMap<String, InfoNode> getFingerTable(){
         return fingerTable;
@@ -57,31 +72,10 @@ public class ChordNode {
         return predecessor;
     }
 
-    /**
-     * Function responsible for finding the successor of a node. Case it's not possible to find the successor,
-     * return the closest node id. After this, we must send a message for this node to ask the same question.
-     * @param requestId Id of the node that we want to find the successor.
-     */
-    public InfoNode findSuccessor(BigInteger requestId){
-        // id < requestId && requestId < successor.id()
-        if (infoNode.getId().compareTo(requestId) > 0 &&  requestId.compareTo(successor.getId()) <= 0)
-            return successor;
-        else {
-            return closestPrecedingNode(requestId);
-        }
-    }
-
-    public InfoNode closestPrecedingNode(BigInteger requestId) {
-        // Store all the nodes in list.
-        List<InfoNode> tempNodes = new ArrayList<>();
-        fingerTable.forEach((k, v)->{
-            tempNodes.add(v);
-        });
-
-        for(int i = tempNodes.size() - 1; i > 0; i--) {
-            if (requestId.compareTo(tempNodes.get(i).getId()) >= 0 && tempNodes.get(i).getId().compareTo(successor.getId()) <= 0)
-                return tempNodes.get(i);
-        }
+    public InfoNode getInfoNode(){
         return infoNode;
     }
+
+
+
 }

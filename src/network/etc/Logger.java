@@ -1,4 +1,4 @@
-package service.etc;
+package network.etc;
 
 public class Logger {
     static Boolean show = true;

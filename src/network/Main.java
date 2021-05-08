@@ -13,26 +13,27 @@ import network.etc.*;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 
 public class Main implements Services {
     private static String ip;
     private static int port;
     public static ChordNode chordNode;
-
+    public static ThreadPoolExecutor threadPool;
 
     public static void main(String[] args) throws IOException {
+        initThreadPool();
         parseParameters(args);
 
         Main main = new Main();
         Services stub = (Services) UnicastRemoteObject.exportObject(main, 0);
         initRMI(stub);
-        initChord();
     }
 
 
-    public static void parseParameters(String[] args) throws UnknownHostException {
+    public static void parseParameters(String[] args)  {
         if (args.length > 4) {
             System.out.println("Usage:\n java network.Main <machineIp> <machinePort> [<chordNodeIp> <chordNodePort>]");
             System.exit(1);
@@ -42,10 +43,14 @@ public class Main implements Services {
         port = Integer.parseInt(args[1]);
 
         if (args.length == 4) {
-            //node = new Chord(args[0], args[1]);
-            //node.join(args[2], args[3]);
+            InfoNode infoNode = new InfoNode(ip, port);
+            InfoNode randomNode = new InfoNode(args[2], Integer.parseInt(args[3]));
+            chordNode = new ChordNode(infoNode,randomNode);
+            System.out.println("first option");
         } else if (args.length == 2) {
-            //node = new Chord(args[0], args[1]);
+            InfoNode infoNode = new InfoNode(ip, port);
+            chordNode = new ChordNode(infoNode);
+            System.out.println("second option");
         } else System.exit(1);
     }
 
@@ -60,11 +65,8 @@ public class Main implements Services {
         }
     }
 
-    public static void initChord() {
-        String uncodedId = Singleton.getIdUncoded(ip, port);
-        BigInteger encodedId = Singleton.encode(uncodedId);
-        InfoNode infoNode = new InfoNode(encodedId, port, ip.toString());
-        chordNode = new ChordNode(infoNode);
+    public static void initThreadPool(){
+        threadPool = (ThreadPoolExecutor) Executors.newScheduledThreadPool(Singleton.THREAD_SIZE);
     }
 
     @Override
