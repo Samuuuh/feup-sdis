@@ -24,7 +24,7 @@ public class ChordServer extends Thread {
 
     @Override
     public void run() {
-
+        /*
         SSLServerConnection con = null;
 
         try {
@@ -32,6 +32,7 @@ public class ChordServer extends Thread {
             while (true) {
                 System.out.println("here");
                 SSLSocket socket = con.accept();
+                System.out.println("Received");
                 var in = new ObjectInputStream(socket.getInputStream());
 
                 Message message = (Message) in.readObject();
@@ -52,6 +53,7 @@ public class ChordServer extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        */
     }
 
     public int getPort() {

@@ -12,8 +12,9 @@ public class SSLServerConnection implements Connection {
     private final SSLServerSocket sslServerSocket;
 
     public SSLServerConnection(int port) throws IOException {
-
+        System.out.println("New ServerConnection on port " + port);
         SSLServerSocketFactory sslServerSocketFactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+        
         sslServerSocket = (SSLServerSocket) sslServerSocketFactory.createServerSocket(port);
     }
 
@@ -23,14 +24,11 @@ public class SSLServerConnection implements Connection {
     }
 
 
-    public int getPort(){
+    public int getPort() {
         return sslServerSocket.getLocalPort();
     }
 
     public InetAddress getIp(){
         return ip;
     }
-
-
-
 }

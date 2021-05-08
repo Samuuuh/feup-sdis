@@ -14,9 +14,9 @@ public class SSLConnection implements Connection {
     private final ObjectInputStream in;
 
     public SSLConnection(InetAddress ip, int port) throws IOException {
-
         System.out.println("before constructor");
         SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+        System.out.println(port);
         this.sslSocket = (SSLSocket) sslSocketFactory.createSocket(ip, port);
 
         this.out = new ObjectOutputStream(sslSocket.getOutputStream());

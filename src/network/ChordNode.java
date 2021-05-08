@@ -55,7 +55,7 @@ public class ChordNode {
 
 
     public void lookup(InfoNode originNode, InfoNode randomNode , BigInteger targetId){
-        System.out.println("HERE");
+        System.out.println("Enter lookup");
         MessageLookup message = new MessageLookup(originNode, targetId);
         new SendMessage(randomNode.getIp(), randomNode.getPort(), message).run();
     }
