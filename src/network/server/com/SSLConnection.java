@@ -19,14 +19,8 @@ public class SSLConnection implements Connection {
 
         this.sslSocket = (SSLSocket) sslSocketFactory.createSocket(ip, 7000);
 
-        //this.out = new ObjectOutputStream(sslSocket.getOutputStream());
-        //this.in = new ObjectInputStream(sslSocket.getInputStream());
-
-        this.out = null;
-        this.in = null;
-
-        //BufferedReader reader = new BufferedReader(new InputStreamReader(sslSocket.getInputStream()));
-        //PrintWriter writer = new PrintWriter(sslSocket.getOutputStream(), true);
+        this.out = new ObjectOutputStream(sslSocket.getOutputStream());
+        this.in = new ObjectInputStream(sslSocket.getInputStream());
 
         System.out.println("after constructor");
     }
