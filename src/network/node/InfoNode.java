@@ -32,7 +32,6 @@ public class InfoNode implements Serializable {
         return ip;
     }
 
-
     public int getPort() {
         return port;
     }

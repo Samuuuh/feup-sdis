@@ -21,6 +21,9 @@ public class MessageLookup extends Message implements Serializable{
         this.targetId = targetId;
     }
 
+    public InfoNode getOriginNode(){
+        return originNode;
+    }
     public BigInteger getTargetId(){
         return targetId;
     }

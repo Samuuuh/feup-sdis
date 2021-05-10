@@ -1,7 +1,9 @@
 package network.server.com;
 
+import network.Main;
 import network.etc.*;
 import network.message.*;
+import network.services.Lookup;
 
 import javax.net.ssl.SSLSocket;
 import java.io.ObjectInputStream;
@@ -29,28 +31,29 @@ public class ChordServer extends Thread {
         try {
             con = new SSLServerConnection(port);
             while (true) {
-                System.out.println("here");
                 SSLSocket socket = con.accept();
-                System.out.println("Received");
                 var out = new ObjectOutputStream(socket.getOutputStream());
                 out.writeObject(new OK());
                 var in = new ObjectInputStream(socket.getInputStream());
-                System.out.println("37 line - waiting to read");
                 Message message = (Message) in.readObject();
                 String type = message.getType();
 
-                System.out.println("line 41 - already read");
 
                 if (type.equals("backup"))
                     Logger.ANY(this.getClass().getName(), "Received backup message.");
-                else if (type.equals("de message = (Message) lete"))
+                else if (type.equals("delete"))
                     Logger.ANY(this.getClass().getName(), "Received delete message.");
                 else if (type.equals("restore"))
                     Logger.ANY(this.getClass().getName(), "Received restore message");
                 else if (type.equals("lookup"))
-                    Logger.ANY(this.getClass().getName(), "Received lookup message");
+                    Main.threadPool.execute(new Lookup((MessageLookup) message));
+                else if (type.equals("successor")) {
+                    Logger.ANY(this.getClass().getName(), "My successor is the peer with port: " + message.getPortOrigin());
+                    Main.chordNode.addSuccessor(((MessageSuccessor) message).getSuccessor());
+                }
                 else
-                    Logger.ANY(this.getClass().getName(), "Received " + type + " message");
+                    Logger.ANY(this.getClass().getName(), "Received"+ message.getType() + "message");
+
 
             }
         } catch (Exception e) {
