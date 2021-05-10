@@ -1,10 +1,11 @@
 package network.node;
 
-import network.etc.Singleton;
+import network.etc.*;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
-public class InfoNode {
+public class InfoNode implements Serializable {
 
     BigInteger id;
     String ip;
@@ -27,12 +28,9 @@ public class InfoNode {
         return id;
     }
 
-
-
     public String getIp() {
         return ip;
     }
-
 
     public int getPort() {
         return port;

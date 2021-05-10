@@ -1,12 +1,14 @@
 package network;
 
-import network.message.MessageLookup;
-import network.node.InfoNode;
-import network.server.com.ChordServer;
+import network.etc.Logger;
+import network.message.*;
+import network.node.*;
+import network.server.com.*;
 import network.server.com.SendMessage;
 
 import java.math.BigInteger;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * This is the most important class of the chord system.
@@ -15,7 +17,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ChordNode {
     // TODO: add linked list.
-    private ConcurrentHashMap<String, InfoNode> fingerTable;
+    private ConcurrentHashMap<BigInteger, InfoNode> fingerTable;
+    private ConcurrentLinkedDeque<BigInteger> fingerTableOrder;
+
     private InfoNode successor;
     private InfoNode predecessor;
     private InfoNode infoNode;
@@ -32,11 +36,11 @@ public class ChordNode {
      */
     public ChordNode(InfoNode infoNode) {
         fingerTable = new ConcurrentHashMap<>();
+        fingerTableOrder = new ConcurrentLinkedDeque<>();
         predecessor = null;
         this.infoNode = infoNode;
         this.successor = infoNode;      // The first element of the network is it's own successor.
         initNetworkChannel();
-
     }
 
     /**
@@ -46,6 +50,7 @@ public class ChordNode {
      */
     public ChordNode(InfoNode infoNode, InfoNode randomNode ) {
         fingerTable = new ConcurrentHashMap<>();
+        fingerTableOrder = new ConcurrentLinkedDeque<>();
         predecessor = null;
         successor = null;
         this.infoNode = infoNode;
@@ -55,13 +60,17 @@ public class ChordNode {
 
 
     public void lookup(InfoNode originNode, InfoNode randomNode , BigInteger targetId){
-        System.out.println("Enter lookup");
         MessageLookup message = new MessageLookup(originNode, targetId);
-        new SendMessage(randomNode.getIp(), randomNode.getPort(), message).run();
+        new SendMessage(randomNode.getIp(), randomNode.getPort(), message).start();
     }
 
-    public ConcurrentHashMap<String, InfoNode> getFingerTable(){
+    public ConcurrentHashMap<BigInteger, InfoNode> getFingerTable(){
         return fingerTable;
+    }
+
+
+    public ConcurrentLinkedDeque<BigInteger> getFingerTableOrder() {
+        return fingerTableOrder;
     }
 
     public InfoNode getSuccessor() {
@@ -76,6 +85,14 @@ public class ChordNode {
         return infoNode;
     }
 
+    public void addSuccessor(InfoNode successor){
+        this.successor = successor;
+        // TODO: add this to the fingerTableOrder and reorder it.
+        fingerTableOrder.add(successor.getId());
+        // TODO: ask professor with we need to add it to the hash table
+        fingerTable.put(successor.getId(), successor);
+        Logger.ANY(this.getClass().getName(), "Added the node to the successors");
+    }
 
 
 }
