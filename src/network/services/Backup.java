@@ -1,8 +1,8 @@
 package network.services;
 
-import network.server.com.SSLConnection;
-import network.message.MessageLookup;
-import network.etc.FileHandler;
+import network.server.com.*;
+import network.message.*;
+import network.etc.*;
 
 import java.io.IOException;
 import java.net.InetAddress;

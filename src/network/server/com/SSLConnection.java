@@ -1,34 +1,24 @@
 package network.server.com;
 
-import network.message.Message;
-
+import network.message.*;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
 import java.net.InetAddress;
 
-public class SSLConnection implements Connection {
+public class SSLConnection implements Connection{
 
     private final SSLSocket sslSocket;
     private final ObjectOutputStream out;
     private final ObjectInputStream in;
 
     public SSLConnection(InetAddress ip, int port) throws IOException {
-        System.out.println("before constructor");
         SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 
-        this.sslSocket = (SSLSocket) sslSocketFactory.createSocket(ip, 7000);
+        this.sslSocket = (SSLSocket) sslSocketFactory.createSocket(ip, port);
 
-        //this.out = new ObjectOutputStream(sslSocket.getOutputStream());
-        //this.in = new ObjectInputStream(sslSocket.getInputStream());
-
-        this.out = null;
-        this.in = null;
-
-        //BufferedReader reader = new BufferedReader(new InputStreamReader(sslSocket.getInputStream()));
-        //PrintWriter writer = new PrintWriter(sslSocket.getOutputStream(), true);
-
-        System.out.println("after constructor");
+        this.out = new ObjectOutputStream(sslSocket.getOutputStream());
+        this.in = new ObjectInputStream(sslSocket.getInputStream());
     }
 
     public SSLSocket accept() {

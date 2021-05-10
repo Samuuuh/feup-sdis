@@ -1,8 +1,8 @@
 package network;
 
-import network.message.MessageLookup;
-import network.node.InfoNode;
-import network.server.com.ChordServer;
+import network.message.*;
+import network.node.*;
+import network.server.com.*;
 import network.server.com.SendMessage;
 
 import java.math.BigInteger;
@@ -55,9 +55,8 @@ public class ChordNode {
 
 
     public void lookup(InfoNode originNode, InfoNode randomNode , BigInteger targetId){
-        System.out.println("Enter lookup");
         MessageLookup message = new MessageLookup(originNode, targetId);
-        new SendMessage(randomNode.getIp(), randomNode.getPort(), message).run();
+        new SendMessage(randomNode.getIp(), randomNode.getPort(), message).start();
     }
 
     public ConcurrentHashMap<String, InfoNode> getFingerTable(){

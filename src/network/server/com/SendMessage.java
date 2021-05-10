@@ -1,14 +1,12 @@
 package network.server.com;
 
-import network.etc.Logger;
-import network.message.Message;
+import network.etc.*;
+import network.message.*;
 
-import javax.net.ssl.SSLSocket;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.io.ObjectOutputStream;
 
-public class SendMessage implements Runnable {
+public class SendMessage extends Thread {
     SSLConnection connectionSocket;
 
     Message message;
@@ -19,6 +17,7 @@ public class SendMessage implements Runnable {
             InetAddress host = InetAddress.getByName("127.0.0.1");
             this.connectionSocket = new SSLConnection(host, port);
             this.message = message;
+            System.out.println("SendMessage constructor done");
         }catch(IOException e){
             e.printStackTrace();
             Logger.ERR(this.getClass().getName(), "Not possible to initialize SSLSocket");
@@ -28,13 +27,14 @@ public class SendMessage implements Runnable {
     @Override
     public void run() {
         try {
-            //System.out.println("Nois é burro");
-            //SSLSocket socket = connectionSocket.accept();
-            //ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            //out.writeObject(this.message);
-            //out.close();
+            System.out.println("Before run Thread");
+            System.out.println(this.message.getClass());
+            this.connectionSocket.sendMessage(this.message);
+            this.connectionSocket.readMessage();
+            System.out.println("After run Thread");
         }
         catch(Exception e) {
+            e.printStackTrace();
             System.out.println("ERROR");
         }
     }
