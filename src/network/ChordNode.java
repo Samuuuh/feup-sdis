@@ -1,21 +1,26 @@
 package network;
 
 import network.etc.Logger;
+import network.etc.Singleton;
 import network.message.*;
 import network.node.*;
 import network.server.com.*;
 import network.server.com.SendMessage;
+import network.server.stabilize.GetPredecessor;
 
+import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is the most important class of the chord system.
  * It's responsible for initialize the Chord Server and contains all the information regarding
  * this chord of this peer.
  */
-public class ChordNode {
+public class ChordNode implements Serializable {
     // TODO: add linked list.
     private ConcurrentHashMap<BigInteger, InfoNode> fingerTable;
     private ConcurrentLinkedDeque<BigInteger> fingerTableOrder;
@@ -37,10 +42,12 @@ public class ChordNode {
     public ChordNode(InfoNode infoNode) {
         fingerTable = new ConcurrentHashMap<>();
         fingerTableOrder = new ConcurrentLinkedDeque<>();
-        predecessor = null;
         this.infoNode = infoNode;
-        this.successor = infoNode;      // The first element of the network is it's own successor.
+        this.predecessor = infoNode;
+        this.successor = infoNode;
         initNetworkChannel();
+        // TODO: thread pool
+        Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 0, Singleton.STABILIZE_TIME* 1000L, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -51,11 +58,10 @@ public class ChordNode {
     public ChordNode(InfoNode infoNode, InfoNode randomNode ) {
         fingerTable = new ConcurrentHashMap<>();
         fingerTableOrder = new ConcurrentLinkedDeque<>();
-        predecessor = null;
-        successor = null;
         this.infoNode = infoNode;
         initNetworkChannel();
         lookup(infoNode, randomNode, infoNode.getId());
+        Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 0, Singleton.STABILIZE_TIME* 1000L, TimeUnit.MILLISECONDS);
     }
 
 
@@ -81,18 +87,44 @@ public class ChordNode {
         return predecessor;
     }
 
+    public BigInteger getId(){
+        return infoNode.getId();
+    }
+
     public InfoNode getInfoNode(){
         return infoNode;
     }
 
-    public void addSuccessor(InfoNode successor){
+    public void setSuccessor(InfoNode successor){
+        if (successor != this.successor)
+            Logger.ANY(this.getClass().getName(), "New successor " + successor.getPort());
+
         this.successor = successor;
-        // TODO: add this to the fingerTableOrder and reorder it.
+        // TODO: is this necessary?
         fingerTableOrder.add(successor.getId());
-        // TODO: ask professor with we need to add it to the hash table
         fingerTable.put(successor.getId(), successor);
-        Logger.ANY(this.getClass().getName(), "Added the node to the successors");
     }
+
+
+    public void setPredecessor(InfoNode predecessor){
+        Logger.ANY(this.getClass().getName(), "New predecessor " + predecessor.getPort());
+        this.predecessor = predecessor;
+    }
+
+    /**
+     * Receives notification where the node inside MessageInfoNode is a candidate to be the predecessor.
+     * @param messageInfoNode - Message received from a node.
+     */
+    public void notify(MessageInfoNode messageInfoNode){
+        InfoNode notifierInfoNode = messageInfoNode.getInfoNode();
+        BigInteger notifierId = notifierInfoNode.getId();
+
+        if (Objects.isNull(this.predecessor) || Singleton.betweenSuccessor(notifierId, predecessor.getId(), this.getId()))
+            setPredecessor(notifierInfoNode);
+
+    }
+
+
 
 
 }

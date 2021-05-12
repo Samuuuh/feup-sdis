@@ -14,6 +14,7 @@ import network.etc.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 
@@ -22,6 +23,7 @@ public class Main implements Services {
     private static int port;
     public static ChordNode chordNode;
     public static ThreadPoolExecutor threadPool;
+    public static ScheduledExecutorService schedulerPool;
 
     public static void main(String[] args) throws IOException {
         initThreadPool();
@@ -67,6 +69,7 @@ public class Main implements Services {
 
     public static void initThreadPool(){
         threadPool = (ThreadPoolExecutor) Executors.newScheduledThreadPool(Singleton.THREAD_SIZE);
+        schedulerPool = Executors.newScheduledThreadPool(Singleton.SCHED_SIZE);
     }
 
     @Override

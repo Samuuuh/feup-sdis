@@ -36,9 +36,7 @@ public class SSLConnection implements Connection{
     }
 
     public void sendMessage(Message message) throws IOException {
-        System.out.println("Object written before");
         out.writeObject(message);
-        System.out.println("Object written after");
     }
 
     public Message readMessage() throws IOException, ClassNotFoundException {
