@@ -7,9 +7,12 @@ import java.math.BigInteger;
 
 public class InfoNode implements Serializable {
 
+    InfoNode predecessor;
+    InfoNode successor;
     BigInteger id;
     String ip;
     int port;
+
 
     public InfoNode(String ip,int port,  BigInteger id ){
         this.ip = ip;
@@ -35,4 +38,6 @@ public class InfoNode implements Serializable {
     public int getPort() {
         return port;
     }
+
+
 }
