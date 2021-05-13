@@ -11,7 +11,8 @@ public class Singleton {
     public static int THREAD_SIZE = 128;
     public static int SCHED_SIZE = 4;        // Thread pool scheduler size.
     public static long STABILIZE_TIME = 5;   // Rate of execution of stabilize in seconds.
-    public static int m = 128;
+    public static long m = 64;
+
 
     public static int getRandomPortNumber(){
         int upperBound = 9000;
@@ -25,7 +26,7 @@ public class Singleton {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(text.getBytes(StandardCharsets.UTF_8));
             BigInteger id = new BigInteger(1, hash);    // Parse it to big integer.
-            return id.mod(BigInteger.valueOf(m));           // Get the module
+            return id.mod(BigInteger.valueOf((long) Math.pow(2,m)));           // Get the module
 
         }catch(Exception e){
             Logger.ERR("network.etc.Singleton", "Not possible to generate id.");

@@ -1,7 +1,9 @@
 package network.server.stabilize;
 
 import network.Main;
+import network.etc.MessageType;
 import network.etc.Singleton;
+import network.message.Message;
 import network.message.MessageInfoNode;
 import network.node.InfoNode;
 import network.server.com.SendMessage;
@@ -34,7 +36,7 @@ public class Stabilize implements Runnable {
                 Main.chordNode.setSuccessor(sucPredecessor);
             }
 
-            MessageInfoNode message = new MessageInfoNode(Main.chordNode.getInfoNode(), "notify", Main.chordNode.getInfoNode());
+            MessageInfoNode message = new MessageInfoNode(Main.chordNode.getInfoNode(), MessageType.NOTIFY, Main.chordNode.getInfoNode());
             Main.threadPool.execute(new SendMessage(Main.chordNode.getSuccessor().getIp(), Main.chordNode.getSuccessor().getPort(), message));
 
         } catch (Exception e) {

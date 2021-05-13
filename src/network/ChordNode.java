@@ -1,6 +1,7 @@
 package network;
 
 import network.etc.Logger;
+import network.etc.MessageType;
 import network.etc.Singleton;
 import network.message.*;
 import network.node.*;
@@ -25,6 +26,7 @@ public class ChordNode implements Serializable {
     private ConcurrentHashMap<BigInteger, InfoNode> fingerTable;
     private ConcurrentLinkedDeque<BigInteger> fingerTableOrder;
 
+    private Integer next;
     private InfoNode successor;
     private InfoNode predecessor;
     private InfoNode infoNode;
@@ -45,7 +47,9 @@ public class ChordNode implements Serializable {
         this.infoNode = infoNode;
         this.predecessor = infoNode;
         this.successor = infoNode;
+        this.next = 0;
         initNetworkChannel();
+        Logger.ANY(this.getClass().getName(), "ID: " + infoNode.getId());
         // TODO: thread pool
         Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 0, Singleton.STABILIZE_TIME* 1000L, TimeUnit.MILLISECONDS);
     }
@@ -60,13 +64,15 @@ public class ChordNode implements Serializable {
         fingerTableOrder = new ConcurrentLinkedDeque<>();
         this.infoNode = infoNode;
         initNetworkChannel();
+        this.next = 0;
+        Logger.ANY(this.getClass().getName(), "ID: " + infoNode.getId());
         lookup(infoNode, randomNode, infoNode.getId());
         Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 0, Singleton.STABILIZE_TIME* 1000L, TimeUnit.MILLISECONDS);
     }
 
 
     public void lookup(InfoNode originNode, InfoNode randomNode , BigInteger targetId){
-        MessageLookup message = new MessageLookup(originNode, targetId);
+        MessageLookup message = new MessageLookup(originNode, targetId, MessageType.LOOKUP);
         new SendMessage(randomNode.getIp(), randomNode.getPort(), message).start();
     }
 
@@ -95,9 +101,16 @@ public class ChordNode implements Serializable {
         return infoNode;
     }
 
+    public Integer getNext(){
+        return next;
+    }
+
+    public void setNext(Integer next){
+        this.next = next;
+    }
     public void setSuccessor(InfoNode successor){
         if (successor != this.successor)
-            Logger.ANY(this.getClass().getName(), "New successor " + successor.getPort());
+            Logger.ANY(this.getClass().getName(), "New successor " + successor.getId());
 
         this.successor = successor;
         // TODO: is this necessary?
@@ -107,7 +120,7 @@ public class ChordNode implements Serializable {
 
 
     public void setPredecessor(InfoNode predecessor){
-        Logger.ANY(this.getClass().getName(), "New predecessor " + predecessor.getPort());
+        Logger.ANY(this.getClass().getName(), "New predecessor " + predecessor.getId());
         this.predecessor = predecessor;
     }
 

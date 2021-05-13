@@ -48,11 +48,9 @@ public class Main implements Services {
             InfoNode infoNode = new InfoNode(ip, port);
             InfoNode randomNode = new InfoNode(args[2], Integer.parseInt(args[3]));
             chordNode = new ChordNode(infoNode,randomNode);
-            System.out.println("first option");
         } else if (args.length == 2) {
             InfoNode infoNode = new InfoNode(ip, port);
             chordNode = new ChordNode(infoNode);
-            System.out.println("second option");
         } else System.exit(1);
     }
 

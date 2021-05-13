@@ -7,8 +7,6 @@ import java.math.BigInteger;
 
 public class InfoNode implements Serializable {
 
-    InfoNode predecessor;
-    InfoNode successor;
     BigInteger id;
     String ip;
     int port;

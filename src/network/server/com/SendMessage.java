@@ -17,6 +17,7 @@ public class SendMessage extends Thread {
             this.connectionSocket = new SSLConnection(host, port);
             this.message = message;
         }catch(IOException e){
+            // What if there is an error.
             e.printStackTrace();
             Logger.ERR(this.getClass().getName(), "Not possible to initialize SSLSocket");
         }

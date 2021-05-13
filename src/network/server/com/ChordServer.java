@@ -37,31 +37,30 @@ public class ChordServer extends Thread {
                 out.writeObject(new OK());
                 var in = new ObjectInputStream(socket.getInputStream());
                 Message message = (Message) in.readObject();
-                String type = message.getType();
+                MessageType type = message.getType();
 
 
-                if (type.equals("backup"))
-                    Logger.ANY(this.getClass().getName(), "Received backup message.");
-                else if (type.equals("delete"))
-                    Logger.ANY(this.getClass().getName(), "Received delete message.");
-                else if (type.equals("restore"))
-                    Logger.ANY(this.getClass().getName(), "Received restore message");
-                else if (type.equals("lookup"))
-                    Main.threadPool.execute(new Lookup((MessageLookup) message));
-                else if (type.equals("successor")) {
+
+                if (type == MessageType.LOOKUP)
+                    Main.threadPool.execute(new Lookup((MessageLookup) message, MessageType.SUCCESSOR, MessageType.LOOKUP));
+                else if (type.equals(MessageType.SUCCESSOR)) {
                     Main.chordNode.setSuccessor(((MessageInfoNode) message).getInfoNode());
                 }
-                else if (type.equals("notify")){
+                else if (type == MessageType.NOTIFY){
                     Main.chordNode.notify((MessageInfoNode) message);
                 }
-                else if (type.equals("getPredecessor")){
+                else if (type == MessageType.GET_PREDECESSOR){
                     // Stabilize from another node asking the chordNode predecessor.
-                    MessageInfoNode messageInfoNode = new MessageInfoNode(Main.chordNode.getInfoNode(), "ansGetPredecessor", Main.chordNode.getPredecessor());
+                    MessageInfoNode messageInfoNode = new MessageInfoNode(Main.chordNode.getInfoNode(), MessageType.ANS_GET_PREDECESSOR, Main.chordNode.getPredecessor());
                     Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageInfoNode));
                 }
-                else if (type.equals("ansGetPredecessor")){
+                else if (type == MessageType.ANS_GET_PREDECESSOR){
                     // Continue the stabilize process after receiving the successor predecessor.
                     Main.threadPool.execute(new Stabilize((MessageInfoNode) message));
+                } else if (type == MessageType.FIX_FINGERS){
+                    Logger.ANY(this.getClass().getName(), "Received FIX_FINGERS");
+                } else if (type == MessageType.ANS_FIX_FINGERS) {
+                    Logger.ANY(this.getClass().getName(), "Received ANS_FIX_FINGERS");
                 }
                 else
                     Logger.ANY(this.getClass().getName(), "Received"+ message.getType() + "message");

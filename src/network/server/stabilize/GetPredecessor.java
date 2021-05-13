@@ -8,6 +8,7 @@ import network.server.com.SendMessage;
 import java.util.Objects;
 
 public class GetPredecessor implements Runnable {
+
     @Override
     public void run() {
         InfoNode successor = Main.chordNode.getSuccessor();

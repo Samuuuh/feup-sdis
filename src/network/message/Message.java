@@ -1,5 +1,6 @@
 package network.message;
 
+import network.etc.MessageType;
 import network.node.InfoNode;
 
 import java.io.Serializable;
@@ -7,9 +8,9 @@ import java.io.Serializable;
 public abstract class Message implements Serializable {
 
     InfoNode originNode;
-    String type;
+    MessageType type;
 
-    public Message(InfoNode originNode, String type){
+    public Message(InfoNode originNode, MessageType type){
         this.originNode = originNode;
         this.type = type;
     }
@@ -22,7 +23,7 @@ public abstract class Message implements Serializable {
         return originNode.getPort();
     }
 
-    public String getType(){
+    public MessageType getType(){
         return type;
     }
 

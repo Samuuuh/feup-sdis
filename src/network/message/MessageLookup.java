@@ -1,5 +1,6 @@
 package network.message;
 
+import network.etc.MessageType;
 import network.node.InfoNode;
 
 import java.io.Externalizable;
@@ -16,8 +17,8 @@ public class MessageLookup extends Message implements Serializable{
      * @param port Port of the sender.
      * @param targetId Id of which we wanna find out the successor.
      */
-    public MessageLookup(InfoNode originNode, BigInteger targetId){
-        super(originNode, "lookup");
+    public MessageLookup(InfoNode originNode, BigInteger targetId, MessageType type){
+        super(originNode, type);
         this.targetId = targetId;
     }
 
