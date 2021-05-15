@@ -8,6 +8,7 @@ import network.services.Lookup;
 
 import javax.net.ssl.SSLSocket;
 
+import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
@@ -40,14 +41,24 @@ public class ChordServer extends Thread {
                 Message message = (Message) in.readObject();
                 MessageType type = message.getType();
 
-
+                if (type == MessageType.RESTORE) {
+                    // TO DO
+                }
                 if (type == MessageType.BACKUP) {
-                    System.out.println(message.getIpOrigin());
-                    byte[] test = ((MessageBackup) message).getBytes();
-                    System.out.println(test.length);
-                    FileHandler.saveFile("/img", "/test", test);
-                    System.out.println("Send Backup to other peers!");
-   
+                    // THIS (Can also be used for restore)
+                    byte[] bytesMessage = ((MessageBackup) message).getBytes();
+                    FileHandler.saveFile(port + "/backup/", ((MessageBackup) message).getFileName(), bytesMessage);
+                    // OR SAVE THE SERIALIZE FILE
+                    /*
+                    FileOutputStream fileOut = new FileOutputStream(((MessageBackup) message).getFileName() + ".ser");
+                    ObjectOutputStream outBackup = new ObjectOutputStream(fileOut);
+                    outBackup.writeObject(message);
+                    outBackup.close();
+                    fileOut.close();
+                    */
+                    
+                    // TODO: Check if repdeg is met
+                    // otherwise send to the sucessor
                 } else if (type == MessageType.LOOKUP) {
                     Main.threadPool.execute(new Lookup((MessageLookup) message, MessageType.SUCCESSOR, MessageType.LOOKUP));
                 } else if (type.equals(MessageType.SUCCESSOR)) {
@@ -71,8 +82,6 @@ public class ChordServer extends Thread {
                 }
                 else
                     Logger.ANY(this.getClass().getName(), "Received"+ message.getType() + "message");
-
-
             }
         } catch (Exception e) {
             e.printStackTrace();

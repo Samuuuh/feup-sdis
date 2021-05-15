@@ -3,6 +3,7 @@ package network.etc;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.*;
 
 import static java.nio.file.Files.readAllBytes;
 
@@ -22,16 +23,24 @@ public class FileHandler {
     }
 
 
-    public static void saveFile(String filePath, String fileId, byte[] bytesMessage) throws IOException {
-        File mainFile = new File("test-BACKUP.txt");
-        mainFile.createNewFile();
-        System.out.println("1");
+    public static void saveFile(String dir, String fileName, byte[] bytesMessage) throws IOException {
+        // Create directory if not exists
+        Path path = Paths.get(dir);
+        Files.createDirectories(path);
 
-        FileOutputStream outputFile = new FileOutputStream("test-BACKUP.jpg", true);
-        System.out.println("2");
-
+        File directory = new File(dir);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+        
+        // SaveFile
+        String filePath = dir + fileName;
+        FileOutputStream outputFile = new FileOutputStream(filePath, true);
         if (bytesMessage != null) outputFile.write(bytesMessage);
-        System.out.println("3");
         outputFile.close();
+    }
+
+    public static void saveSerialize() {
+        
     }
 }

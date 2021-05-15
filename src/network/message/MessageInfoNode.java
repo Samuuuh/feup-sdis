@@ -18,7 +18,4 @@ public class MessageInfoNode extends Message implements Serializable {
     public InfoNode getInfoNode(){
         return infoNode;
     }
-
-
-
 }

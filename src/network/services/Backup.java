@@ -27,13 +27,13 @@ public class Backup {
      * This function is responsible for sending the message to the SSLServer .
      */
     public void request(InfoNode originNode) throws IOException, ClassNotFoundException {
-        
-        // Ler do filePath
-        System.out.println(filePath);
         byte[] byteArr = FileHandler.readFile(filePath);
 
+        
+        MessageBackup message = new MessageBackup(originNode, filePath, byteArr);
+
         // TODO: create a for loop for the replication degree
-        MessageBackup message = new MessageBackup(originNode, byteArr);
+        // TODO: which one to send the backup message
         new SendMessage("127.0.0.1", 8888, message).start();
     }
 }
