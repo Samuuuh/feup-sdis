@@ -13,6 +13,7 @@ public class SendMessage extends Thread {
 
     public SendMessage(String ip, int port, Message message) {
         try {
+            // TODO: REMOVE 127.0.0.1
             InetAddress host = InetAddress.getByName("127.0.0.1");
             this.connectionSocket = new SSLConnection(host, port);
             this.message = message;

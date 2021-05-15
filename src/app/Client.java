@@ -41,7 +41,7 @@ public class Client {
                 System.out.println("Usage:\n java Client <peer_ap> BACKUP <file> <replication_degree>\n");
                 return;
             }
-
+            
             String file = args[2];
             String replication_degree = args[3];
             boolean isNumber = replication_degree.matches("\\d+");

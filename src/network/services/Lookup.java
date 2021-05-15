@@ -19,13 +19,12 @@ public class Lookup implements Runnable{
     MessageType returnType;
     MessageType forwardType;
 
-    public Lookup(MessageLookup message, MessageType returnType, MessageType forwardType){
+    public Lookup(MessageLookup message, MessageType returnType, MessageType forwardType) {
         this.message = message;
         this.chordNode = Main.chordNode;
         this.returnType = returnType;
         this.forwardType = forwardType;
     }
-
 
     @Override
     public void run() {

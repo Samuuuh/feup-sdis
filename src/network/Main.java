@@ -1,5 +1,7 @@
+
 package network;
 
+import network.*;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.InetAddress;
@@ -8,6 +10,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import network.node.InfoNode;
+import network.services.Backup;
 import network.services.Services;
 import network.etc.*;
 
@@ -73,6 +76,16 @@ public class Main implements Services {
     @Override
     public String backup(String filePath, int repDeg) {
         //new Backup(ip, server.getPort(), filePath, repDeg).request();
+        Backup a = new Backup("127.0.0.1", 8888, filePath, repDeg);
+
+        try {
+            a.request(chordNode.getInfoNode());
+        } catch(IOException e){
+            e.printStackTrace();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
         return "Start Lookup";
     }
 }

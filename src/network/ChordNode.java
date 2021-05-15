@@ -1,5 +1,6 @@
 package network;
 
+import network.*;
 import network.etc.Logger;
 import network.etc.MessageType;
 import network.etc.Singleton;
