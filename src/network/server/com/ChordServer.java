@@ -54,13 +54,10 @@ public class ChordServer extends Thread {
                     Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageInfoNode));
                 } else if (type == MessageType.ANS_GET_PREDECESSOR){
                     // Continue the stabilize process after receiving the successor predecessor.
-                    System.out.println("Run stabilize");
                     Main.threadPool.execute(new Stabilize((MessageInfoNode) message));
                 } else if (type == MessageType.FIX_FINGERS){
-                    System.out.println("I have received fix finger from the port " + message.getPortOrigin());
                     Main.threadPool.execute(new Lookup((MessageLookup)message, MessageType.ANS_FIX_FINGERS, MessageType.FIX_FINGERS));
                 } else if (type == MessageType.ANS_FIX_FINGERS) {
-                    System.out.println("I have received ans fix fingers from the port " + message.getPortOrigin());
                     Main.threadPool.execute(new PutOnFinger((MessageSuccessor) message));
                 } else {
                     Logger.ANY(this.getClass().getName(), "Received" + message.getType() + "message");

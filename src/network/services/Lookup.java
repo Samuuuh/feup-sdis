@@ -38,7 +38,6 @@ public class Lookup implements Runnable{
         if (Singleton.betweenSuccessor(targetId, currentId, successorId)) {
             MessageSuccessor messageSuccessor = new MessageSuccessor(Main.chordNode.getInfoNode(), targetId, Main.chordNode.getInfoNode(), this.returnType);
             Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageSuccessor));
-            System.out.println("Sending message with targetId: " + targetId + " to " + message.getIpOrigin());
         }
         else closestPrecedingNode(targetId);
     }
@@ -56,14 +55,12 @@ public class Lookup implements Runnable{
 
                 InfoNode closestNode = fingerTable.get(id);
                 MessageLookup messageLookup = new MessageLookup(message.getOriginNode(), targetId, this.forwardType);
-                System.out.println("The closest node is " + id.toString());
                 Main.threadPool.execute(new SendMessage(closestNode.getIp(), closestNode.getPort(), messageLookup));
                 break;
             }
         }
 
         // The own node is the successor.
-        System.out.println("Sending message with targetId: " + targetId + " to " + message.getIpOrigin());
         MessageSuccessor messageSuccessor = new MessageSuccessor(Main.chordNode.getInfoNode(), targetId, Main.chordNode.getInfoNode(), this.returnType);
         Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageSuccessor));
     }

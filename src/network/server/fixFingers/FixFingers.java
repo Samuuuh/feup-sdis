@@ -27,11 +27,9 @@ public class FixFingers implements Runnable{
 
             BigInteger currentId = Main.chordNode.getId();
             BigInteger nextId = new BigInteger(String.valueOf((long) Math.pow(2, next - 1)));
-            System.out.println("nextId " + nextId);
             BigInteger targetId = currentId.add(nextId);
             MessageLookup messageLookup = new MessageLookup(Main.chordNode.getInfoNode(), targetId, MessageType.FIX_FINGERS);
             new SendMessage(successor.getIp(), successor.getPort(), messageLookup).start();
-            System.out.println("Sent FIX FINGERS to " + successor.getPort());
         }catch(Exception e){
             e.printStackTrace();
         }
