@@ -20,7 +20,7 @@ public class GetPredecessor implements Runnable {
             if (Objects.isNull(successor)) return;
 
             Main.chordNode.printHashTable();
-
+            Main.chordNode.printFingerTableOrder();
             // Case the successor is the own node, there is no necessity of sending the message.
             if (successor == Main.chordNode.getInfoNode()) {
                 Main.threadPool.execute(new Stabilize());

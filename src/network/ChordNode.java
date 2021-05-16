@@ -149,9 +149,11 @@ public class ChordNode implements Serializable {
 
 
     public void initOrderedTable(){
+
         for (int i = 0; i < Singleton.m; i++) {
-            BigInteger key = new BigInteger(String.valueOf((long) Math.pow(2,i)));
-            fingerTableOrder.addLast(key);
+            BigInteger offset = new BigInteger(String.valueOf((long) Math.pow(2,i)));
+            BigInteger fingerTableEntry = this.infoNode.getId().add(offset);
+            fingerTableOrder.addLast(fingerTableEntry);
         }
     }
 
