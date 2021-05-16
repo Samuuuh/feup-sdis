@@ -28,7 +28,7 @@ public class Stabilize implements Runnable {
     public void run() {
         try {
             BigInteger currentId = Main.chordNode.getInfoNode().getId();
-
+            System.out.println(sucPredecessor.getId().toString());
             if (Objects.isNull(sucPredecessor))
                 return;
 

@@ -7,6 +7,7 @@ import network.message.*;
 import network.node.*;
 import network.server.com.*;
 import network.server.com.SendMessage;
+import network.server.fixFingers.FixFingers;
 import network.server.stabilize.GetPredecessor;
 
 import java.io.Serializable;
@@ -39,6 +40,7 @@ public class ChordNode implements Serializable {
 
     /**
      * First node of the network.
+     *
      * @param infoNode Information about the own node.
      */
     public ChordNode(InfoNode infoNode) {
@@ -49,34 +51,42 @@ public class ChordNode implements Serializable {
         this.successor = infoNode;
         this.next = 0;
         initNetworkChannel();
+        initOrderedTable();
+
         Logger.ANY(this.getClass().getName(), "ID: " + infoNode.getId());
-        // TODO: thread pool
-        Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 0, Singleton.STABILIZE_TIME* 1000L, TimeUnit.MILLISECONDS);
+        Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 100, Singleton.STABILIZE_TIME * 1000L, TimeUnit.MILLISECONDS);
+        Main.schedulerPool.scheduleWithFixedDelay(new FixFingers(), 100, Singleton.FIX_FINGERS_TIME * 1000L, TimeUnit.MILLISECONDS);
     }
 
     /**
      * It 's not the first node of the network. It receives another node.d
+     *
      * @param randomNode Other node of the network.
-     * @param infoNode Information about the own node.
+     * @param infoNode   Information about the own node.
      */
-    public ChordNode(InfoNode infoNode, InfoNode randomNode ) {
+    public ChordNode(InfoNode infoNode, InfoNode randomNode) {
         fingerTable = new ConcurrentHashMap<>();
         fingerTableOrder = new ConcurrentLinkedDeque<>();
         this.infoNode = infoNode;
-        initNetworkChannel();
         this.next = 0;
+        initNetworkChannel();
+        initOrderedTable();
+
         Logger.ANY(this.getClass().getName(), "ID: " + infoNode.getId());
         lookup(infoNode, randomNode, infoNode.getId());
-        Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 0, Singleton.STABILIZE_TIME* 1000L, TimeUnit.MILLISECONDS);
+        Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 100, Singleton.STABILIZE_TIME * 1000L, TimeUnit.MILLISECONDS);
+        Main.schedulerPool.scheduleWithFixedDelay(new FixFingers(), 100, Singleton.FIX_FINGERS_TIME * 1000L, TimeUnit.MILLISECONDS);
+        // Main.schedulerPool.schedule(new FixFingers(), 100, TimeUnit.MILLISECONDS);
+
     }
 
 
-    public void lookup(InfoNode originNode, InfoNode randomNode , BigInteger targetId){
+    public void lookup(InfoNode originNode, InfoNode randomNode, BigInteger targetId) {
         MessageLookup message = new MessageLookup(originNode, targetId, MessageType.LOOKUP);
         new SendMessage(randomNode.getIp(), randomNode.getPort(), message).start();
     }
 
-    public ConcurrentHashMap<BigInteger, InfoNode> getFingerTable(){
+    public ConcurrentHashMap<BigInteger, InfoNode> getFingerTable() {
         return fingerTable;
     }
 
@@ -93,42 +103,42 @@ public class ChordNode implements Serializable {
         return predecessor;
     }
 
-    public BigInteger getId(){
+    public BigInteger getId() {
         return infoNode.getId();
     }
 
-    public InfoNode getInfoNode(){
+    public InfoNode getInfoNode() {
         return infoNode;
     }
 
-    public Integer getNext(){
+    public Integer getNext() {
         return next;
     }
 
-    public void setNext(Integer next){
+    public void setNext(Integer next) {
         this.next = next;
     }
-    public void setSuccessor(InfoNode successor){
+
+    public void setSuccessor(InfoNode successor) {
         if (successor != this.successor)
             Logger.ANY(this.getClass().getName(), "New successor " + successor.getId());
 
         this.successor = successor;
-        // TODO: is this necessary?
-        fingerTableOrder.add(successor.getId());
         fingerTable.put(successor.getId(), successor);
     }
 
 
-    public void setPredecessor(InfoNode predecessor){
+    public void setPredecessor(InfoNode predecessor) {
         Logger.ANY(this.getClass().getName(), "New predecessor " + predecessor.getId());
         this.predecessor = predecessor;
     }
 
     /**
      * Receives notification where the node inside MessageInfoNode is a candidate to be the predecessor.
+     *
      * @param messageInfoNode - Message received from a node.
      */
-    public void notify(MessageInfoNode messageInfoNode){
+    public void notify(MessageInfoNode messageInfoNode) {
         InfoNode notifierInfoNode = messageInfoNode.getInfoNode();
         BigInteger notifierId = notifierInfoNode.getId();
 
@@ -138,6 +148,28 @@ public class ChordNode implements Serializable {
     }
 
 
+    public void initOrderedTable(){
+        for (int i = 0; i < Singleton.m; i++) {
+            BigInteger key = new BigInteger(String.valueOf((long) Math.pow(2,i)));
+            fingerTableOrder.addLast(key);
+        }
+    }
 
+    public void printHashTable() {
+        System.out.println("---- FINGER TABLE ---- ");
+        fingerTable.forEach((key, value) -> {
+            System.out.println("KEY: " + key);
+            System.out.println("SUCCESSOR: " + value.getId());
+        });
+        System.out.println("---- END ----");
+    }
+
+    public void printFingerTableOrder(){
+        System.out.println("---- FINGER ORDER ---- ");
+        fingerTableOrder.forEach((key)->{
+            System.out.println("ID: " + key);
+        });
+        System.out.println("---- END ----");
+    }
 
 }
