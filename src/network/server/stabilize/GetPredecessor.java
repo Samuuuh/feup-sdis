@@ -1,6 +1,7 @@
 package network.server.stabilize;
 
 import network.Main;
+import network.etc.Logger;
 import network.message.MessageGetPredecessor;
 import network.node.InfoNode;
 import network.server.com.SendMessage;
@@ -11,18 +12,27 @@ public class GetPredecessor implements Runnable {
 
     @Override
     public void run() {
-        InfoNode successor = Main.chordNode.getSuccessor();
+        try {
+            if (Main.chordNode == null)
+                return ;
 
-        if (Objects.isNull(successor)) return;
+            InfoNode successor = Main.chordNode.getSuccessor();
 
-        // Case the successor is the own node, there is no necessity of sending the message.
-        if (successor == Main.chordNode.getInfoNode()) {
-            Main.threadPool.execute(new Stabilize());
-            return;
+            if (Objects.isNull(successor)) return;
+
+            // Case the successor is the own node, there is no necessity of sending the message.
+            if (successor == Main.chordNode.getInfoNode()) {
+                Main.threadPool.execute(new Stabilize());
+                return;
+            }
+
+            MessageGetPredecessor messageGetPredecessor = new MessageGetPredecessor(Main.chordNode.getInfoNode());
+            Main.threadPool.execute(new SendMessage(successor.getIp(), successor.getPort(), messageGetPredecessor));
+
+        }catch(Exception e){
+            Logger.ERR(this.getClass().getName(), "Not possible to get predecessor.");
         }
 
-        MessageGetPredecessor messageGetPredecessor = new MessageGetPredecessor(Main.chordNode.getInfoNode());
-        Main.threadPool.execute(new SendMessage(successor.getIp(),successor.getPort(), messageGetPredecessor));
     }
 
 

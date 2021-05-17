@@ -5,23 +5,18 @@ import network.message.*;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class SendMessage extends Thread {
     SSLConnection connectionSocket;
 
     Message message;
 
-    public SendMessage(String ip, int port, Message message) {
-        try {
-            // TODO: REMOVE 127.0.0.1
-            InetAddress host = InetAddress.getByName("127.0.0.1");
-            this.connectionSocket = new SSLConnection(host, port);
-            this.message = message;
-        }catch(IOException e){
-            // What if there is an error.
-            e.printStackTrace();
-            Logger.ERR(this.getClass().getName(), "Not possible to initialize SSLSocket");
-        }
+    public SendMessage(String ip, int port, Message message) throws IOException {
+        InetAddress host = InetAddress.getByName("127.0.0.1");
+        this.connectionSocket = new SSLConnection(host, port);
+        this.message = message;
+
     }
 
     @Override
@@ -29,8 +24,7 @@ public class SendMessage extends Thread {
         try {
             this.connectionSocket.sendMessage(this.message);
             this.connectionSocket.readMessage();
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("ERROR");
         }

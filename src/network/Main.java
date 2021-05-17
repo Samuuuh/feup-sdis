@@ -54,6 +54,7 @@ public class Main implements Services {
         } else if (args.length == 2) {
             InfoNode infoNode = new InfoNode(ip, port);
             chordNode = new ChordNode(infoNode);
+
         } else System.exit(1);
     }
 
