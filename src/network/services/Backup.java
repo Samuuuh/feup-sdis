@@ -32,7 +32,6 @@ public class Backup {
         // TODO: create a for loop for the replication degree
         //sslConnection.sendMessage(messageBackup);
         MessageLookup response = (MessageLookup) sslConnection.readMessage();
-        System.out.println(response.getType());
         sslConnection.closeIn();
 
     }

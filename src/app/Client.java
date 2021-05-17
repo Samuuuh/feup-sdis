@@ -71,7 +71,6 @@ public class Client {
             Services stub = (Services) this.registry.lookup(this.accessPoint);
             int replication = Integer.parseInt(replication_degree);
             String response = stub.backup(filePath, replication);
-            System.out.println(response);
         }catch (Exception e){
             Logger.ERR(this.getClass().getName(), "Error on requesting backup.");
             e.printStackTrace();

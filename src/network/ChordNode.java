@@ -5,11 +5,13 @@ import network.etc.MessageType;
 import network.etc.Singleton;
 import network.message.*;
 import network.node.*;
+import network.server.CheckPredecessor;
 import network.server.com.*;
 import network.server.com.SendMessage;
 import network.server.fixFingers.FixFingers;
 import network.server.stabilize.GetPredecessor;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Objects;
@@ -56,6 +58,7 @@ public class ChordNode implements Serializable {
         Logger.ANY(this.getClass().getName(), "ID: " + infoNode.getId());
         Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 100, Singleton.STABILIZE_TIME * 1000L, TimeUnit.MILLISECONDS);
         Main.schedulerPool.scheduleWithFixedDelay(new FixFingers(), 100, Singleton.FIX_FINGERS_TIME * 1000L, TimeUnit.MILLISECONDS);
+        Main.schedulerPool.scheduleWithFixedDelay(new CheckPredecessor(), 100, Singleton.CHECK_PRED_TIME * 1000L, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -65,23 +68,27 @@ public class ChordNode implements Serializable {
      * @param infoNode   Information about the own node.
      */
     public ChordNode(InfoNode infoNode, InfoNode randomNode) {
-        fingerTable = new ConcurrentHashMap<>();
-        fingerTableOrder = new ConcurrentLinkedDeque<>();
-        this.infoNode = infoNode;
-        this.next = 0;
-        initNetworkChannel();
-        initOrderedTable();
+        try {
+            fingerTable = new ConcurrentHashMap<>();
+            fingerTableOrder = new ConcurrentLinkedDeque<>();
+            this.infoNode = infoNode;
+            this.next = 0;
+            initNetworkChannel();
+            initOrderedTable();
 
-        Logger.ANY(this.getClass().getName(), "ID: " + infoNode.getId());
-        lookup(infoNode, randomNode, infoNode.getId());
-        Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 100, Singleton.STABILIZE_TIME * 1000L, TimeUnit.MILLISECONDS);
-        Main.schedulerPool.scheduleWithFixedDelay(new FixFingers(), 100, Singleton.FIX_FINGERS_TIME * 1000L, TimeUnit.MILLISECONDS);
-        // Main.schedulerPool.schedule(new FixFingers(), 100, TimeUnit.MILLISECONDS);
+            Logger.ANY(this.getClass().getName(), "ID: " + infoNode.getId());
+            lookup(infoNode, randomNode, infoNode.getId());
+            Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 100, Singleton.STABILIZE_TIME * 1000L, TimeUnit.MILLISECONDS);
+            Main.schedulerPool.scheduleWithFixedDelay(new FixFingers(), 100, Singleton.FIX_FINGERS_TIME * 1000L, TimeUnit.MILLISECONDS);
+            Main.schedulerPool.scheduleWithFixedDelay(new CheckPredecessor(), 100, Singleton.CHECK_PRED_TIME * 1000L, TimeUnit.MILLISECONDS);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
 
     }
 
 
-    public void lookup(InfoNode originNode, InfoNode randomNode, BigInteger targetId) {
+    public void lookup(InfoNode originNode, InfoNode randomNode, BigInteger targetId) throws IOException {
         MessageLookup message = new MessageLookup(originNode, targetId, MessageType.LOOKUP);
         new SendMessage(randomNode.getIp(), randomNode.getPort(), message).start();
     }
@@ -127,10 +134,13 @@ public class ChordNode implements Serializable {
         fingerTable.put(successor.getId(), successor);
     }
 
-
     public void setPredecessor(InfoNode predecessor) {
-        Logger.ANY(this.getClass().getName(), "New predecessor " + predecessor.getId());
         this.predecessor = predecessor;
+
+        if (predecessor != null)
+            Logger.ANY(this.getClass().getName(), "New predecessor " + predecessor.getId());
+        else
+            Logger.ANY(this.getClass().getName(), "New predecessor is null");
     }
 
     /**
@@ -156,6 +166,7 @@ public class ChordNode implements Serializable {
             fingerTableOrder.addLast(fingerTableEntry);
         }
     }
+
 
     public void printHashTable() {
         System.out.println("---- FINGER TABLE ---- ");

@@ -1,6 +1,7 @@
 package network.server.stabilize;
 
 import network.Main;
+import network.etc.Logger;
 import network.etc.MessageType;
 import network.etc.Singleton;
 import network.message.Message;
@@ -28,7 +29,6 @@ public class Stabilize implements Runnable {
     public void run() {
         try {
             BigInteger currentId = Main.chordNode.getInfoNode().getId();
-            System.out.println(sucPredecessor.getId().toString());
             if (Objects.isNull(sucPredecessor))
                 return;
 
@@ -40,7 +40,7 @@ public class Stabilize implements Runnable {
             Main.threadPool.execute(new SendMessage(Main.chordNode.getSuccessor().getIp(), Main.chordNode.getSuccessor().getPort(), message));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.ERR(this.getClass().getName(), "Error on stabilizing.");
         }
     }
 }

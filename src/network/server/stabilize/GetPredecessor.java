@@ -1,6 +1,7 @@
 package network.server.stabilize;
 
 import network.Main;
+import network.etc.Logger;
 import network.message.MessageGetPredecessor;
 import network.node.InfoNode;
 import network.server.com.SendMessage;
@@ -29,7 +30,7 @@ public class GetPredecessor implements Runnable {
             Main.threadPool.execute(new SendMessage(successor.getIp(), successor.getPort(), messageGetPredecessor));
 
         }catch(Exception e){
-            e.printStackTrace();
+            Logger.ERR(this.getClass().getName(), "Not possible to get predecessor.");
         }
 
     }

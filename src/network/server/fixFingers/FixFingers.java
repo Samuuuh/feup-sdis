@@ -1,6 +1,7 @@
 package network.server.fixFingers;
 
 import network.Main;
+import network.etc.Logger;
 import network.etc.MessageType;
 import network.etc.Singleton;
 import network.message.MessageLookup;
@@ -31,7 +32,7 @@ public class FixFingers implements Runnable{
             MessageLookup messageLookup = new MessageLookup(Main.chordNode.getInfoNode(), targetId, MessageType.FIX_FINGERS);
             new SendMessage(successor.getIp(), successor.getPort(), messageLookup).start();
         }catch(Exception e){
-            e.printStackTrace();
+            Logger.ERR(this.getClass().getName(), "Error on fix fingers.");
         }
     }
 }

@@ -12,6 +12,7 @@ public class Singleton {
     public static int SCHED_SIZE = 10;           // Thread pool scheduler size.
     public static long STABILIZE_TIME = 5;      // Rate of execution of stabilize in seconds.
     public static long FIX_FINGERS_TIME = 2;    // Rate of execution of fix fingers in seconds.
+    public static long CHECK_PRED_TIME = 2;     // Rate of execution of check predecessor in seconds.
     public static long m = 4;                   // TODO: change later
 
 

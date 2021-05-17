@@ -2,26 +2,25 @@ package network.services;
 
 import network.ChordNode;
 import network.Main;
+import network.etc.Logger;
 import network.etc.MessageType;
 import network.etc.Singleton;
-import network.message.Message;
 import network.message.MessageLookup;
-import network.message.MessageInfoNode;
 import network.message.MessageSuccessor;
 import network.node.InfoNode;
 import network.server.com.SendMessage;
 
+import java.io.IOException;
 import java.math.BigInteger;
-import java.util.Iterator;
 
-public class Lookup implements Runnable{
+public class Lookup implements Runnable {
 
     MessageLookup message;
     ChordNode chordNode;
     MessageType returnType;
     MessageType forwardType;
 
-    public Lookup(MessageLookup message, MessageType returnType, MessageType forwardType){
+    public Lookup(MessageLookup message, MessageType returnType, MessageType forwardType) {
         this.message = message;
         this.chordNode = Main.chordNode;
         this.returnType = returnType;
@@ -31,25 +30,29 @@ public class Lookup implements Runnable{
 
     @Override
     public void run() {
-        BigInteger targetId = message.getTargetId();
-        BigInteger currentId = Main.chordNode.getInfoNode().getId();
-        BigInteger successorId = Main.chordNode.getSuccessor().getId();
+        try {
+            BigInteger targetId = message.getTargetId();
+            BigInteger currentId = Main.chordNode.getInfoNode().getId();
+            BigInteger successorId = Main.chordNode.getSuccessor().getId();
 
-        if (Singleton.betweenSuccessor(targetId, currentId, successorId)) {
-            MessageSuccessor messageSuccessor = new MessageSuccessor(Main.chordNode.getInfoNode(), targetId, Main.chordNode.getInfoNode(), this.returnType);
-            Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageSuccessor));
+            if (Singleton.betweenSuccessor(targetId, currentId, successorId)) {
+                MessageSuccessor messageSuccessor = new MessageSuccessor(Main.chordNode.getInfoNode(), targetId, Main.chordNode.getInfoNode(), this.returnType);
+                Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageSuccessor));
+            } else closestPrecedingNode(targetId);
+
+        } catch (Exception e) {
+            Logger.ERR(this.getClass().getName(), "Error calculating closest preceding Node or sending message.");
         }
-        else closestPrecedingNode(targetId);
     }
 
-    public void closestPrecedingNode(BigInteger targetId){
+    public void closestPrecedingNode(BigInteger targetId) throws IOException {
         var fingerTableOrder = Main.chordNode.getFingerTableOrder();
         var fingerTable = Main.chordNode.getFingerTable();
 
         BigInteger currentId = Main.chordNode.getInfoNode().getId();
 
         var iterator = fingerTableOrder.descendingIterator();
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             BigInteger id = iterator.next();
             if (Singleton.betweenSuccessor(targetId, currentId, id)) {
 

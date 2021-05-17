@@ -27,7 +27,7 @@ public class ChordServer extends Thread {
 
     @Override
     public void run() {
-        
+
         SSLServerConnection con = null;
 
         try {
@@ -41,34 +41,35 @@ public class ChordServer extends Thread {
                 MessageType type = message.getType();
 
 
-
                 if (type == MessageType.LOOKUP) {
                     Main.threadPool.execute(new Lookup((MessageLookup) message, MessageType.SUCCESSOR, MessageType.LOOKUP));
                 } else if (type.equals(MessageType.SUCCESSOR)) {
                     Main.chordNode.setSuccessor(((MessageSuccessor) message).getSuccessor());
-                } else if (type == MessageType.NOTIFY){
+                } else if (type == MessageType.NOTIFY) {
                     Main.chordNode.notify((MessageInfoNode) message);
-                } else if (type == MessageType.GET_PREDECESSOR){
+                } else if (type == MessageType.GET_PREDECESSOR) {
                     // Stabilize from another node asking the chordNode predecessor.
                     MessageInfoNode messageInfoNode = new MessageInfoNode(Main.chordNode.getInfoNode(), MessageType.ANS_GET_PREDECESSOR, Main.chordNode.getPredecessor());
                     Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageInfoNode));
-                } else if (type == MessageType.ANS_GET_PREDECESSOR){
+                } else if (type == MessageType.ANS_GET_PREDECESSOR) {
                     // Continue the stabilize process after receiving the successor predecessor.
                     Main.threadPool.execute(new Stabilize((MessageInfoNode) message));
-                } else if (type == MessageType.FIX_FINGERS){
-                    Main.threadPool.execute(new Lookup((MessageLookup)message, MessageType.ANS_FIX_FINGERS, MessageType.FIX_FINGERS));
+                } else if (type == MessageType.FIX_FINGERS) {
+                    Main.threadPool.execute(new Lookup((MessageLookup) message, MessageType.ANS_FIX_FINGERS, MessageType.FIX_FINGERS));
                 } else if (type == MessageType.ANS_FIX_FINGERS) {
                     Main.threadPool.execute(new PutOnFinger((MessageSuccessor) message));
+                } else if (type == MessageType.OK) {
                 } else {
                     Logger.ANY(this.getClass().getName(), "Received" + message.getType() + "message");
                 }
 
 
             }
-        } catch (Exception ignored) {
+        } catch (
+                Exception ignored) {
             Logger.ANY(this.getClass().getName(), "End ChordServer");
         }
-        
+
     }
 
     public int getPort() {
