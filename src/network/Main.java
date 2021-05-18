@@ -1,16 +1,12 @@
 
 package network;
 
-import network.*;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import network.node.InfoNode;
-import network.services.Backup;
+import network.services.backup.SendBackup;
 import network.services.Services;
 import network.etc.*;
 
@@ -38,7 +34,7 @@ public class Main implements Services {
     }
 
 
-    public static void parseParameters(String[] args)  {
+    public static void parseParameters(String[] args) {
         if (args.length > 4) {
             System.out.println("Usage:\n java network.Main <machineIp> <machinePort> [<chordNodeIp> <chordNodePort>]");
             System.exit(1);
@@ -50,7 +46,7 @@ public class Main implements Services {
         if (args.length == 4) {
             InfoNode infoNode = new InfoNode(ip, port);
             InfoNode randomNode = new InfoNode(args[2], Integer.parseInt(args[3]));
-            chordNode = new ChordNode(infoNode,randomNode);
+            chordNode = new ChordNode(infoNode, randomNode);
         } else if (args.length == 2) {
             InfoNode infoNode = new InfoNode(ip, port);
             chordNode = new ChordNode(infoNode);
@@ -68,7 +64,7 @@ public class Main implements Services {
         }
     }
 
-    public static void initThreadPool(){
+    public static void initThreadPool() {
         threadPool = (ThreadPoolExecutor) Executors.newScheduledThreadPool(Singleton.THREAD_SIZE);
         schedulerPool = Executors.newScheduledThreadPool(Singleton.SCHED_SIZE);
     }
@@ -76,15 +72,7 @@ public class Main implements Services {
     @Override
     public String backup(String filePath, int repDeg) {
         InfoNode sucessor = chordNode.getSuccessor();
-        Backup a = new Backup(sucessor.getIp(), sucessor.getPort(), filePath, repDeg);
-
-        try {
-            a.request(chordNode.getInfoNode(), repDeg);
-        } catch(IOException e){
-            e.printStackTrace();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+        Main.threadPool.execute(new SendBackup(sucessor.getIp(), sucessor.getPort(), filePath, chordNode.getInfoNode(), repDeg));
 
         return "Start Lookup";
     }

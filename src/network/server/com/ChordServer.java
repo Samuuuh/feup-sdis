@@ -6,6 +6,7 @@ import network.message.*;
 import network.node.InfoNode;
 import network.server.stabilize.Stabilize;
 import network.services.Lookup;
+import network.services.backup.ProcessBackup;
 
 import javax.net.ssl.SSLSocket;
 import java.io.ObjectInputStream;
@@ -51,51 +52,29 @@ public class ChordServer extends Thread {
                         Logger.ANY(this.getClass().getName(), "Desired replication degree not met. Expected:" + desiredRepDeg + " Met:" + actualRepDeg);
                     }       
                 }
-                if (type == MessageType.BACKUP) {
-                    Logger.ANY(this.getClass().getName(), "Received BACKUP");
-                    int desiredRepDeg = ((MessageBackup) message).getDesiredRepDeg();
+                else if (type == MessageType.BACKUP) {
+                    int desiredRepDeg = ((MessageBackup)message).getDesiredRepDeg();
+                    int actualRepDeg = ((MessageBackup)message).getActualRepDeg();
 
                     if (message.getPortOrigin() == port) {
-                        int actualRepDeg = ((MessageBackup) message).getActualRepDeg();
-        
                         Logger.ANY(this.getClass().getName(), "Backup finished");
                         if(desiredRepDeg == actualRepDeg) {
                             Logger.ANY(this.getClass().getName(), "Desired replication degree met. RepDeg: " + actualRepDeg);
                         } else {
                             Logger.ANY(this.getClass().getName(), "Desired replication degree not met. Expected:" + desiredRepDeg + " Met:" + actualRepDeg);
                         }
-                        continue;
+                    }else{
+                        Main.threadPool.execute(new ProcessBackup((MessageBackup) message));
                     }
-                    String filePath = ((MessageBackup) message).getFileName();
-                    byte[] bytesMessage = ((MessageBackup) message).getBytes();
-                    FileHandler.saveFile(port + "/backup/", filePath, bytesMessage);
-                    
-                    // TODO: Verificar se o peer pode salvar/salvou o ficheiro
-                    int actualRepDeg = ((MessageBackup) message).getActualRepDeg() + 1;
 
-                    if(actualRepDeg == desiredRepDeg) {
-                        MessageDoneBackup messageDone = new MessageDoneBackup(message.getOriginNode(), MessageType.DONE_BACKUP, desiredRepDeg, actualRepDeg);
-                        Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageDone));
-                    } else {
-                        InfoNode suc = Main.chordNode.getSuccessor();
-                        MessageBackup newMessage = new MessageBackup(message.getOriginNode(), filePath, bytesMessage, desiredRepDeg, actualRepDeg);
-                        Main.threadPool.execute(new SendMessage(suc.getIp(), suc.getPort(), newMessage));
-                    }
-                    
-                    // OR SAVE THE SERIALIZE FILE
-                    /*
-                    FileOutputStream fileOut = new FileOutputStream(((MessageBackup) message).getFileName() + ".ser");
-                    ObjectOutputStream outBackup = new ObjectOutputStream(fileOut);
-                    outBackup.writeObject(message);
-                    outBackup.close();
-                    fileOut.close();
-                    */
-                    
-                    // TODO: Check if repdeg is met
-                    // otherwise send to the sucessor
-                } else if (type == MessageType.LOOKUP) {
+                }
+                else if (type == MessageType.STORED){
+                    Logger.ANY(this.getClass().getName(), "Received stored from peer " + message.getOriginNode().getId());
+                }
+                else if (type == MessageType.LOOKUP) {
                     Main.threadPool.execute(new Lookup((MessageLookup) message, MessageType.SUCCESSOR, MessageType.LOOKUP));
-                } else if (type.equals(MessageType.SUCCESSOR)) {
+                }
+                else if (type == MessageType.SUCCESSOR) {
                     Main.chordNode.setSuccessor(((MessageInfoNode) message).getInfoNode());
                 }
                 else if (type == MessageType.NOTIFY){
@@ -109,9 +88,11 @@ public class ChordServer extends Thread {
                 else if (type == MessageType.ANS_GET_PREDECESSOR){
                     // Continue the stabilize process after receiving the successor predecessor.
                     Main.threadPool.execute(new Stabilize((MessageInfoNode) message));
-                } else if (type == MessageType.FIX_FINGERS){
+                }
+                else if (type == MessageType.FIX_FINGERS){
                     Logger.ANY(this.getClass().getName(), "Received FIX_FINGERS");
-                } else if (type == MessageType.ANS_FIX_FINGERS) {
+                }
+                else if (type == MessageType.ANS_FIX_FINGERS) {
                     Logger.ANY(this.getClass().getName(), "Received ANS_FIX_FINGERS");
                 }
                 else
