@@ -22,7 +22,7 @@ public class Client {
             return;
         }
 
-        Client client = new Client(args);
+        new Client(args);
     }
 
     private Client(String[] args) throws IOException {

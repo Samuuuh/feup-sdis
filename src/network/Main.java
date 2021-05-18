@@ -75,11 +75,11 @@ public class Main implements Services {
 
     @Override
     public String backup(String filePath, int repDeg) {
-        //new Backup(ip, server.getPort(), filePath, repDeg).request();
-        Backup a = new Backup("127.0.0.1", 8888, filePath, repDeg);
+        InfoNode sucessor = chordNode.getSuccessor();
+        Backup a = new Backup(sucessor.getIp(), sucessor.getPort(), filePath, repDeg);
 
         try {
-            a.request(chordNode.getInfoNode());
+            a.request(chordNode.getInfoNode(), repDeg);
         } catch(IOException e){
             e.printStackTrace();
         } catch(Exception e) {

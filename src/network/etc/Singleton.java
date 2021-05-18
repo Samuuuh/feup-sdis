@@ -1,7 +1,5 @@
 package network.etc;
 
-import network.node.InfoNode;
-
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -11,7 +9,7 @@ public class Singleton {
     public static int THREAD_SIZE = 128;
     public static int SCHED_SIZE = 4;        // Thread pool scheduler size.
     public static long STABILIZE_TIME = 5;   // Rate of execution of stabilize in seconds.
-    public static long m = 64;
+    public static long m = 4;
 
 
     public static int getRandomPortNumber(){

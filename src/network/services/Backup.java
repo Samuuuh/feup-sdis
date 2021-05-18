@@ -9,6 +9,7 @@ import network.etc.FileHandler;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.ProtocolException;
 
 public class Backup {
     String ip;
@@ -26,14 +27,11 @@ public class Backup {
     /**
      * This function is responsible for sending the message to the SSLServer .
      */
-    public void request(InfoNode originNode) throws IOException, ClassNotFoundException {
+    public void request(InfoNode originNode, int repDeg) throws IOException, ClassNotFoundException {
         byte[] byteArr = FileHandler.readFile(filePath);
 
-        
-        MessageBackup message = new MessageBackup(originNode, filePath, byteArr);
+        MessageBackup message = new MessageBackup(originNode, filePath, byteArr, repDeg, 0);
 
-        // TODO: create a for loop for the replication degree
-        // TODO: which one to send the backup message
-        new SendMessage("127.0.0.1", 8888, message).start();
+        new SendMessage(ip, port, message).start();
     }
 }

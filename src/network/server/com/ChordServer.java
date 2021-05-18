@@ -3,12 +3,11 @@ package network.server.com;
 import network.Main;
 import network.etc.*;
 import network.message.*;
+import network.node.InfoNode;
 import network.server.stabilize.Stabilize;
 import network.services.Lookup;
 
 import javax.net.ssl.SSLSocket;
-
-import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
@@ -41,13 +40,48 @@ public class ChordServer extends Thread {
                 Message message = (Message) in.readObject();
                 MessageType type = message.getType();
 
-                if (type == MessageType.RESTORE) {
-                    // TO DO
+                if (type == MessageType.DONE_BACKUP) {
+                    int desiredRepDeg = ((MessageDoneBackup) message).getDesiredRepDeg();
+                    int actualRepDeg = ((MessageDoneBackup) message).getActualRepDeg();
+                    Logger.ANY(this.getClass().getName(), "Received DONE_BACKUP. Backup finished");
+
+                    if(desiredRepDeg == actualRepDeg) {
+                        Logger.ANY(this.getClass().getName(), "Desired replication degree met. RepDeg: " + actualRepDeg);
+                    } else {
+                        Logger.ANY(this.getClass().getName(), "Desired replication degree not met. Expected:" + desiredRepDeg + " Met:" + actualRepDeg);
+                    }       
                 }
                 if (type == MessageType.BACKUP) {
-                    // THIS (Can also be used for restore)
+                    Logger.ANY(this.getClass().getName(), "Received BACKUP");
+                    int desiredRepDeg = ((MessageBackup) message).getDesiredRepDeg();
+
+                    if (message.getPortOrigin() == port) {
+                        int actualRepDeg = ((MessageBackup) message).getActualRepDeg();
+        
+                        Logger.ANY(this.getClass().getName(), "Backup finished");
+                        if(desiredRepDeg == actualRepDeg) {
+                            Logger.ANY(this.getClass().getName(), "Desired replication degree met. RepDeg: " + actualRepDeg);
+                        } else {
+                            Logger.ANY(this.getClass().getName(), "Desired replication degree not met. Expected:" + desiredRepDeg + " Met:" + actualRepDeg);
+                        }
+                        continue;
+                    }
+                    String filePath = ((MessageBackup) message).getFileName();
                     byte[] bytesMessage = ((MessageBackup) message).getBytes();
-                    FileHandler.saveFile(port + "/backup/", ((MessageBackup) message).getFileName(), bytesMessage);
+                    FileHandler.saveFile(port + "/backup/", filePath, bytesMessage);
+                    
+                    // TODO: Verificar se o peer pode salvar/salvou o ficheiro
+                    int actualRepDeg = ((MessageBackup) message).getActualRepDeg() + 1;
+
+                    if(actualRepDeg == desiredRepDeg) {
+                        MessageDoneBackup messageDone = new MessageDoneBackup(message.getOriginNode(), MessageType.DONE_BACKUP, desiredRepDeg, actualRepDeg);
+                        Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageDone));
+                    } else {
+                        InfoNode suc = Main.chordNode.getSuccessor();
+                        MessageBackup newMessage = new MessageBackup(message.getOriginNode(), filePath, bytesMessage, desiredRepDeg, actualRepDeg);
+                        Main.threadPool.execute(new SendMessage(suc.getIp(), suc.getPort(), newMessage));
+                    }
+                    
                     // OR SAVE THE SERIALIZE FILE
                     /*
                     FileOutputStream fileOut = new FileOutputStream(((MessageBackup) message).getFileName() + ".ser");

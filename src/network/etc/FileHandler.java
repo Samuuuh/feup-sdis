@@ -14,6 +14,7 @@ public class FileHandler {
         if (file.length() > Integer.MAX_VALUE)
             throw new IOException("File too large to be read");
         try {
+            System.out.println("Aqui ");
             return readAllBytes(file.toPath());
 
         } catch (Exception e) {

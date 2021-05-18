@@ -6,6 +6,8 @@ public enum MessageType {
     RESTORE,
     DELETE,
     RECLAIM,
+
+    DONE_BACKUP,
     
     // Join
     LOOKUP,

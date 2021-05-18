@@ -15,6 +15,10 @@ public abstract class Message implements Serializable {
         this.type = type;
     }
 
+    public InfoNode getOriginNode() {
+        return originNode;
+    }
+
     public String getIpOrigin(){
         return originNode.getIp();
     }
