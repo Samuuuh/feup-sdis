@@ -71,7 +71,6 @@ public class ChordNode implements Serializable {
         Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 0, Singleton.STABILIZE_TIME* 1000L, TimeUnit.MILLISECONDS);
     }
 
-
     public void lookup(InfoNode originNode, InfoNode randomNode , BigInteger targetId){
         MessageLookup message = new MessageLookup(originNode, targetId, MessageType.LOOKUP);
         new SendMessage(randomNode.getIp(), randomNode.getPort(), message).start();
@@ -137,8 +136,4 @@ public class ChordNode implements Serializable {
             setPredecessor(notifierInfoNode);
 
     }
-
-
-
-
 }

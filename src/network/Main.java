@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import network.node.InfoNode;
+import network.node.State;
 import network.services.backup.SendBackup;
 import network.services.restore.SendRestore;
 import network.services.Services;
@@ -21,6 +22,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class Main implements Services {
     private static String ip;
     private static int port;
+    public static State state;
     public static ChordNode chordNode;
     public static ThreadPoolExecutor threadPool;
     public static ScheduledExecutorService schedulerPool;
@@ -31,6 +33,7 @@ public class Main implements Services {
 
         Main main = new Main();
         Services stub = (Services) UnicastRemoteObject.exportObject(main, 0);
+        State state = new State();
         initRMI(stub);
     }
 

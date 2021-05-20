@@ -6,9 +6,8 @@ import network.node.InfoNode;
 import java.math.BigInteger;
 
 public class MessageLookup extends Message {
-
-
     BigInteger targetId;
+    
     /**
      * Finds out the successor of a node.
      * @param ip Ip of the sender.

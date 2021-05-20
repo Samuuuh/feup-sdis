@@ -1,8 +1,10 @@
 package network.etc;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.*;
 
@@ -61,5 +63,18 @@ public class FileHandler {
         FileOutputStream outputFile = new FileOutputStream(filePath, true);
         if (bytesMessage != null) outputFile.write(bytesMessage);
         outputFile.close();
+    }
+
+    public static MessageBackup ReadObjectFromFile(String filepath) {
+        try {
+            FileInputStream fileIn = new FileInputStream(filepath);
+            ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+            MessageBackup obj = (MessageBackup) objectIn.readObject();
+            objectIn.close();
+            return obj;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 }

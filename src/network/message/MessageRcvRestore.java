@@ -4,15 +4,21 @@ import network.etc.MessageType;
 import network.node.InfoNode;
 
 public class MessageRcvRestore extends Message {
-    MessageBackup file;
+    byte[] byteFile;
+    String filePath;
 
-    public MessageRcvRestore(InfoNode originNode, MessageBackup file) {
-      super(originNode, MessageType.RCV_RESTORE);
-
-      this.file = file;
+    public MessageRcvRestore(InfoNode originNode, byte[] byteFile, String filePath) {
+        super(originNode, MessageType.RCV_RESTORE);
+        
+        this.byteFile = byteFile;
+        this.filePath = filePath;
     }
 
-    public MessageBackup getFile() {
-      return file;
+    public byte[] getBytes() {
+        return byteFile;
+    }
+
+    public String getFileName() {
+        return filePath;
     }
 }

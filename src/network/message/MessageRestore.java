@@ -15,5 +15,4 @@ public class MessageRestore extends Message {
     public String getFile() {
       return filePath;
     }
-
 }

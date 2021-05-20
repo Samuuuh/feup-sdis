@@ -7,11 +7,11 @@ import network.node.InfoNode;
 import network.server.stabilize.Stabilize;
 import network.services.Lookup;
 import network.services.backup.ProcessBackup;
+import network.services.restore.ProcessRestore;
 
 import javax.net.ssl.SSLSocket;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
 
 /**
  * Server channel. It receives messages from other peers.
@@ -42,8 +42,13 @@ public class ChordServer extends Thread {
                 MessageType type = message.getType();
                 
                 if (type == MessageType.RCV_RESTORE) {
-
+                    Logger.ANY(this.getClass().getName(), "Received RCV_RESTORE.");
+                    Main.threadPool.execute(new ProcessRestore((MessageRcvRestore) message));
                 } else if (type == MessageType.RESTORE) {
+                    MessageBackup mess = FileHandler.ReadObjectFromFile("8888/backup/file.ser");
+                    System.out.println(mess.getIpOrigin());
+                    MessageRcvRestore messageStored = new MessageRcvRestore(message.getOriginNode(), mess.getBytes(), mess.getFileName());
+                    Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageStored));
                     Logger.ANY(this.getClass().getName(), "Received RESTORE.");
                 } else if (type == MessageType.DONE_BACKUP) {
                     int desiredRepDeg = ((MessageDoneBackup) message).getDesiredRepDeg();
@@ -67,7 +72,7 @@ public class ChordServer extends Thread {
                         } else {
                             Logger.ANY(this.getClass().getName(), "Desired replication degree not met. Expected:" + desiredRepDeg + " Met:" + actualRepDeg);
                         }
-                    }else{
+                    } else {
                         Main.threadPool.execute(new ProcessBackup((MessageBackup) message));
                     }
 
