@@ -7,6 +7,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 import network.node.InfoNode;
 import network.services.backup.SendBackup;
+import network.services.restore.SendRestore;
 import network.services.Services;
 import network.etc.*;
 
@@ -74,6 +75,14 @@ public class Main implements Services {
         InfoNode sucessor = chordNode.getSuccessor();
         Main.threadPool.execute(new SendBackup(sucessor.getIp(), sucessor.getPort(), filePath, chordNode.getInfoNode(), repDeg));
 
-        return "Start Lookup";
+        return "Start Backup";
+    }
+
+    @Override
+    public String restore(String filePath) {
+        InfoNode sucessor = chordNode.getSuccessor();
+        Main.threadPool.execute(new SendRestore(sucessor.getIp(), sucessor.getPort(), filePath, chordNode.getInfoNode()));
+
+        return "Start Restore";
     }
 }

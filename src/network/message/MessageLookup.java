@@ -3,11 +3,9 @@ package network.message;
 import network.etc.MessageType;
 import network.node.InfoNode;
 
-import java.io.Externalizable;
-import java.io.Serializable;
 import java.math.BigInteger;
 
-public class MessageLookup extends Message implements Serializable{
+public class MessageLookup extends Message {
 
 
     BigInteger targetId;

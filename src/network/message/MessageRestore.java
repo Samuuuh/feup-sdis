@@ -4,7 +4,16 @@ import network.node.InfoNode;
 import network.etc.MessageType;
 
 public class MessageRestore extends Message {
-    public MessageRestore(InfoNode originNode) {
-        super(originNode, MessageType.RESTORE);
-      }
+    String filePath;
+
+    public MessageRestore(InfoNode originNode, String filePath) {
+      super(originNode, MessageType.RESTORE);
+
+      this.filePath = filePath;
+    }
+
+    public String getFile() {
+      return filePath;
+    }
+
 }

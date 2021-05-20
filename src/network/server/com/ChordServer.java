@@ -40,8 +40,12 @@ public class ChordServer extends Thread {
                 var in = new ObjectInputStream(socket.getInputStream());
                 Message message = (Message) in.readObject();
                 MessageType type = message.getType();
+                
+                if (type == MessageType.RCV_RESTORE) {
 
-                if (type == MessageType.DONE_BACKUP) {
+                } else if (type == MessageType.RESTORE) {
+                    Logger.ANY(this.getClass().getName(), "Received RESTORE.");
+                } else if (type == MessageType.DONE_BACKUP) {
                     int desiredRepDeg = ((MessageDoneBackup) message).getDesiredRepDeg();
                     int actualRepDeg = ((MessageDoneBackup) message).getActualRepDeg();
                     Logger.ANY(this.getClass().getName(), "Received DONE_BACKUP. Backup finished");
@@ -53,8 +57,8 @@ public class ChordServer extends Thread {
                     }       
                 }
                 else if (type == MessageType.BACKUP) {
-                    int desiredRepDeg = ((MessageBackup)message).getDesiredRepDeg();
-                    int actualRepDeg = ((MessageBackup)message).getActualRepDeg();
+                    int desiredRepDeg = ((MessageBackup) message).getDesiredRepDeg();
+                    int actualRepDeg = ((MessageBackup) message).getActualRepDeg();
 
                     if (message.getPortOrigin() == port) {
                         Logger.ANY(this.getClass().getName(), "Backup finished");

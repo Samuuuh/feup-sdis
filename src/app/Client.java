@@ -50,10 +50,18 @@ public class Client {
                 System.out.println("Replication degree should be an Integer");
                 return;
             }
+
             backup(file, replication_degree);
 
         } else if (this.operation.equals("RESTORE")) {
-            // TODO
+            if (args.length != 3) {
+                System.out.println("Usage:\n java Client <peer_ap> RESTORE <file>\n");
+                return;
+            }
+
+            String file = args[2];
+            restore(file);
+
         } else if (this.operation.equals("DELETE")) {
             // TODO
         } else if (this.operation.equals("RECLAIM")) {
@@ -71,6 +79,17 @@ public class Client {
             Services stub = (Services) this.registry.lookup(this.accessPoint);
             int replication = Integer.parseInt(replication_degree);
             String response = stub.backup(filePath, replication);
+            System.out.println(response);
+        }catch (Exception e){
+            Logger.ERR(this.getClass().getName(), "Error on requesting backup.");
+            e.printStackTrace();
+        }
+    }
+
+    private void restore(String filePath)  {
+        try {
+            Services stub = (Services) this.registry.lookup(this.accessPoint);
+            String response = stub.restore(filePath);
             System.out.println(response);
         }catch (Exception e){
             Logger.ERR(this.getClass().getName(), "Error on requesting backup.");

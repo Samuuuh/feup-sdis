@@ -6,7 +6,6 @@ import network.etc.Singleton;
 import network.message.MessageLookup;
 import network.node.InfoNode;
 import network.server.com.SendMessage;
-import network.services.Lookup;
 
 import java.math.BigInteger;
 
@@ -23,7 +22,7 @@ public class FixFingers implements Runnable{
 
 
         BigInteger currentId = Main.chordNode.getId();
-        BigInteger nextId = new BigInteger(String.valueOf((long)Math.pow(2,next-1)));
+        BigInteger nextId = new BigInteger(String.valueOf((long)Math.pow(2, next-1)));
         BigInteger targetId = currentId.add(nextId);
 
         MessageLookup messageLookup = new MessageLookup(Main.chordNode.getInfoNode(), targetId, MessageType.FIX_FINGERS);

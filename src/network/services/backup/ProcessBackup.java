@@ -5,15 +5,12 @@ import network.etc.FileHandler;
 import network.etc.Logger;
 import network.etc.MessageType;
 import network.message.MessageBackup;
-import network.message.MessageDoneBackup;
 import network.message.MessageStored;
+import network.message.MessageDoneBackup;
 import network.node.InfoNode;
 import network.server.com.SendMessage;
 
-import java.io.IOException;
-
 public class ProcessBackup implements Runnable {
-
     MessageBackup message;
 
     public ProcessBackup(MessageBackup messageBackup) {
@@ -24,10 +21,9 @@ public class ProcessBackup implements Runnable {
     public void run() {
         Logger.ANY(this.getClass().getName(), "Received BACKUP");
         int desiredRepDeg = message.getDesiredRepDeg();
-        byte[] bytesMessage = message.getBytes();
         String filePath = message.getFileName();
 
-        saveFile(filePath, bytesMessage);
+        saveFile(filePath, message);
         int actualRepDeg = message.getActualRepDeg() + 1;
 
         if (actualRepDeg == desiredRepDeg) {
@@ -38,12 +34,11 @@ public class ProcessBackup implements Runnable {
         }
     }
 
-    // TODO: Verificar se o peer pode salvar/salvou o ficheiro
-    public void saveFile(String filePath, byte[] bytesMessage) {
+    public void saveFile(String filePath, MessageBackup message) {
         try {
             int port = Main.chordNode.getInfoNode().getPort();
-            FileHandler.saveFile(port + "/backup/", filePath, bytesMessage);
-        }catch(Exception e){
+            FileHandler.saveSerialize(port + "/backup/", "file.ser", message);
+        }catch(Exception e) {
             Logger.ERR(this.getClass().getName(), "Not possible to save file " + filePath);
         }
     }

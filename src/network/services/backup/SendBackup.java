@@ -3,15 +3,11 @@ package network.services.backup;
 import network.server.com.*;
 import network.message.*;
 import network.node.InfoNode;
-import network.*;
 import network.etc.FileHandler;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.ProtocolException;
 
-public class SendBackup implements Runnable{
+public class SendBackup implements Runnable {
     String ip;
     String filePath;
     int port;
