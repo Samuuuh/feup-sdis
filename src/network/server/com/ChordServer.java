@@ -45,11 +45,17 @@ public class ChordServer extends Thread {
                     Logger.ANY(this.getClass().getName(), "Received RCV_RESTORE.");
                     Main.threadPool.execute(new ProcessRestore((MessageRcvRestore) message));
                 } else if (type == MessageType.RESTORE) {
-                    MessageBackup mess = FileHandler.ReadObjectFromFile("8888/backup/file.ser");
-                    System.out.println(mess.getIpOrigin());
-                    MessageRcvRestore messageStored = new MessageRcvRestore(message.getOriginNode(), mess.getBytes(), mess.getFileName());
-                    Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageStored));
                     Logger.ANY(this.getClass().getName(), "Received RESTORE.");
+                    // See if peer has the file
+                    
+                    if(Main.state.getFile(((MessageRestore) message).getFile()) != null) {
+                        MessageBackup mess = FileHandler.ReadObjectFromFile(String.valueOf(port) + "backup/file.ser");
+                        MessageRcvRestore messageRcvRestore = new MessageRcvRestore(message.getOriginNode(), mess.getBytes(), mess.getFileName());
+                        Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageRcvRestore));
+                    } else {
+                        // Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), message));
+                    }
+                    
                 } else if (type == MessageType.DONE_BACKUP) {
                     int desiredRepDeg = ((MessageDoneBackup) message).getDesiredRepDeg();
                     int actualRepDeg = ((MessageDoneBackup) message).getActualRepDeg();
@@ -64,6 +70,8 @@ public class ChordServer extends Thread {
                 else if (type == MessageType.BACKUP) {
                     int desiredRepDeg = ((MessageBackup) message).getDesiredRepDeg();
                     int actualRepDeg = ((MessageBackup) message).getActualRepDeg();
+                    
+                    Main.state.addFile(((MessageBackup) message).getFileName());
 
                     if (message.getPortOrigin() == port) {
                         Logger.ANY(this.getClass().getName(), "Backup finished");

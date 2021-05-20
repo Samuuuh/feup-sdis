@@ -7,7 +7,8 @@ public class State {
     private ConcurrentHashMap<String, String> storedChunks;
 
     public State() {
-
+        backedUpFiles = new ConcurrentHashMap<>();
+        storedChunks = new ConcurrentHashMap<>();
     }
 
     public void addFile(String file) {

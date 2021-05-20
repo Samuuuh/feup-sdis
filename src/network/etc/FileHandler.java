@@ -8,7 +8,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.*;
 
-import network.message.Message;
 import network.message.MessageBackup;
 
 import static java.nio.file.Files.readAllBytes;

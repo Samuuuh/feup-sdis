@@ -33,7 +33,7 @@ public class Main implements Services {
 
         Main main = new Main();
         Services stub = (Services) UnicastRemoteObject.exportObject(main, 0);
-        State state = new State();
+        state = new State();
         initRMI(stub);
     }
 
