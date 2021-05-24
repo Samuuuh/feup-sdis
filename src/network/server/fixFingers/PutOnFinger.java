@@ -19,6 +19,5 @@ public class PutOnFinger implements Runnable {
     public void run() {
         var fingerTable = Main.chordNode.getFingerTable();
         fingerTable.put(this.message.getTargetId(), this.message.getSuccessor());
-
     }
 }

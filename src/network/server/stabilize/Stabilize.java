@@ -37,7 +37,7 @@ public class Stabilize implements Runnable {
             }
 
             MessageInfoNode message = new MessageInfoNode(Main.chordNode.getInfoNode(), MessageType.NOTIFY, Main.chordNode.getInfoNode());
-            Main.threadPool.execute(new SendMessage(Main.chordNode.getSuccessor().getIp(), Main.chordNode.getSuccessor().getPort(), message));
+            new SendMessage(Main.chordNode.getSuccessor().getIp(), Main.chordNode.getSuccessor().getPort(), message).call();
 
         } catch (Exception e) {
             Logger.ERR(this.getClass().getName(), "Error on stabilizing.");

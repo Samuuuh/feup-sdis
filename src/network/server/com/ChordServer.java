@@ -69,7 +69,7 @@ public class ChordServer extends Thread {
                 } else if (type == MessageType.GET_PREDECESSOR) {
                     // Stabilize from another node asking the chordNode predecessor.
                     MessageInfoNode messageInfoNode = new MessageInfoNode(Main.chordNode.getInfoNode(), MessageType.ANS_GET_PREDECESSOR, Main.chordNode.getPredecessor());
-                    Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageInfoNode));
+                    new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageInfoNode).call();
                 } else if (type == MessageType.ANS_GET_PREDECESSOR) {
                     // Continue the stabilize process after receiving the successor predecessor.
                     Main.threadPool.execute(new Stabilize((MessageInfoNode) message));

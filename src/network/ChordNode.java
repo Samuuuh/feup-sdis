@@ -1,25 +1,22 @@
 package network;
 
-import network.*;
 import network.etc.Logger;
 import network.etc.MessageType;
 import network.etc.Singleton;
 import network.message.*;
 import network.node.*;
-import network.server.CheckPredecessor;
+import network.server.CheckPredecessor.CheckPredecessor;
+import network.server.CheckPredecessor.CheckPredecessorOrchestrator;
 import network.server.com.*;
 import network.server.com.SendMessage;
-import network.server.fixFingers.FixFingers;
+import network.server.fixFingers.FixFingerOrchestrator;
 import network.server.stabilize.GetPredecessor;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * This is the most important class of the chord system.
@@ -86,16 +83,15 @@ public class ChordNode implements Serializable {
     public void initPeriodicFunctions() {
         // Stabilize
         Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 100, Singleton.STABILIZE_TIME * 1000L, TimeUnit.MILLISECONDS);
-        Main.schedulerPool.scheduleWithFixedDelay(new FixFingers(), 100, Singleton.FIX_FINGERS_TIME * 100L, TimeUnit.MILLISECONDS);
-
         // Check predecessor
-        Main.schedulerPool.scheduleWithFixedDelay(new CheckPredecessor(), 100, Singleton.CHECK_PRED_TIME * 1000L, TimeUnit.MILLISECONDS);
+        Main.schedulerPool.schedule(new CheckPredecessorOrchestrator(), 100, TimeUnit.MILLISECONDS);
+        // Schedule the fix fingers.
+        Main.schedulerPool.scheduleWithFixedDelay(new FixFingerOrchestrator(), 100, Singleton.FIX_FINGERS_TIME * 1000L, TimeUnit.MILLISECONDS);
     }
 
-
-    public void lookup(InfoNode originNode, InfoNode randomNode, BigInteger targetId) throws IOException {
+    public void lookup(InfoNode originNode, InfoNode randomNode, BigInteger targetId) throws IOException, ClassNotFoundException {
         MessageLookup message = new MessageLookup(originNode, targetId, MessageType.LOOKUP);
-        new SendMessage(randomNode.getIp(), randomNode.getPort(), message).start();
+        new SendMessage(randomNode.getIp(), randomNode.getPort(), message).call();
     }
 
     public ConcurrentHashMap<BigInteger, InfoNode> getFingerTable() {
@@ -127,6 +123,7 @@ public class ChordNode implements Serializable {
         return next;
     }
 
+
     public void setNext(Integer next) {
         this.next = next;
     }
@@ -147,8 +144,6 @@ public class ChordNode implements Serializable {
      * the actual successor.
      */
     public void fixSuccessor() {
-        printHashTable();
-        printFingerTableOrder();
         BigInteger[] fingerTableOrderArray = fingerTableOrder.toArray(new BigInteger[0]);
         for (BigInteger key : fingerTableOrderArray) {
             if (!fingerTable.get(key).getId().equals(successor.getId()))
@@ -164,8 +159,6 @@ public class ChordNode implements Serializable {
 
         if (predecessor != null)
             Logger.ANY(this.getClass().getName(), "New predecessor " + predecessor.getId());
-        else
-            Logger.ANY(this.getClass().getName(), "New predecessor is null");
     }
 
     /**

@@ -5,9 +5,9 @@ import network.message.*;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.util.concurrent.Callable;
 
-public class SendMessage extends Thread {
+public class SendMessage implements Callable {
     SSLConnection connectionSocket;
 
     Message message;
@@ -20,14 +20,10 @@ public class SendMessage extends Thread {
     }
 
     @Override
-    public void run() {
-        try {
-            this.connectionSocket.sendMessage(this.message);
-            this.connectionSocket.readMessage();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("ERROR");
-        }
+    public Boolean call() throws IOException, ClassNotFoundException {
+        this.connectionSocket.sendMessage(this.message);
+        this.connectionSocket.readMessage();
+        return true;
     }
 
 }

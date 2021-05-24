@@ -27,7 +27,7 @@ public class GetPredecessor implements Runnable {
             }
 
             MessageGetPredecessor messageGetPredecessor = new MessageGetPredecessor(Main.chordNode.getInfoNode());
-            Main.threadPool.execute(new SendMessage(successor.getIp(), successor.getPort(), messageGetPredecessor));
+            new SendMessage(successor.getIp(), successor.getPort(), messageGetPredecessor).call();
 
         }catch(Exception e){
             Logger.ERR(this.getClass().getName(), "Not possible to get predecessor.");

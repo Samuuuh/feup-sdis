@@ -34,6 +34,6 @@ public class Backup {
 
         // TODO: create a for loop for the replication degree
         // TODO: which one to send the backup message
-        new SendMessage("127.0.0.1", 8888, message).start();
+        new SendMessage("127.0.0.1", 8888, message).call();
     }
 }
