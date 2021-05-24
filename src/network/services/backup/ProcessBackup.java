@@ -30,10 +30,10 @@ public class ProcessBackup implements Runnable {
             int actualRepDeg = message.getActualRepDeg() + 1;
 
             if (actualRepDeg == desiredRepDeg) {
-                sendBackupDone();
+                sendBackupDone(filePath);
             } else {
                 sendToSuccessor();
-                storedMessageOrigin();
+                storedMessageOrigin(filePath);
             }
         }catch(Exception e){
             Logger.ERR(this.getClass().getName(), "Not possible to send backup message");
@@ -60,17 +60,17 @@ public class ProcessBackup implements Runnable {
         Main.threadPool.submit(new SendMessage(suc.getIp(), suc.getPort(), newMessage));
     }
 
-    public void storedMessageOrigin() throws IOException {
+    public void storedMessageOrigin(String filePath) throws IOException {
         InfoNode currentNode = Main.chordNode.getInfoNode();
-        MessageStored messageStored = new MessageStored(currentNode, MessageType.STORED);
+        MessageStored messageStored = new MessageStored(currentNode, MessageType.STORED, filePath);
         Main.threadPool.submit(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageStored));
     }
 
-    public void sendBackupDone() throws IOException {
+    public void sendBackupDone(String filePath) throws IOException {
         int desiredRepDeg = message.getDesiredRepDeg();
         int actualRepDeg = message.getActualRepDeg() + 1;
 
-        MessageDoneBackup messageDone = new MessageDoneBackup(message.getOriginNode(), MessageType.DONE_BACKUP, desiredRepDeg, actualRepDeg);
+        MessageDoneBackup messageDone = new MessageDoneBackup(message.getOriginNode(), MessageType.DONE_BACKUP, desiredRepDeg, actualRepDeg, filePath);
         Main.threadPool.submit(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageDone));
     }
 }

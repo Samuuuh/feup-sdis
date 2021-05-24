@@ -6,11 +6,12 @@ import network.node.InfoNode;
 public class MessageDoneBackup extends Message {
     int desiredRepDeg;
     int actualRepDeg;
-    
-    public MessageDoneBackup(InfoNode originNode, MessageType type, int desiredRepDeg, int actualRepDeg){
+    String filePath;
+    public MessageDoneBackup(InfoNode originNode, MessageType type, int desiredRepDeg, int actualRepDeg, String filePath){
         super(originNode, type);
         this.desiredRepDeg = desiredRepDeg;
         this.actualRepDeg = actualRepDeg;
+        this.filePath = filePath;
     }
 
     public int getDesiredRepDeg() {
@@ -19,5 +20,9 @@ public class MessageDoneBackup extends Message {
 
     public int getActualRepDeg() {
         return actualRepDeg;
+    }
+
+    public String getFilePath(){
+        return filePath;
     }
 }
