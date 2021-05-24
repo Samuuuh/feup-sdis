@@ -1,5 +1,7 @@
 package network.services.backup;
 
+import network.Main;
+import network.etc.Logger;
 import network.server.com.*;
 import network.message.*;
 import network.node.InfoNode;
@@ -27,8 +29,9 @@ public class SendBackup implements Runnable {
         try {
             byte[] byteArr = FileHandler.readFile(filePath);
             MessageBackup message = new MessageBackup(originNode, filePath, byteArr, repDeg, 0);
-            new SendMessage(ip, port, message).start();
+            Main.threadPool.submit(new SendMessage(ip, port, message));
         } catch (IOException e) {
+            Logger.ERR(this.getClass().getName(), "Not possible to send backup message");
             e.printStackTrace();
         }
     }

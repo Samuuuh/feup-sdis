@@ -10,6 +10,8 @@ import network.message.MessageDoneBackup;
 import network.node.InfoNode;
 import network.server.com.SendMessage;
 
+import java.io.IOException;
+
 public class ProcessBackup implements Runnable {
     MessageBackup message;
 
@@ -19,18 +21,22 @@ public class ProcessBackup implements Runnable {
 
     @Override
     public void run() {
-        Logger.ANY(this.getClass().getName(), "Received BACKUP");
-        int desiredRepDeg = message.getDesiredRepDeg();
-        String filePath = message.getFileName();
+        try {
+            Logger.ANY(this.getClass().getName(), "Received BACKUP");
+            int desiredRepDeg = message.getDesiredRepDeg();
+            String filePath = message.getFileName();
 
-        saveFile(filePath, message);
-        int actualRepDeg = message.getActualRepDeg() + 1;
+            saveFile(filePath, message);
+            int actualRepDeg = message.getActualRepDeg() + 1;
 
-        if (actualRepDeg == desiredRepDeg) {
-            sendBackupDone();
-        } else {
-            sendToSuccessor();
-            storedMessageOrigin();
+            if (actualRepDeg == desiredRepDeg) {
+                sendBackupDone();
+            } else {
+                sendToSuccessor();
+                storedMessageOrigin();
+            }
+        }catch(Exception e){
+            Logger.ERR(this.getClass().getName(), "Not possible to send backup message");
         }
     }
 
@@ -43,7 +49,7 @@ public class ProcessBackup implements Runnable {
         }
     }
 
-    public void sendToSuccessor(){
+    public void sendToSuccessor() throws IOException {
         int desiredRepDeg = message.getDesiredRepDeg();
         byte[] bytesMessage = message.getBytes();
         String filePath = message.getFileName();
@@ -51,20 +57,20 @@ public class ProcessBackup implements Runnable {
 
         InfoNode suc = Main.chordNode.getSuccessor();
         MessageBackup newMessage = new MessageBackup(message.getOriginNode(), filePath, bytesMessage, desiredRepDeg, actualRepDeg);
-        Main.threadPool.execute(new SendMessage(suc.getIp(), suc.getPort(), newMessage));
+        Main.threadPool.submit(new SendMessage(suc.getIp(), suc.getPort(), newMessage));
     }
 
-    public void storedMessageOrigin(){
+    public void storedMessageOrigin() throws IOException {
         InfoNode currentNode = Main.chordNode.getInfoNode();
         MessageStored messageStored = new MessageStored(currentNode, MessageType.STORED);
-        Main.threadPool.execute(new SendMessage(message.getIpOrigin(), messageStored.getPortOrigin(), messageStored));
+        Main.threadPool.submit(new SendMessage(message.getIpOrigin(), messageStored.getPortOrigin(), messageStored));
     }
 
-    public void sendBackupDone(){
+    public void sendBackupDone() throws IOException {
         int desiredRepDeg = message.getDesiredRepDeg();
         int actualRepDeg = message.getActualRepDeg() + 1;
 
         MessageDoneBackup messageDone = new MessageDoneBackup(message.getOriginNode(), MessageType.DONE_BACKUP, desiredRepDeg, actualRepDeg);
-        Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageDone));
+        Main.threadPool.submit(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageDone));
     }
 }

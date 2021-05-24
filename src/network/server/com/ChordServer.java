@@ -52,7 +52,7 @@ public class ChordServer extends Thread {
                     if(Main.state.getFile(((MessageRestore) message).getFile()) != null) {
                         MessageBackup mess = FileHandler.ReadObjectFromFile(String.valueOf(port) + "backup/file.ser");
                         MessageRcvRestore messageRcvRestore = new MessageRcvRestore(message.getOriginNode(), mess.getBytes(), mess.getFileName());
-                        Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageRcvRestore));
+                        new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageRcvRestore).call();
                     } else {
                         // Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), message));
                     }
