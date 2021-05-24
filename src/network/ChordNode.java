@@ -15,6 +15,7 @@ import network.server.stabilize.GetPredecessor;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -55,11 +56,8 @@ public class ChordNode implements Serializable {
         this.next = 0;
         initNetworkChannel();
         initOrderedTable();
-
         Logger.ANY(this.getClass().getName(), "ID: " + infoNode.getId());
-        Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 100, Singleton.STABILIZE_TIME * 1000L, TimeUnit.MILLISECONDS);
-        Main.schedulerPool.scheduleWithFixedDelay(new FixFingers(), 100, Singleton.FIX_FINGERS_TIME * 1000L, TimeUnit.MILLISECONDS);
-        Main.schedulerPool.scheduleWithFixedDelay(new CheckPredecessor(), 100, Singleton.CHECK_PRED_TIME * 1000L, TimeUnit.MILLISECONDS);
+        initPeriodicFunctions();
     }
 
     /**
@@ -79,13 +77,19 @@ public class ChordNode implements Serializable {
 
             Logger.ANY(this.getClass().getName(), "ID: " + infoNode.getId());
             lookup(infoNode, randomNode, infoNode.getId());
-            Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 100, Singleton.STABILIZE_TIME * 1000L, TimeUnit.MILLISECONDS);
-            Main.schedulerPool.scheduleWithFixedDelay(new FixFingers(), 100, Singleton.FIX_FINGERS_TIME * 1000L, TimeUnit.MILLISECONDS);
-            Main.schedulerPool.scheduleWithFixedDelay(new CheckPredecessor(), 100, Singleton.CHECK_PRED_TIME * 1000L, TimeUnit.MILLISECONDS);
-        }catch(Exception e){
+            initPeriodicFunctions();
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    public void initPeriodicFunctions() {
+        // Stabilize
+        Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 100, Singleton.STABILIZE_TIME * 1000L, TimeUnit.MILLISECONDS);
+        Main.schedulerPool.scheduleWithFixedDelay(new FixFingers(), 100, Singleton.FIX_FINGERS_TIME * 100L, TimeUnit.MILLISECONDS);
+
+        // Check predecessor
+        Main.schedulerPool.scheduleWithFixedDelay(new CheckPredecessor(), 100, Singleton.CHECK_PRED_TIME * 1000L, TimeUnit.MILLISECONDS);
     }
 
 
@@ -135,6 +139,26 @@ public class ChordNode implements Serializable {
         fingerTable.put(successor.getId(), successor);
     }
 
+
+    /**
+     * TODO: where are the cases that we need to set this function?
+     * Case it's not possible to communicate with the successor, the
+     * it's necessary to find a successor in the finger table that is not
+     * the actual successor.
+     */
+    public void fixSuccessor() {
+        printHashTable();
+        printFingerTableOrder();
+        BigInteger[] fingerTableOrderArray = fingerTableOrder.toArray(new BigInteger[0]);
+        for (BigInteger key : fingerTableOrderArray) {
+            if (!fingerTable.get(key).getId().equals(successor.getId()))
+                setSuccessor(fingerTable.get(key));
+        }
+        // The only node in the network.
+        setSuccessor(infoNode);
+    }
+
+
     public void setPredecessor(InfoNode predecessor) {
         this.predecessor = predecessor;
 
@@ -159,10 +183,10 @@ public class ChordNode implements Serializable {
     }
 
 
-    public void initOrderedTable(){
+    public void initOrderedTable() {
 
         for (int i = 0; i < Singleton.m; i++) {
-            BigInteger offset = new BigInteger(String.valueOf((long) Math.pow(2,i)));
+            BigInteger offset = new BigInteger(String.valueOf((long) Math.pow(2, i)));
             BigInteger fingerTableEntry = this.infoNode.getId().add(offset);
             fingerTableOrder.addLast(fingerTableEntry);
         }
@@ -178,9 +202,9 @@ public class ChordNode implements Serializable {
         System.out.println("---- END ----");
     }
 
-    public void printFingerTableOrder(){
+    public void printFingerTableOrder() {
         System.out.println("---- FINGER ORDER ---- ");
-        fingerTableOrder.forEach((key)->{
+        fingerTableOrder.forEach((key) -> {
             System.out.println("ID: " + key);
         });
         System.out.println("---- END ----");

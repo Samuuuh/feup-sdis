@@ -5,6 +5,9 @@ import network.message.OK;
 import network.node.InfoNode;
 import network.server.com.SendMessage;
 
+/**
+ * Checks if the predecessor still exists. Case not it will set to null.
+ */
 public class CheckPredecessor implements Runnable{
 
 
