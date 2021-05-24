@@ -40,6 +40,7 @@ public class Lookup implements Runnable {
             } else closestPrecedingNode(targetId);
 
         } catch (Exception e) {
+            e.printStackTrace();
             Logger.ERR(this.getClass().getName(), "Error calculating closest preceding Node or sending message.");
         }
     }

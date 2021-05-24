@@ -34,49 +34,53 @@ public class ChordServer extends Thread {
 
         try {
             con = new SSLServerConnection(port);
-            while (true) {
+        }catch(Exception e){
+            System.out.println("Not possible to initialize port connection with port : " + port);
+        }
+
+        while (true) {
+            try {
                 SSLSocket socket = con.accept();
                 var out = new ObjectOutputStream(socket.getOutputStream());
                 out.writeObject(new OK());
                 var in = new ObjectInputStream(socket.getInputStream());
                 Message message = (Message) in.readObject();
                 MessageType type = message.getType();
-                
+
                 if (type == MessageType.RCV_RESTORE) {
                     Logger.ANY(this.getClass().getName(), "Received RCV_RESTORE.");
                     Main.threadPool.execute(new ProcessRestore((MessageRcvRestore) message));
                 } else if (type == MessageType.RESTORE) {
                     Logger.ANY(this.getClass().getName(), "Received RESTORE.");
                     // See if peer has the file
-                    
-                    if(Main.state.getStoredFile(((MessageRestore) message).getFile()) != null) {
+
+                    if (Main.state.getStoredFile(((MessageRestore) message).getFile()) != null) {
                         MessageBackup mess = FileHandler.ReadObjectFromFile(String.valueOf(port) + "backup/file.ser");
                         MessageRcvRestore messageRcvRestore = new MessageRcvRestore(message.getOriginNode(), mess.getBytes(), mess.getFileName());
                         new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageRcvRestore).call();
                     } else {
                         // Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), message));
                     }
-                    
+
                 } else if (type == MessageType.DONE_BACKUP) {
                     int desiredRepDeg = ((MessageDoneBackup) message).getDesiredRepDeg();
                     int actualRepDeg = ((MessageDoneBackup) message).getActualRepDeg();
                     Logger.ANY(this.getClass().getName(), "Received DONE_BACKUP. Backup finished");
 
-                    if(desiredRepDeg == actualRepDeg) {
+                    if (desiredRepDeg == actualRepDeg) {
                         Logger.ANY(this.getClass().getName(), "Desired replication degree met. RepDeg: " + actualRepDeg);
                     } else {
                         Logger.ANY(this.getClass().getName(), "Desired replication degree not met. Expected:" + desiredRepDeg + " Met:" + actualRepDeg);
-                    }       
-                }
-                else if (type == MessageType.BACKUP) {
+                    }
+                } else if (type == MessageType.BACKUP) {
                     int desiredRepDeg = ((MessageBackup) message).getDesiredRepDeg();
                     int actualRepDeg = ((MessageBackup) message).getActualRepDeg();
-                    
+
                     Main.state.addStoredFile(((MessageBackup) message).getFileName());
 
                     if (message.getPortOrigin() == port) {
                         Logger.ANY(this.getClass().getName(), "Backup finished");
-                        if(desiredRepDeg == actualRepDeg) {
+                        if (desiredRepDeg == actualRepDeg) {
                             Logger.ANY(this.getClass().getName(), "Desired replication degree met. RepDeg: " + actualRepDeg);
                         } else {
                             Logger.ANY(this.getClass().getName(), "Desired replication degree not met. Expected:" + desiredRepDeg + " Met:" + actualRepDeg);
@@ -85,11 +89,9 @@ public class ChordServer extends Thread {
                         Main.threadPool.execute(new ProcessBackup((MessageBackup) message));
                     }
 
-                }
-                else if (type == MessageType.STORED){
+                } else if (type == MessageType.STORED) {
                     Logger.ANY(this.getClass().getName(), "Received stored from peer " + message.getOriginNode().getId());
-                }
-                else if (type == MessageType.LOOKUP) {
+                } else if (type == MessageType.LOOKUP) {
                     Main.threadPool.execute(new Lookup((MessageLookup) message, MessageType.SUCCESSOR, MessageType.LOOKUP));
                 } else if (type.equals(MessageType.SUCCESSOR)) {
                     Main.chordNode.setSuccessor(((MessageSuccessor) message).getSuccessor());
@@ -110,13 +112,13 @@ public class ChordServer extends Thread {
                 } else {
                     Logger.ANY(this.getClass().getName(), "Received" + message.getType() + "message");
                 }
-
-
+            } catch (Exception e) {
+                e.printStackTrace();
+                Logger.ANY(this.getClass().getName(), "Error on ChordServer, still active...");
             }
-        } catch (
-                Exception ignored) {
-            Logger.ANY(this.getClass().getName(), "End ChordServer");
+
         }
+
 
     }
 

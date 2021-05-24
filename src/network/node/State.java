@@ -13,7 +13,7 @@ public class State {
 
     public State() {
         backedUpFiles = new ConcurrentHashMap<>();
-        backedUpFiles = new ConcurrentHashMap<>();
+        storedFiles= new ConcurrentHashMap<>();
     }
 
     public void addStoredFile(String file) {
