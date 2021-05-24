@@ -2,10 +2,12 @@ package network.server.CheckPredecessor;
 
 import network.etc.Logger;
 import network.etc.Singleton;
-import network.server.fixFingers.FixFingers;
-
 import java.util.concurrent.*;
 
+/**
+ * This class is responsible for keeping the CheckPredecessor running,
+ * even if it leads to an error.
+ */
 public class CheckPredecessorOrchestrator implements Runnable {
 
     @Override

@@ -6,6 +6,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This class is responsible for running the FixFingers for an entire cycle and
+ * then waits a certain amount of time to execute it again.
+ */
 public class FixFingerOrchestrator implements Runnable {
 
     @Override
