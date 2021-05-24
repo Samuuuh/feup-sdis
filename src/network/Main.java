@@ -1,16 +1,14 @@
 
 package network;
 
-import network.*;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import network.node.InfoNode;
-import network.services.Backup;
+import network.node.State;
+import network.services.backup.SendBackup;
+import network.services.restore.SendRestore;
 import network.services.Services;
 import network.etc.*;
 
@@ -24,6 +22,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class Main implements Services {
     private static String ip;
     private static int port;
+    public static State state;
     public static ChordNode chordNode;
     public static ThreadPoolExecutor threadPool;
     public static ScheduledExecutorService schedulerPool;
@@ -34,11 +33,12 @@ public class Main implements Services {
 
         Main main = new Main();
         Services stub = (Services) UnicastRemoteObject.exportObject(main, 0);
+        state = new State();
         initRMI(stub);
     }
 
 
-    public static void parseParameters(String[] args)  {
+    public static void parseParameters(String[] args) {
         if (args.length > 4) {
             System.out.println("Usage:\n java network.Main <machineIp> <machinePort> [<chordNodeIp> <chordNodePort>]");
             System.exit(1);
@@ -50,7 +50,7 @@ public class Main implements Services {
         if (args.length == 4) {
             InfoNode infoNode = new InfoNode(ip, port);
             InfoNode randomNode = new InfoNode(args[2], Integer.parseInt(args[3]));
-            chordNode = new ChordNode(infoNode,randomNode);
+            chordNode = new ChordNode(infoNode, randomNode);
         } else if (args.length == 2) {
             InfoNode infoNode = new InfoNode(ip, port);
             chordNode = new ChordNode(infoNode);
@@ -69,24 +69,24 @@ public class Main implements Services {
         }
     }
 
-    public static void initThreadPool(){
+    public static void initThreadPool() {
         threadPool = (ThreadPoolExecutor) Executors.newScheduledThreadPool(Singleton.THREAD_SIZE);
         schedulerPool = Executors.newScheduledThreadPool(Singleton.SCHED_SIZE);
     }
 
     @Override
     public String backup(String filePath, int repDeg) {
-        //new Backup(ip, server.getPort(), filePath, repDeg).request();
-        Backup a = new Backup("127.0.0.1", 8888, filePath, repDeg);
+        InfoNode sucessor = chordNode.getSuccessor();
+        Main.threadPool.execute(new SendBackup(sucessor.getIp(), sucessor.getPort(), filePath, chordNode.getInfoNode(), repDeg));
 
-        try {
-            a.request(chordNode.getInfoNode());
-        } catch(IOException e){
-            e.printStackTrace();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+        return "Start Backup";
+    }
 
-        return "Start Lookup";
+    @Override
+    public String restore(String filePath) {
+        InfoNode sucessor = chordNode.getSuccessor();
+        Main.threadPool.execute(new SendRestore(sucessor.getIp(), sucessor.getPort(), filePath, chordNode.getInfoNode()));
+
+        return "Start Restore";
     }
 }

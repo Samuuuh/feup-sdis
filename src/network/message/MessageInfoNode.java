@@ -1,12 +1,9 @@
 package network.message;
 
-import network.ChordNode;
 import network.etc.MessageType;
 import network.node.InfoNode;
 
-import java.io.Serializable;
-
-public class MessageInfoNode extends Message implements Serializable {
+public class MessageInfoNode extends Message {
 
     InfoNode infoNode;
 
