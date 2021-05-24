@@ -63,7 +63,7 @@ public class ProcessBackup implements Runnable {
     public void storedMessageOrigin() throws IOException {
         InfoNode currentNode = Main.chordNode.getInfoNode();
         MessageStored messageStored = new MessageStored(currentNode, MessageType.STORED);
-        Main.threadPool.submit(new SendMessage(message.getIpOrigin(), messageStored.getPortOrigin(), messageStored));
+        Main.threadPool.submit(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageStored));
     }
 
     public void sendBackupDone() throws IOException {

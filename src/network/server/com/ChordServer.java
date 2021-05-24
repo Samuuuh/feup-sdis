@@ -113,7 +113,6 @@ public class ChordServer extends Thread {
                     Logger.ANY(this.getClass().getName(), "Received" + message.getType() + "message");
                 }
             } catch (Exception e) {
-                e.printStackTrace();
                 Logger.ANY(this.getClass().getName(), "Error on ChordServer, still active...");
             }
 

@@ -51,10 +51,12 @@ public class ChordNode implements Serializable {
         this.predecessor = infoNode;
         this.successor = infoNode;
         this.next = 0;
-        initNetworkChannel();
+
         initOrderedTable();
+        initNetworkChannel();
         Logger.ANY(this.getClass().getName(), "ID: " + infoNode.getId());
         initPeriodicFunctions();
+
     }
 
     /**
@@ -69,8 +71,8 @@ public class ChordNode implements Serializable {
             fingerTableOrder = new ConcurrentLinkedDeque<>();
             this.infoNode = infoNode;
             this.next = 0;
-            initNetworkChannel();
             initOrderedTable();
+            initNetworkChannel();
 
             Logger.ANY(this.getClass().getName(), "ID: " + infoNode.getId());
             lookup(infoNode, randomNode, infoNode.getId());
@@ -82,11 +84,11 @@ public class ChordNode implements Serializable {
 
     public void initPeriodicFunctions() {
         // Stabilize
-        Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 100, Singleton.STABILIZE_TIME * 1000L, TimeUnit.MILLISECONDS);
+        Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 0, Singleton.STABILIZE_TIME * 1000L, TimeUnit.MILLISECONDS);
         // Check predecessor
-        Main.schedulerPool.schedule(new CheckPredecessorOrchestrator(), 100, TimeUnit.MILLISECONDS);
+        Main.schedulerPool.schedule(new CheckPredecessorOrchestrator(), 0, TimeUnit.MILLISECONDS);
         // Schedule the fix fingers.
-        Main.schedulerPool.scheduleWithFixedDelay(new FixFingerOrchestrator(), 100, Singleton.FIX_FINGERS_TIME * 1000L, TimeUnit.MILLISECONDS);
+        Main.schedulerPool.scheduleWithFixedDelay(new FixFingerOrchestrator(), 0, Singleton.FIX_FINGERS_TIME * 1000L, TimeUnit.MILLISECONDS);
     }
 
     public void lookup(InfoNode originNode, InfoNode randomNode, BigInteger targetId) throws IOException, ClassNotFoundException {
