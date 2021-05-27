@@ -56,7 +56,6 @@ public class ChordNode implements Serializable {
         initNetworkChannel();
         Logger.ANY(this.getClass().getName(), "ID: " + infoNode.getId());
         initPeriodicFunctions();
-
     }
 
     /**
@@ -75,8 +74,8 @@ public class ChordNode implements Serializable {
             initNetworkChannel();
 
             Logger.ANY(this.getClass().getName(), "ID: " + infoNode.getId());
-            lookup(infoNode, randomNode, infoNode.getId());
             initPeriodicFunctions();
+            lookup(infoNode, randomNode, infoNode.getId());
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -40,6 +40,7 @@ public class ChordServer extends Thread {
 
         while (true) {
             try {
+                assert con != null;
                 SSLSocket socket = con.accept();
                 var out = new ObjectOutputStream(socket.getOutputStream());
                 out.writeObject(new OK());
