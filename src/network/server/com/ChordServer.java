@@ -54,13 +54,12 @@ public class ChordServer extends Thread {
                 } else if (type == MessageType.RESTORE) {
                     Logger.ANY(this.getClass().getName(), "Received RESTORE.");
                     // See if peer has the file
-
                     if (Main.state.getStoredFile(((MessageRestore) message).getFile()) != null) {
-                        MessageBackup mess = FileHandler.ReadObjectFromFile(String.valueOf(port) + "backup/file.ser");
+                        MessageBackup mess = FileHandler.ReadObjectFromFile(String.valueOf(port) + "/backup/file.ser");
                         MessageRcvRestore messageRcvRestore = new MessageRcvRestore(message.getOriginNode(), mess.getBytes(), mess.getFileName());
                         new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageRcvRestore).call();
                     } else {
-                        // Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), message));
+                         Main.threadPool.submit(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), message));
                     }
 
                 } else if (type == MessageType.DONE_BACKUP) {

@@ -86,7 +86,6 @@ public class Main implements Services {
     public String restore(String filePath) {
         InfoNode sucessor = chordNode.getSuccessor();
         Main.threadPool.execute(new SendRestore(sucessor.getIp(), sucessor.getPort(), filePath, chordNode.getInfoNode()));
-
         return "Start Restore";
     }
 }
