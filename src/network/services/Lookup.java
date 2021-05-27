@@ -55,8 +55,9 @@ public class Lookup implements Runnable {
         while (iterator.hasNext()) {
             BigInteger id = iterator.next();
             if (Singleton.betweenSuccessor(targetId, currentId, id)) {
-
                 InfoNode closestNode = fingerTable.get(id);
+                if (closestNode == null) continue;
+
                 MessageLookup messageLookup = new MessageLookup(message.getOriginNode(), targetId, this.forwardType);
                 new SendMessage(closestNode.getIp(), closestNode.getPort(), messageLookup).call();
                 break;
