@@ -63,11 +63,9 @@ public class ChordServer extends Thread {
                     }
 
                 } else if (type == MessageType.DONE_BACKUP) {
-                    Main.state.addBackedUpFile(((MessageDoneBackup) message).getFilePath(), message.getOriginNode().getId());
                     int desiredRepDeg = ((MessageDoneBackup) message).getDesiredRepDeg();
                     int actualRepDeg = ((MessageDoneBackup) message).getActualRepDeg();
                     Logger.ANY(this.getClass().getName(), "Received DONE_BACKUP. Backup finished");
-                    Main.state.printBackedUpHash();
                     if (desiredRepDeg == actualRepDeg) {
                         Logger.ANY(this.getClass().getName(), "Desired replication degree met. RepDeg: " + actualRepDeg);
                     } else {
@@ -91,7 +89,6 @@ public class ChordServer extends Thread {
                     }
 
                 } else if (type == MessageType.STORED) {
-                    Main.state.addBackedUpFile(((MessageStored) message).getFilePath(), message.getOriginNode().getId());
                     Logger.ANY(this.getClass().getName(), "Received stored from peer " + message.getOriginNode().getId());
                 } else if (type == MessageType.LOOKUP) {
                     Main.threadPool.execute(new Lookup((MessageLookup) message, MessageType.SUCCESSOR, MessageType.LOOKUP));
