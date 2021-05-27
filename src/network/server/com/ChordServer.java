@@ -11,6 +11,7 @@ import network.services.backup.ProcessBackup;
 import network.services.restore.ProcessRestore;
 
 import javax.net.ssl.SSLSocket;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
@@ -48,49 +49,10 @@ public class ChordServer extends Thread {
                 Message message = (Message) in.readObject();
                 MessageType type = message.getType();
 
-                if (type == MessageType.RCV_RESTORE) {
-                    Logger.ANY(this.getClass().getName(), "Received RCV_RESTORE.");
-                    Main.threadPool.execute(new ProcessRestore((MessageRcvRestore) message));
-                } else if (type == MessageType.RESTORE) {
-                    Logger.ANY(this.getClass().getName(), "Received RESTORE.");
-                    // See if peer has the file
-                    if (Main.state.getStoredFile(((MessageRestore) message).getFile()) != null) {
-                        MessageBackup mess = FileHandler.ReadObjectFromFile(String.valueOf(port) + "/backup/file.ser");
-                        MessageRcvRestore messageRcvRestore = new MessageRcvRestore(message.getOriginNode(), mess.getBytes(), mess.getFileName());
-                        new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageRcvRestore).call();
-                    } else {
-                         Main.threadPool.submit(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), message));
-                    }
+                restoreProtocol(message, type);
+                backupProtocol(message, type);
 
-                } else if (type == MessageType.DONE_BACKUP) {
-                    int desiredRepDeg = ((MessageDoneBackup) message).getDesiredRepDeg();
-                    int actualRepDeg = ((MessageDoneBackup) message).getActualRepDeg();
-                    Logger.ANY(this.getClass().getName(), "Received DONE_BACKUP. Backup finished");
-                    if (desiredRepDeg == actualRepDeg) {
-                        Logger.ANY(this.getClass().getName(), "Desired replication degree met. RepDeg: " + actualRepDeg);
-                    } else {
-                        Logger.ANY(this.getClass().getName(), "Desired replication degree not met. Expected:" + desiredRepDeg + " Met:" + actualRepDeg);
-                    }
-                } else if (type == MessageType.BACKUP) {
-                    int desiredRepDeg = ((MessageBackup) message).getDesiredRepDeg();
-                    int actualRepDeg = ((MessageBackup) message).getActualRepDeg();
-
-                    Main.state.addStoredFile(((MessageBackup) message).getFileName());
-
-                    if (message.getPortOrigin() == port) {
-                        Logger.ANY(this.getClass().getName(), "Backup finished");
-                        if (desiredRepDeg == actualRepDeg) {
-                            Logger.ANY(this.getClass().getName(), "Desired replication degree met. RepDeg: " + actualRepDeg);
-                        } else {
-                            Logger.ANY(this.getClass().getName(), "Desired replication degree not met. Expected:" + desiredRepDeg + " Met:" + actualRepDeg);
-                        }
-                    } else {
-                        Main.threadPool.execute(new ProcessBackup((MessageBackup) message));
-                    }
-
-                } else if (type == MessageType.STORED) {
-                    Logger.ANY(this.getClass().getName(), "Received stored from peer " + message.getOriginNode().getId());
-                } else if (type == MessageType.LOOKUP) {
+                if (type == MessageType.LOOKUP) {
                     Main.threadPool.execute(new Lookup((MessageLookup) message, MessageType.SUCCESSOR, MessageType.LOOKUP));
                 } else if (type.equals(MessageType.SUCCESSOR)) {
                     Main.chordNode.setSuccessor(((MessageSuccessor) message).getSuccessor());
@@ -116,9 +78,61 @@ public class ChordServer extends Thread {
             }
 
         }
-
-
     }
+
+    private void backupProtocol(Message message, MessageType type){
+          if (type == MessageType.BACKUP) {
+            int desiredRepDeg = ((MessageBackup) message).getDesiredRepDeg();
+            int actualRepDeg = ((MessageBackup) message).getActualRepDeg();
+
+            Main.state.addStoredFile(((MessageBackup) message).getFileName());
+
+            if (message.getPortOrigin() == port) {
+                Logger.ANY(this.getClass().getName(), "Backup finished");
+                if (desiredRepDeg == actualRepDeg) {
+                    Logger.ANY(this.getClass().getName(), "Desired replication degree met. RepDeg: " + actualRepDeg);
+                } else {
+                    Logger.ANY(this.getClass().getName(), "Desired replication degree not met. Expected:" + desiredRepDeg + " Met:" + actualRepDeg);
+                }
+            } else {
+                Main.threadPool.execute(new ProcessBackup((MessageBackup) message));
+            }
+        }
+        else if (type == MessageType.STORED) {
+            Logger.ANY(this.getClass().getName(), "Received stored from peer " + message.getOriginNode().getId());
+        }
+        else if (type == MessageType.DONE_BACKUP) {
+            int desiredRepDeg = ((MessageDoneBackup) message).getDesiredRepDeg();
+            int actualRepDeg = ((MessageDoneBackup) message).getActualRepDeg();
+            Logger.ANY(this.getClass().getName(), "Received DONE_BACKUP. Backup finished");
+            if (desiredRepDeg == actualRepDeg) {
+                Logger.ANY(this.getClass().getName(), "Desired replication degree met. RepDeg: " + actualRepDeg);
+            } else {
+                Logger.ANY(this.getClass().getName(), "Desired replication degree not met. Expected:" + desiredRepDeg + " Met:" + actualRepDeg);
+            }
+        }
+    }
+
+    // TODO: restore process.
+    private void restoreProtocol(Message message, MessageType type) throws IOException {
+        // Check if it has the file, otherwise pass the message to the successor.
+        if (type == MessageType.RESTORE) {
+            Logger.ANY(this.getClass().getName(), "Received RESTORE.");
+            if (Main.state.getStoredFile(((MessageRestore) message).getFile()) != null) {
+                MessageBackup mess = FileHandler.ReadObjectFromFile(String.valueOf(port) + "/backup/file.ser");
+                MessageRcvRestore messageRcvRestore = new MessageRcvRestore(message.getOriginNode(), mess.getBytes(), mess.getFileName());
+                Main.threadPool.submit(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageRcvRestore));
+            } else {
+                Main.threadPool.submit(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), message));
+            }
+        }
+        // Confirmation.
+        else if (type == MessageType.RCV_RESTORE) {
+            Logger.ANY(this.getClass().getName(), "Received RCV_RESTORE.");
+            Main.threadPool.execute(new ProcessRestore((MessageRcvRestore) message));
+        }
+    }
+
 
     public int getPort() {
         return port;

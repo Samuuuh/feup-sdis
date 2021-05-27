@@ -1,5 +1,6 @@
 package network.server.fixFingers;
 
+import network.Main;
 import network.etc.Singleton;
 
 import java.util.concurrent.ExecutorService;
@@ -15,9 +16,10 @@ public class FixFingerOrchestrator implements Runnable {
     @Override
     public void run() {
         try {
+            ExecutorService executorService = Executors.newSingleThreadExecutor();
+
             for (int i = 0; i < Singleton.m; i++) {
-                ExecutorService executorService = Executors.newSingleThreadExecutor();
-                executorService.submit(new FixFingers());
+                executorService.submit(new FixFingers(i+1));
                 executorService.awaitTermination(500, TimeUnit.MILLISECONDS);
             }
         } catch (InterruptedException e) {

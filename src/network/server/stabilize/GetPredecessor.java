@@ -8,13 +8,16 @@ import network.server.com.SendMessage;
 
 import java.util.Objects;
 
+/**
+ * This class is responsible for checking if the predecessor is the right one.
+ */
 public class GetPredecessor implements Runnable {
 
     @Override
     public void run() {
         try {
             if (Main.chordNode == null)
-                return ;
+                return;
 
             InfoNode successor = Main.chordNode.getSuccessor();
 
@@ -27,9 +30,9 @@ public class GetPredecessor implements Runnable {
             }
 
             MessageGetPredecessor messageGetPredecessor = new MessageGetPredecessor(Main.chordNode.getInfoNode());
-            new SendMessage(successor.getIp(), successor.getPort(), messageGetPredecessor).call();
-
+            Main.threadPool.submit(new SendMessage(successor.getIp(), successor.getPort(), messageGetPredecessor));
         }catch(Exception e){
+            e.printStackTrace();
             Logger.ERR(this.getClass().getName(), "Not possible to get predecessor.");
         }
 

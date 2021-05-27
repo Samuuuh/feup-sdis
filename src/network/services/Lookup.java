@@ -2,7 +2,6 @@ package network.services;
 
 import network.ChordNode;
 import network.Main;
-import network.etc.Logger;
 import network.etc.MessageType;
 import network.etc.Singleton;
 import network.message.MessageLookup;
@@ -35,13 +34,13 @@ public class Lookup implements Runnable {
             BigInteger successorId = Main.chordNode.getSuccessor().getId();
 
             if (Singleton.betweenSuccessor(targetId, currentId, successorId)) {
-                MessageSuccessor messageSuccessor = new MessageSuccessor(Main.chordNode.getInfoNode(), targetId, Main.chordNode.getInfoNode(), this.returnType);
+                MessageSuccessor messageSuccessor = new MessageSuccessor(Main.chordNode.getInfoNode(), targetId, Main.chordNode.getSuccessor(), this.returnType);
+
+                //System.out.println("targetId " + targetId + " is between currentId "+ currentId + " and successor ID " + successorId);
                 new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageSuccessor).call();
             } else closestPrecedingNode(targetId);
 
         } catch (Exception e) {
-            e.printStackTrace();
-            Logger.ERR(this.getClass().getName(), "Error calculating closest preceding Node or sending message.");
         }
     }
 
@@ -56,18 +55,17 @@ public class Lookup implements Runnable {
             BigInteger id = iterator.next();
             if (Singleton.betweenSuccessor(targetId, currentId, id)) {
                 InfoNode closestNode = fingerTable.get(id);
-                if (closestNode == null) continue;
-
+                if (closestNode == null) break;
                 MessageLookup messageLookup = new MessageLookup(message.getOriginNode(), targetId, this.forwardType);
-                new SendMessage(closestNode.getIp(), closestNode.getPort(), messageLookup).call();
-                break;
+                Main.threadPool.submit(new SendMessage(closestNode.getIp(), closestNode.getPort(), messageLookup));
+                return;
             }
         }
 
         // The own node is the successor.
+        System.out.println(message.getPortOrigin());
+        //System.out.println("successor of " + targetId + " is " + Main.chordNode.getInfoNode().getId());
         MessageSuccessor messageSuccessor = new MessageSuccessor(Main.chordNode.getInfoNode(), targetId, Main.chordNode.getInfoNode(), this.returnType);
-        new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageSuccessor).call();
+        Main.threadPool.submit(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageSuccessor));
     }
-
-
 }

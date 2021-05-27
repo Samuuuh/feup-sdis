@@ -74,8 +74,8 @@ public class ChordNode implements Serializable {
             initNetworkChannel();
 
             Logger.ANY(this.getClass().getName(), "ID: " + infoNode.getId());
-            initPeriodicFunctions();
             lookup(infoNode, randomNode, infoNode.getId());
+            initPeriodicFunctions();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,16 +83,16 @@ public class ChordNode implements Serializable {
 
     public void initPeriodicFunctions() {
         // Stabilize
-        Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 0, Singleton.STABILIZE_TIME * 1000L, TimeUnit.MILLISECONDS);
+        Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 100, Singleton.STABILIZE_TIME * 1000L, TimeUnit.MILLISECONDS);
         // Check predecessor
-        Main.schedulerPool.schedule(new CheckPredecessorOrchestrator(), 0, TimeUnit.MILLISECONDS);
+        Main.schedulerPool.schedule(new CheckPredecessorOrchestrator(), 5000, TimeUnit.MILLISECONDS);
         // Schedule the fix fingers.
-        Main.schedulerPool.scheduleWithFixedDelay(new FixFingerOrchestrator(), 0, Singleton.FIX_FINGERS_TIME * 1000L, TimeUnit.MILLISECONDS);
+        Main.schedulerPool.scheduleWithFixedDelay(new FixFingerOrchestrator(), 100, Singleton.FIX_FINGERS_TIME * 1000L, TimeUnit.MILLISECONDS);
     }
 
-    public void lookup(InfoNode originNode, InfoNode randomNode, BigInteger targetId) throws IOException, ClassNotFoundException {
+    public void lookup(InfoNode originNode, InfoNode randomNode, BigInteger targetId) throws IOException {
         MessageLookup message = new MessageLookup(originNode, targetId, MessageType.LOOKUP);
-        new SendMessage(randomNode.getIp(), randomNode.getPort(), message).call();
+        Main.threadPool.submit(new SendMessage(randomNode.getIp(), randomNode.getPort(), message));
     }
 
     public ConcurrentHashMap<BigInteger, InfoNode> getFingerTable() {
@@ -134,7 +134,6 @@ public class ChordNode implements Serializable {
             Logger.ANY(this.getClass().getName(), "New successor " + successor.getId());
 
         this.successor = successor;
-        fingerTable.put(successor.getId(), successor);
     }
 
 

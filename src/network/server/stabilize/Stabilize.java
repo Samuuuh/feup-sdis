@@ -4,7 +4,6 @@ import network.Main;
 import network.etc.Logger;
 import network.etc.MessageType;
 import network.etc.Singleton;
-import network.message.Message;
 import network.message.MessageInfoNode;
 import network.node.InfoNode;
 import network.server.com.SendMessage;
@@ -37,9 +36,10 @@ public class Stabilize implements Runnable {
             }
 
             MessageInfoNode message = new MessageInfoNode(Main.chordNode.getInfoNode(), MessageType.NOTIFY, Main.chordNode.getInfoNode());
-            new SendMessage(Main.chordNode.getSuccessor().getIp(), Main.chordNode.getSuccessor().getPort(), message).call();
 
+            new SendMessage(Main.chordNode.getSuccessor().getIp(), Main.chordNode.getSuccessor().getPort(), message).call();
         } catch (Exception e) {
+            e.printStackTrace();
             Logger.ERR(this.getClass().getName(), "Error on stabilizing.");
         }
     }
