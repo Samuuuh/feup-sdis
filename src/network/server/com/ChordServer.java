@@ -3,11 +3,13 @@ package network.server.com;
 import network.Main;
 import network.etc.*;
 import network.message.*;
+import network.message.MessageBackup;
+import network.message.MessageDoneBackup;
 import network.server.fixFingers.PutOnFinger;
-import network.node.InfoNode;
 import network.server.stabilize.Stabilize;
 import network.services.Lookup;
 import network.services.backup.ProcessBackup;
+import network.services.restore.HandleRestore;
 import network.services.restore.ProcessRestore;
 
 import javax.net.ssl.SSLSocket;
@@ -40,6 +42,7 @@ public class ChordServer extends Thread {
 
         while (true) {
             try {
+                assert con != null;
                 SSLSocket socket = con.accept();
                 var out = new ObjectOutputStream(socket.getOutputStream());
                 out.writeObject(new OK());
@@ -47,83 +50,86 @@ public class ChordServer extends Thread {
                 Message message = (Message) in.readObject();
                 MessageType type = message.getType();
 
-                if (type == MessageType.RCV_RESTORE) {
-                    Logger.ANY(this.getClass().getName(), "Received RCV_RESTORE.");
-                    Main.threadPool.execute(new ProcessRestore((MessageRcvRestore) message));
-                } else if (type == MessageType.RESTORE) {
-                    Logger.ANY(this.getClass().getName(), "Received RESTORE.");
-                    // See if peer has the file
 
-                    if (Main.state.getStoredFile(((MessageRestore) message).getFile()) != null) {
-                        MessageBackup mess = FileHandler.ReadObjectFromFile(String.valueOf(port) + "backup/file.ser");
-                        MessageRcvRestore messageRcvRestore = new MessageRcvRestore(message.getOriginNode(), mess.getBytes(), mess.getFileName());
-                        new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageRcvRestore).call();
-                    } else {
-                        // Main.threadPool.execute(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), message));
-                    }
-
-                } else if (type == MessageType.DONE_BACKUP) {
-                    Main.state.addBackedUpFile(((MessageDoneBackup) message).getFilePath(), message.getOriginNode().getId());
-                    int desiredRepDeg = ((MessageDoneBackup) message).getDesiredRepDeg();
-                    int actualRepDeg = ((MessageDoneBackup) message).getActualRepDeg();
-                    Logger.ANY(this.getClass().getName(), "Received DONE_BACKUP. Backup finished");
-                    Main.state.printBackedUpHash();
-                    if (desiredRepDeg == actualRepDeg) {
-                        Logger.ANY(this.getClass().getName(), "Desired replication degree met. RepDeg: " + actualRepDeg);
-                    } else {
-                        Logger.ANY(this.getClass().getName(), "Desired replication degree not met. Expected:" + desiredRepDeg + " Met:" + actualRepDeg);
-                    }
-                } else if (type == MessageType.BACKUP) {
-                    int desiredRepDeg = ((MessageBackup) message).getDesiredRepDeg();
-                    int actualRepDeg = ((MessageBackup) message).getActualRepDeg();
-
-                    Main.state.addStoredFile(((MessageBackup) message).getFileName());
-
-                    if (message.getPortOrigin() == port) {
-                        Logger.ANY(this.getClass().getName(), "Backup finished");
-                        if (desiredRepDeg == actualRepDeg) {
-                            Logger.ANY(this.getClass().getName(), "Desired replication degree met. RepDeg: " + actualRepDeg);
+                switch (type) {
+                    case BACKUP:
+                        var messageBackup = ((MessageBackup) message);
+                        if (message.getPortOrigin() == port) {
+                            backupEndLog(messageBackup.getDesiredRepDeg(), messageBackup.getActualRepDeg());
                         } else {
-                            Logger.ANY(this.getClass().getName(), "Desired replication degree not met. Expected:" + desiredRepDeg + " Met:" + actualRepDeg);
+                            Main.state.addStoredFile(messageBackup.getFileName());
+                            Main.threadPool.execute(new ProcessBackup(messageBackup));
                         }
-                    } else {
-                        Main.threadPool.execute(new ProcessBackup((MessageBackup) message));
-                    }
-
-                } else if (type == MessageType.STORED) {
-                    Main.state.addBackedUpFile(((MessageStored) message).getFilePath(), message.getOriginNode().getId());
-                    Logger.ANY(this.getClass().getName(), "Received stored from peer " + message.getOriginNode().getId());
-                } else if (type == MessageType.LOOKUP) {
-                    Main.threadPool.execute(new Lookup((MessageLookup) message, MessageType.SUCCESSOR, MessageType.LOOKUP));
-                } else if (type.equals(MessageType.SUCCESSOR)) {
-                    Main.chordNode.setSuccessor(((MessageSuccessor) message).getSuccessor());
-                } else if (type == MessageType.NOTIFY) {
-                    Main.chordNode.notify((MessageInfoNode) message);
-                } else if (type == MessageType.GET_PREDECESSOR) {
-                    // Stabilize from another node asking the chordNode predecessor.
-                    MessageInfoNode messageInfoNode = new MessageInfoNode(Main.chordNode.getInfoNode(), MessageType.ANS_GET_PREDECESSOR, Main.chordNode.getPredecessor());
-                    new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageInfoNode).call();
-                } else if (type == MessageType.ANS_GET_PREDECESSOR) {
-                    // Continue the stabilize process after receiving the successor predecessor.
-                    Main.threadPool.execute(new Stabilize((MessageInfoNode) message));
-                } else if (type == MessageType.FIX_FINGERS) {
-                    Main.threadPool.execute(new Lookup((MessageLookup) message, MessageType.ANS_FIX_FINGERS, MessageType.FIX_FINGERS));
-                } else if (type == MessageType.ANS_FIX_FINGERS) {
-                    Main.threadPool.execute(new PutOnFinger((MessageSuccessor) message));
-                } else if (type == MessageType.OK) {
-                } else {
-                    Logger.ANY(this.getClass().getName(), "Received" + message.getType() + "message");
+                        break;
+                    case STORED:
+                        Logger.ANY(this.getClass().getName(), "Received stored from peer " + message.getOriginNode().getId());
+                        break;
+                    case DONE_BACKUP:
+                        var messageDoneBackup = (MessageDoneBackup) message;
+                        backupEndLog(messageDoneBackup.getDesiredRepDeg(), messageDoneBackup.getActualRepDeg());
+                        break;
+                    // Check if it has the file, otherwise pass the message to the successor.
+                    case RESTORE:
+                        Logger.ANY(this.getClass().getName(), "Received RESTORE.");
+                        Main.threadPool.execute(new HandleRestore((MessageRestore) message, port));
+                        break;
+                    // Confirmation.
+                    case RCV_RESTORE:
+                        Logger.ANY(this.getClass().getName(), "Received RCV_RESTORE.");
+                        Main.threadPool.execute(new ProcessRestore((MessageRcvRestore) message));
+                        break;
+                    case LOOKUP:
+                        Main.threadPool.execute(new Lookup((MessageLookup) message, MessageType.SUCCESSOR, MessageType.LOOKUP));
+                        break;
+                    case SUCCESSOR:
+                        Main.chordNode.setSuccessor(((MessageSuccessor) message).getSuccessor());
+                        break;
+                    case NOTIFY:
+                        Main.chordNode.notify((MessageInfoNode) message);
+                        break;
+                    case GET_PREDECESSOR:
+                        MessageInfoNode messageInfoNode = new MessageInfoNode(Main.chordNode.getInfoNode(), MessageType.ANS_GET_PREDECESSOR, Main.chordNode.getPredecessor());
+                        Main.threadPool.submit(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageInfoNode));
+                        break;
+                    case ANS_GET_PREDECESSOR:
+                        Main.threadPool.execute(new Stabilize((MessageInfoNode) message));
+                        break;
+                    case FIX_FINGERS:
+                        Main.threadPool.execute(new Lookup((MessageLookup) message, MessageType.ANS_FIX_FINGERS, MessageType.FIX_FINGERS));
+                        break;
+                    case ANS_FIX_FINGERS:
+                        Main.threadPool.execute(new PutOnFinger((MessageSuccessor) message));
+                        break;
+                    case OK:
+                        break;
+                    default:
+                        Logger.ANY(this.getClass().getName(), "Received" + message.getType() + "message");
+                        break;
                 }
             } catch (Exception e) {
                 Logger.ANY(this.getClass().getName(), "Error on ChordServer, still active...");
             }
 
         }
-
-
     }
+
+    /**
+     * This function prints if the replication was achieved or not.
+     */
+    private void backupEndLog(int desiredRepDeg, int actualRepDeg){
+        Logger.ANY(this.getClass().getName(), "Backup finished");
+        if (desiredRepDeg == actualRepDeg) {
+            Logger.ANY(this.getClass().getName(), "Desired replication degree met. RepDeg: " + actualRepDeg);
+        } else {
+            Logger.ANY(this.getClass().getName(), "Desired replication degree not met. Expected:" + desiredRepDeg + " Met:" + actualRepDeg);
+        }
+    }
+
 
     public int getPort() {
         return port;
     }
+
+
+
 }

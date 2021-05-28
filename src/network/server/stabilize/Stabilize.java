@@ -4,7 +4,6 @@ import network.Main;
 import network.etc.Logger;
 import network.etc.MessageType;
 import network.etc.Singleton;
-import network.message.Message;
 import network.message.MessageInfoNode;
 import network.node.InfoNode;
 import network.server.com.SendMessage;
@@ -12,6 +11,11 @@ import network.server.com.SendMessage;
 import java.math.BigInteger;
 import java.util.Objects;
 
+/**
+ * Once the successor predecessor was found, the stabilize will check if it's
+ * the peer successor.
+ * https://pdos.csail.mit.edu/papers/ton:chord/paper-ton.pdf
+ */
 public class Stabilize implements Runnable {
 
     InfoNode sucPredecessor;
@@ -29,6 +33,7 @@ public class Stabilize implements Runnable {
     public void run() {
         try {
             BigInteger currentId = Main.chordNode.getInfoNode().getId();
+
             if (Objects.isNull(sucPredecessor))
                 return;
 
@@ -40,6 +45,7 @@ public class Stabilize implements Runnable {
             new SendMessage(Main.chordNode.getSuccessor().getIp(), Main.chordNode.getSuccessor().getPort(), message).call();
 
         } catch (Exception e) {
+            e.printStackTrace();
             Logger.ERR(this.getClass().getName(), "Error on stabilizing.");
         }
     }
