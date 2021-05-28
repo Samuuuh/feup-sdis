@@ -8,6 +8,6 @@ public interface Services extends Remote {
 
         public String restore(String filePath) throws IOException, ClassNotFoundException;
 
-        public String reclaim(int size);
+        public String reclaim(String ip, int port, int size) throws IOException, ClassNotFoundException;
 }
 

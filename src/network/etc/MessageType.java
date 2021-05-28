@@ -3,7 +3,6 @@ package network.etc;
 public enum MessageType {
     // Protocol messages
     DELETE,
-    RECLAIM,
 
     // Backup protocol
     BACKUP,
@@ -13,7 +12,10 @@ public enum MessageType {
     // Restore protocol
     RESTORE,
     RCV_RESTORE,
-    
+
+    // Reclaim protocol
+    RECLAIM,
+
     // Join
     LOOKUP,
     SUCCESSOR,

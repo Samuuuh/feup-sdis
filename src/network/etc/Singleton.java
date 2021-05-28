@@ -1,8 +1,11 @@
 package network.etc;
 
+import network.Main;
+
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class Singleton {
     public static int REGISTER_PORT = 9999;
@@ -38,8 +41,13 @@ public class Singleton {
     }
 
 
+
     public static String getIdUncoded(String ip, int port){
         return ip + ":" + port;
+    }
+
+    public static String getFilePath(String fileName){
+        return "/" + Main.getPort() + "/" + fileName + ".ser";
     }
 
 

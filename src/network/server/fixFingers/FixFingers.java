@@ -31,7 +31,6 @@ public class FixFingers implements Callable {
             BigInteger nextId = new BigInteger(String.valueOf((long) Math.pow(2, currentNext - 1)));
             BigInteger targetId = currentId.add(nextId);
             MessageLookup messageLookup = new MessageLookup(Main.chordNode.getInfoNode(), targetId, MessageType.FIX_FINGERS);
-            System.out.println("Find the successor of " + targetId);
             new SendMessage(successor.getIp(), successor.getPort(), messageLookup).call();
         } catch (Exception e) {
             e.printStackTrace();

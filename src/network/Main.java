@@ -9,6 +9,7 @@ import network.node.InfoNode;
 import network.node.State;
 import network.services.backup.SendBackup;
 import network.services.reclaim.ProcessReclaim;
+import network.services.reclaim.RequestReclaim;
 import network.services.restore.SendRestore;
 import network.services.Services;
 import network.etc.*;
@@ -91,9 +92,13 @@ public class Main implements Services {
     }
 
     @Override
-    public String reclaim(int size){
-        Main.threadPool.submit(new ProcessReclaim());
+    public String reclaim(String ip, int port, int size){
+        Main.threadPool.submit(new RequestReclaim(ip, port, size));
         return "Reclaim initiated";
+    }
+
+    public static int getPort(){
+        return port;
     }
 
 }

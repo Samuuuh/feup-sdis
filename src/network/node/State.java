@@ -5,11 +5,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class State {
     // Files stored.
-    private ConcurrentHashMap<String, Integer> storedFiles;
+    private final ConcurrentHashMap<String, Integer> storedFiles;
     // Files that the peer requested backup.
 
     public State() {
-        storedFiles = new ConcurrentHashMap<String, int>();
+        storedFiles = new ConcurrentHashMap<>();
     }
 
     public void addStoredFile(String file, int size) {
@@ -20,4 +20,17 @@ public class State {
         return storedFiles.get(file);
     }
 
+    public ConcurrentHashMap<String, Integer> getStoredFiles(){
+        return storedFiles;
+    }
+
+    public void cleanState(){
+        storedFiles.clear();
+   }
+
+   public void printStoredFiles(){
+        storedFiles.forEach((key, value)->{
+            System.out.println("-- FILE " + key + " :: SIZE " + value);
+        });
+   }
 }
