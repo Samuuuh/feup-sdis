@@ -1,6 +1,7 @@
 package network.services.reclaim;
 
 import network.Main;
+import network.message.reclaim.MessageReclaim;
 
 import java.util.concurrent.Callable;
 
@@ -9,21 +10,20 @@ import java.util.concurrent.Callable;
  */
 public class ProcessReclaim implements Callable {
 
-    private int reclaimSize;
+    MessageReclaim messageReclaim;
 
-    public ProcessReclaim(int reclaimSize){
-        this.reclaimSize = reclaimSize;
+    public ProcessReclaim(MessageReclaim messageReclaim){
+        this.messageReclaim = messageReclaim;
     }
 
     @Override
     public Object call()  {
-        
         // initiating the reclaim.
 
         // Delete random files util
-        if (reclaimSize == 0){
+        /*if (reclaimSize == 0){
             System.out.println("reclaim size is zero!");
-        }
+        }*/
 
         System.out.println("stored files ");
         Main.state.printStoredFiles();

@@ -66,12 +66,12 @@ public class Client {
             // TODO
         } else if (this.operation.equals("RECLAIM")) {
             if (args.length != 4){
-                System.out.println("Usage:\n java Client <peer_ap> RECLAIM <size>\n");
+                System.out.println("Usage:\n java Client <peer_ap> RECLAIM <chordId> <size>\n");
                 return;
             }
-            String ip = args[2];
+            String id = args[2];
             Integer size = Integer.parseInt(args[3]);
-            reclaim(ip, size);
+            reclaim(id, size);
         } else if (this.operation.equals("STATE")) {
             // TODO
         } else {
@@ -102,11 +102,10 @@ public class Client {
         }
     }
 
-    private void reclaim(String ip, Integer size){
+    private void reclaim(String targetId, Integer size){
         try{
             Services stub = (Services) this.registry.lookup(this.accessPoint);
-            int port = Integer.parseInt(this.accessPoint);
-            String response = stub.reclaim(ip, port, size);
+            String response = stub.reclaim(targetId, size);
             System.out.println(response);
         }catch(Exception e){
             Logger.ERR(this.getClass().getName(), "Error on requesting reclaim.");

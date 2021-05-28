@@ -10,7 +10,7 @@ import java.security.NoSuchAlgorithmException;
 public class Singleton {
     public static int REGISTER_PORT = 9999;
     public static int THREAD_SIZE = 128;
-    public static int SCHED_SIZE = 10;           // Thread pool scheduler size.
+    public static int SCHED_SIZE = 32;           // Thread pool scheduler size.
     public static long STABILIZE_TIME = 5;      // Rate of execution of stabilize in seconds.
     // TODO: calculate expected time.
     public static long FIX_FINGERS_TIME = 3;    // Rate of execution of fix fingers in seconds.

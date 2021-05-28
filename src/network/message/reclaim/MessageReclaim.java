@@ -27,4 +27,7 @@ public class MessageReclaim extends Message {
         return targetId;
     }
 
+    public int getMessageId() {
+        return messageId;
+    }
 }

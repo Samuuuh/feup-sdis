@@ -5,16 +5,21 @@ import network.etc.*;
 import network.message.*;
 import network.message.MessageBackup;
 import network.message.MessageDoneBackup;
+import network.message.reclaim.MessageReclaim;
 import network.server.fixFingers.PutOnFinger;
 import network.server.stabilize.Stabilize;
 import network.services.Lookup;
 import network.services.backup.ProcessBackup;
+import network.services.reclaim.HandleRequestReclaim;
+import network.services.reclaim.UnbanReclaim;
 import network.services.restore.HandleRestore;
 import network.services.restore.ProcessRestore;
 
 import javax.net.ssl.SSLSocket;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.sql.Time;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Server channel. It receives messages from other peers.
@@ -100,6 +105,8 @@ public class ChordServer extends Thread {
                     case ANS_FIX_FINGERS:
                         Main.threadPool.execute(new PutOnFinger((MessageSuccessor) message));
                         break;
+                    case RECLAIM:
+                        Main.threadPool.execute(new HandleRequestReclaim((MessageReclaim) message));
                     case OK:
                         break;
                     default:
