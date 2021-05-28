@@ -18,11 +18,7 @@ public class UnbanReclaim implements Runnable{
     @Override
     public void run() {
         try {
-            Logger.INFO(this.getClass().getName(), "Removed before");
-            System.out.println(this.id);
             Main.bannedReclaimMessages.remove(id);
-            System.out.println();
-            Logger.INFO(this.getClass().getName(), "Removed after");
         }catch(Exception e){
             e.printStackTrace();
         }

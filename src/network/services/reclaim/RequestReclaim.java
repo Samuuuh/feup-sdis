@@ -17,6 +17,7 @@ public class RequestReclaim implements Callable {
 
     int reclaimSize;
     MessageReclaim messageReclaim;
+
     public RequestReclaim(BigInteger targetId, int reclaimSize){
         this.reclaimSize = reclaimSize;
         messageReclaim = new MessageReclaim(Main.chordNode.getInfoNode(), MessageType.RECLAIM, targetId, this.reclaimSize);
