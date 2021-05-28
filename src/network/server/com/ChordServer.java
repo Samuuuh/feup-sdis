@@ -57,7 +57,7 @@ public class ChordServer extends Thread {
                         if (message.getPortOrigin() == port) {
                             backupEndLog(messageBackup.getDesiredRepDeg(), messageBackup.getActualRepDeg());
                         } else {
-                            Main.state.addStoredFile(messageBackup.getFileName());
+                            Main.state.addStoredFile(messageBackup.getFileName(), messageBackup.getBytes().length);
                             Main.threadPool.execute(new ProcessBackup(messageBackup));
                         }
                         break;

@@ -8,6 +8,7 @@ import java.rmi.server.UnicastRemoteObject;
 import network.node.InfoNode;
 import network.node.State;
 import network.services.backup.SendBackup;
+import network.services.reclaim.ProcessReclaim;
 import network.services.restore.SendRestore;
 import network.services.Services;
 import network.etc.*;
@@ -88,4 +89,11 @@ public class Main implements Services {
         Main.threadPool.execute(new SendRestore(sucessor.getIp(), sucessor.getPort(), filePath, chordNode.getInfoNode()));
         return "Start Restore";
     }
+
+    @Override
+    public String reclaim(int size){
+        Main.threadPool.submit(new ProcessReclaim());
+        return "Reclaim initiated";
+    }
+
 }
