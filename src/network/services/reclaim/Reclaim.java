@@ -33,10 +33,11 @@ public class Reclaim implements Runnable{
     }
 
     private void reclaim(){
+        
         Logger.ANY(this.getClass().getName(), "Reclaim done with success.");
     }
 
     private void parseMessage(){
-        Logger.ANY(this.getClass().getName(), "Parse messages"); 
+        Logger.ANY(this.getClass().getName(), "Parse messages");
     }
 }
