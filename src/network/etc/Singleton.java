@@ -46,10 +46,24 @@ public class Singleton {
         return ip + ":" + port;
     }
 
-    public static String getFilePath(String fileName){
-        return "/" + Main.getPort() + "/" + fileName + ".ser";
+    public static String getBackupFilePath(String fileName){
+        return "peers/" + Main.chordNode.getId() + "/backup/"  + fileName + ".ser";
+    }
+    public static String getRestoreFilePath(String fileName){
+        return "peers/ " +Main.chordNode.getId()+ "/restore/" + fileName;
     }
 
+    public static String getFileName(String filePath){
+        var splitPath = filePath.split("/");
+        String fileNameWithExt = splitPath[splitPath.length-1];
+        return fileNameWithExt.split("\\.")[0];
+    }
+
+    public static String getFileExtension(String filePath){
+        var splitPath = filePath.split("/");
+        String fileNameWithExt = splitPath[splitPath.length-1];
+        return fileNameWithExt.split("\\.")[1];
+    }
 
     /**
      * if nodeId > successorId, then it will a turn in the circle.

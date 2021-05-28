@@ -4,6 +4,7 @@ import network.Main;
 import network.etc.FileHandler;
 import network.etc.Logger;
 import network.etc.MessageType;
+import network.etc.Singleton;
 import network.message.MessageBackup;
 import network.message.MessageStored;
 import network.message.MessageDoneBackup;
@@ -42,8 +43,8 @@ public class ProcessBackup implements Runnable {
 
     public void saveFile(String filePath, MessageBackup message) {
         try {
-            int port = Main.chordNode.getInfoNode().getPort();
-            FileHandler.saveSerialize(port + "/backup/", "file.ser", message);
+            String fileName = Singleton.getFileName(filePath);
+            FileHandler.saveSerialize("peers/" + Main.chordNode.getId() + "/backup/",fileName + ".ser", message);
         }catch(Exception e) {
             Logger.ERR(this.getClass().getName(), "Not possible to save file " + filePath);
         }

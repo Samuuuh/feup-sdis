@@ -33,11 +33,12 @@ public class Reclaim implements Runnable{
     }
 
     private void reclaim(){
-        
+        if (messageReclaim.getSize() == 0){
+
+        }
+
         Logger.ANY(this.getClass().getName(), "Reclaim done with success.");
     }
 
-    private void parseMessage(){
-        Logger.ANY(this.getClass().getName(), "Parse messages");
-    }
+
 }
