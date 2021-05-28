@@ -3,8 +3,9 @@ package network.server.com;
 import network.Main;
 import network.etc.*;
 import network.message.*;
+import network.message.MessageBackup;
+import network.message.MessageDoneBackup;
 import network.server.fixFingers.PutOnFinger;
-import network.node.InfoNode;
 import network.server.stabilize.Stabilize;
 import network.services.Lookup;
 import network.services.backup.ProcessBackup;
@@ -12,7 +13,6 @@ import network.services.restore.HandleRestore;
 import network.services.restore.ProcessRestore;
 
 import javax.net.ssl.SSLSocket;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 

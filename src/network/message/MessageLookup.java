@@ -19,10 +19,6 @@ public class MessageLookup extends Message {
         this.targetId = targetId;
     }
 
-    public InfoNode getOriginNode(){
-        return originNode;
-    }
-    
     public BigInteger getTargetId(){
         return targetId;
     }
