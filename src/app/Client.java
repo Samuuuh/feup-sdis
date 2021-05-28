@@ -63,10 +63,15 @@ public class Client {
             restore(file);
 
         } else if (this.operation.equals("DELETE")) {
-            // TODO
+            if (args.length != 3) {
+                System.out.println("Usage:\n java Client <peer_ap> RESTORE <file>\n");
+                return;
+            }
+
+            String file = args[2];
+            delete(file);
+
         } else if (this.operation.equals("RECLAIM")) {
-            // TODO
-        } else if (this.operation.equals("STATE")) {
             // TODO
         } else {
             System.out.println("Usage:\n java Client <peer_ap> <sub_protocol> <opnd_1> <opnd_2>\n" +
@@ -89,6 +94,17 @@ public class Client {
         try {
             Services stub = (Services) this.registry.lookup(this.accessPoint);
             String response = stub.restore(filePath);
+            System.out.println(response);
+        }catch (Exception e){
+            Logger.ERR(this.getClass().getName(), "Error on requesting backup.");
+            e.printStackTrace();
+        }
+    }
+
+    private void delete(String filePath)  {
+        try {
+            Services stub = (Services) this.registry.lookup(this.accessPoint);
+            String response = stub.delete(filePath);
             System.out.println(response);
         }catch (Exception e){
             Logger.ERR(this.getClass().getName(), "Error on requesting backup.");

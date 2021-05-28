@@ -24,4 +24,7 @@ public class State {
         return storedFiles.get(file);
     }
 
+    public void deleteStored(String file) {
+        storedFiles.remove(file);
+    }
 }

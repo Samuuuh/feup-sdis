@@ -24,7 +24,7 @@ public class HandleRestore implements Runnable {
     public void run() {
         try {
             if (Main.state.getStoredFile(fileName) != null) {
-                MessageBackup mess = FileHandler.ReadObjectFromFile( port + "/backup/" + fileName + ".ser");
+                MessageBackup mess = FileHandler.ReadObjectFromFile( port + "/backup/" + fileName.substring(0, fileName.lastIndexOf('.')) + ".ser");
                 MessageRcvRestore messageRcvRestore = new MessageRcvRestore(message.getOriginNode(), mess.getBytes(), mess.getFileName());
                 Main.threadPool.submit(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageRcvRestore));
             } else {

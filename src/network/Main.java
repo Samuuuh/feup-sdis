@@ -8,6 +8,7 @@ import java.rmi.server.UnicastRemoteObject;
 import network.node.InfoNode;
 import network.node.State;
 import network.services.backup.SendBackup;
+import network.services.delete.SendDelete;
 import network.services.restore.SendRestore;
 import network.services.Services;
 import network.etc.*;
@@ -87,5 +88,12 @@ public class Main implements Services {
         InfoNode sucessor = chordNode.getSuccessor();
         Main.threadPool.execute(new SendRestore(sucessor.getIp(), sucessor.getPort(), filePath, chordNode.getInfoNode()));
         return "Start Restore";
+    }
+
+    @Override
+    public String delete(String filePath) {
+        InfoNode sucessor = chordNode.getSuccessor();
+        Main.threadPool.execute(new SendDelete(sucessor.getIp(), sucessor.getPort(), filePath, chordNode.getInfoNode()));
+        return "Deleting " + filePath;
     }
 }

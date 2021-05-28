@@ -9,7 +9,6 @@ import java.util.concurrent.Callable;
 
 public class SendMessage implements Callable {
     SSLConnection connectionSocket;
-
     Message message;
 
     public SendMessage(String ip, int port, Message message) throws IOException {

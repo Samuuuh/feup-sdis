@@ -10,6 +10,7 @@ import network.message.MessageDoneBackup;
 import network.node.InfoNode;
 import network.server.com.SendMessage;
 
+import java.io.File;
 import java.io.IOException;
 
 public class ProcessBackup implements Runnable {
@@ -43,7 +44,7 @@ public class ProcessBackup implements Runnable {
     public void saveFile(String filePath, MessageBackup message) {
         try {
             int port = Main.chordNode.getInfoNode().getPort();
-            FileHandler.saveSerialize(port + "/backup/", "file.ser", message);
+            FileHandler.saveSerialize(port + "/backup/", filePath.substring(0, filePath.lastIndexOf('.')) + ".ser", message);
         }catch(Exception e) {
             Logger.ERR(this.getClass().getName(), "Not possible to save file " + filePath);
         }

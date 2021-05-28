@@ -64,6 +64,17 @@ public class FileHandler {
         outputFile.close();
     }
 
+    public static void deleteFile(String dir, String fileName) {
+        String filePath = dir + fileName;
+        File newFile = new File(filePath);
+        if(newFile.delete()) {
+            System.out.println("File deleted successfully");
+        }
+        else {
+            System.out.println("Failed to delete the file");
+        }
+    }
+
     public static MessageBackup ReadObjectFromFile(String filepath) {
         try {
             FileInputStream fileIn = new FileInputStream(filepath);
