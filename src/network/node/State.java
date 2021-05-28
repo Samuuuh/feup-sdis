@@ -17,24 +17,27 @@ public class State {
     public void addStoredFile(String file, int size) {
         storedFiles.put(file, size);
         occupiedSize += size;
+        printStoredFiles();
     }
 
     public Integer getStoredFile(String file) {
         return storedFiles.get(file);
     }
 
-    public ConcurrentHashMap<String, Integer> getStoredFiles(){
+    public ConcurrentHashMap<String, Integer> getStoredFiles() {
         return storedFiles;
     }
 
-    public void cleanState(){
+    public void cleanState() {
         storedFiles.clear();
         occupiedSize = 0;
-   }
+    }
 
-   public void printStoredFiles(){
-        storedFiles.forEach((key, value)->{
+    public void printStoredFiles() {
+        System.out.println("MAX SIZE: " + this.maxSize);
+        System.out.println("OCCUPIED SIZE " + this.occupiedSize);
+        storedFiles.forEach((key, value) -> {
             System.out.println("-- FILE " + key + " :: SIZE " + value);
         });
-   }
+    }
 }

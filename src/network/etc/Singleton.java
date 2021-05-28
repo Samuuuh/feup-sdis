@@ -40,8 +40,6 @@ public class Singleton {
         return BigInteger.ZERO;                             // Error
     }
 
-
-
     public static String getIdUncoded(String ip, int port){
         return ip + ":" + port;
     }

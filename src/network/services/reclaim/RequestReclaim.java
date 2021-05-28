@@ -2,7 +2,6 @@ package network.services.reclaim;
 
 import network.Main;
 import network.etc.MessageType;
-import network.etc.Singleton;
 import network.message.reclaim.MessageReclaim;
 import network.node.InfoNode;
 import network.server.com.SendMessage;
