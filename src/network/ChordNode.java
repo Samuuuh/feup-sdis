@@ -5,7 +5,6 @@ import network.etc.MessageType;
 import network.etc.Singleton;
 import network.message.*;
 import network.node.*;
-import network.server.CheckPredecessor.CheckPredecessor;
 import network.server.CheckPredecessor.CheckPredecessorOrchestrator;
 import network.server.com.*;
 import network.server.com.SendMessage;

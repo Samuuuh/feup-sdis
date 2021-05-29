@@ -79,7 +79,6 @@ public class Main implements Services {
     public String backup(String filePath, int repDeg) {
         InfoNode sucessor = chordNode.getSuccessor();
         Main.threadPool.execute(new SendBackup(sucessor.getIp(), sucessor.getPort(), filePath, chordNode.getInfoNode(), repDeg));
-
         return "Start Backup";
     }
 
@@ -92,8 +91,7 @@ public class Main implements Services {
 
     @Override
     public String delete(String filePath) {
-        InfoNode sucessor = chordNode.getSuccessor();
-        Main.threadPool.execute(new SendDelete(sucessor.getIp(), sucessor.getPort(), filePath, chordNode.getInfoNode()));
+        Main.threadPool.execute(new SendDelete(filePath, chordNode.getInfoNode()));
         return "Deleting " + filePath;
     }
 }
