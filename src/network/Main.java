@@ -1,7 +1,9 @@
 
 package network;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.math.BigInteger;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -17,9 +19,7 @@ import network.etc.*;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
 
 
 public class Main implements Services {
@@ -33,10 +33,10 @@ public class Main implements Services {
     public static void main(String[] args) throws IOException {
         initThreadPool();
         parseParameters(args);
-
         Main main = new Main();
         Services stub = (Services) UnicastRemoteObject.exportObject(main, 0);
-        state = new State();
+        restoreState();
+        saveState();
         initRMI(stub);
     }
 
@@ -77,6 +77,35 @@ public class Main implements Services {
         schedulerPool = Executors.newScheduledThreadPool(Singleton.SCHED_SIZE);
     }
 
+    // STATE --------------------------------------------------------------------------------------
+    public static void saveState() {
+        schedulerPool.scheduleAtFixedRate(new Runnable() {
+                                              @Override
+                                              public void run() {
+                                                  try {
+                                                      state.saveState();
+                                                  } catch (IOException e) {
+                                                      e.printStackTrace();
+                                                  }
+                                              }
+                                          }
+                , 0, Singleton.SAVE_PERIOD * 1000L, TimeUnit.MILLISECONDS);
+    }
+
+    private static void restoreState() {
+        try {
+            FileInputStream fileIn = new FileInputStream(Singleton.getStatePath() + Singleton.STATE_FILENAME);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            state = (State) in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (IOException | ClassNotFoundException e) {
+            Logger.ANY("Peer", "Initializing new state.");
+            state = new State();
+        }
+    }
+
+    // SERVICES ------------------------------------------------------------------------------------
     @Override
     public String backup(String filePath, int repDeg) {
         InfoNode sucessor = chordNode.getSuccessor();
@@ -92,12 +121,12 @@ public class Main implements Services {
     }
 
     @Override
-    public String reclaim(String targetId, int size){
+    public String reclaim(String targetId, int size) {
         Main.threadPool.submit(new SendReclaim(new BigInteger(targetId), size));
         return "Reclaim initiated";
     }
 
-    public static int getPort(){
+    public static int getPort() {
         return port;
     }
 
@@ -107,4 +136,6 @@ public class Main implements Services {
         Main.threadPool.execute(new SendDelete(filePath, chordNode.getInfoNode()));
         return "Deleting " + filePath;
     }
+
+
 }

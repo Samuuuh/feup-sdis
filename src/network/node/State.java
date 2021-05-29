@@ -1,7 +1,16 @@
 package network.node;
 
 
+import network.Main;
+import network.etc.Singleton;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class State implements Serializable {
@@ -40,23 +49,23 @@ public class State implements Serializable {
         return storedFiles;
     }
 
-    public int getMaxSize(){
+    public int getMaxSize() {
         return maxSize;
     }
 
-    public int getOccupiedSize(){
+    public int getOccupiedSize() {
         return occupiedSize;
     }
 
-    public void setMaxSize(int newMaxSize){
+    public void setMaxSize(int newMaxSize) {
         this.maxSize = newMaxSize;
     }
 
 
-    public Integer removeFile(String fileName){
+    public Integer removeFile(String fileName) {
         Integer size = storedFiles.remove(fileName);
         if (size != null)
-            occupiedSize-=size;
+            occupiedSize -= size;
         return size;
     }
 
@@ -96,4 +105,21 @@ public class State implements Serializable {
     public Integer getBlockReclaimMessages(Integer id) {
         return blockedReclaimMessages.get(id);
     }
+
+    // STATE SAVE ----------------------------------------------------------
+
+    public void saveState() throws IOException {
+        String pathString = Singleton.getStatePath();
+        String filePathString = pathString + Singleton.STATE_FILENAME;
+
+        Path path = Paths.get(pathString);
+        Files.createDirectories(path);
+
+        FileOutputStream fileOutputStream = new FileOutputStream(filePathString);
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+        objectOutputStream.writeObject(Main.state);
+        objectOutputStream.close();
+        fileOutputStream.close();
+    }
+
 }

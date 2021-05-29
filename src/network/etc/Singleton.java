@@ -8,14 +8,16 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class Singleton {
+
+    public static long m = 4;                   // TODO: change later
     public static int REGISTER_PORT = 9999;
     public static int THREAD_SIZE = 128;
     public static int SCHED_SIZE = 32;           // Thread pool scheduler size.
     public static long STABILIZE_TIME = 5;      // Rate of execution of stabilize in seconds.
-    // TODO: calculate expected time.
     public static long FIX_FINGERS_TIME = 3;    // Rate of execution of fix fingers in seconds.
     public static long CHECK_PRED_TIME = 2;     // Rate of execution of check predecessor in seconds.
-    public static long m = 4;                   // TODO: change later
+    public static long SAVE_PERIOD = 5;         // Rate of saving state in seconds .
+    public static String STATE_FILENAME = "state.ser";
 
 
     public static int getRandomPortNumber(){
@@ -63,6 +65,9 @@ public class Singleton {
         return fileNameWithExt.split("\\.")[1];
     }
 
+    public static String getStatePath(){
+        return "peers/" + Main.chordNode.getId() + "/";
+    }
     /**
      * if nodeId > successorId, then it will a turn in the circle.
      * We need to consider the case above to calculate if an id is between others.

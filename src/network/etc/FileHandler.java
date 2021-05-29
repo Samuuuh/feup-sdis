@@ -12,18 +12,17 @@ import network.message.MessageBackup;
 
 import static java.nio.file.Files.readAllBytes;
 
+
 public class FileHandler {
     public static byte[] readFile(String filePath) throws IOException {
         File file = new File(filePath);
 
         if (file.length() > Integer.MAX_VALUE)
-            throw new IOException("File too large to be read");
+            Logger.ERR("network.etc.FileHandler","File too large to be read");
         try {
-            System.out.println("Aqui ");
             return readAllBytes(file.toPath());
-
         } catch (Exception e) {
-            Logger.INFO("main.service.etc.FileHandler", "File does not exist, skiping...");
+            Logger.INFO("network.etc.FileHandler", "File does not exist, skiping...");
         }
         return null;
     }
@@ -68,10 +67,10 @@ public class FileHandler {
         String filePath = dir + fileName;
         File newFile = new File(filePath);
         if(newFile.delete()) {
-            System.out.println("File" + Singleton.getFileName(filePath) + "deleted successfully");
+            Logger.SUC("network.etc.FileHandler", "File" + fileName + "deleted");
         }
         else {
-            System.out.println("Failed to delete the file");
+            Logger.INFO("network.etc.FileHandler", "Not possible delete file " + fileName);
         }
     }
 
@@ -90,10 +89,8 @@ public class FileHandler {
 
     public static void DeleteFile(String filePath){
         File file = new File(filePath);
-        if (file.delete()) {
-            System.out.println("file deleted");
-        }else{
-            System.out.println("file NOT deleted");
+        if (!file.delete()) {
+            Logger.INFO("network.etc.FileHandler", "Not possible delete file " + filePath);
         }
 
     }

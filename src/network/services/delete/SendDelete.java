@@ -22,8 +22,8 @@ public class SendDelete implements Runnable {
 
     @Override
     public void run() {
-        try {
 
+        try {
             Main.state.addBlockDeleteMessages(filePath);
             if (Main.state.getStoredFile(filePath) != null) {
                 Main.state.removeFile(filePath);
