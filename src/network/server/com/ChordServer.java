@@ -5,10 +5,12 @@ import network.etc.*;
 import network.message.*;
 import network.message.MessageBackup;
 import network.message.MessageDoneBackup;
+import network.message.reclaim.MessageReclaim;
 import network.server.fixFingers.PutOnFinger;
 import network.server.stabilize.Stabilize;
 import network.services.Lookup;
 import network.services.backup.ProcessBackup;
+import network.services.reclaim.Reclaim;
 import network.services.delete.ProcessDelete;
 import network.services.restore.HandleRestore;
 import network.services.restore.ProcessRestore;
@@ -58,7 +60,6 @@ public class ChordServer extends Thread {
                         if (message.getPortOrigin() == port) {
                             backupEndLog(messageBackup.getDesiredRepDeg(), messageBackup.getActualRepDeg());
                         } else {
-                            Main.state.addStoredFile(messageBackup.getFileName());
                             Main.threadPool.execute(new ProcessBackup(messageBackup));
                         }
                         break;
@@ -105,6 +106,8 @@ public class ChordServer extends Thread {
                     case ANS_FIX_FINGERS:
                         Main.threadPool.execute(new PutOnFinger((MessageSuccessor) message));
                         break;
+                    case RECLAIM:
+                        Main.threadPool.execute(new Reclaim((MessageReclaim) message));
                     case OK:
                         break;
                     default:

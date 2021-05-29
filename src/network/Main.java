@@ -2,12 +2,14 @@
 package network;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import network.node.InfoNode;
 import network.node.State;
 import network.services.backup.SendBackup;
+import network.services.reclaim.RequestReclaim;
 import network.services.delete.SendDelete;
 import network.services.restore.SendRestore;
 import network.services.Services;
@@ -15,6 +17,7 @@ import network.etc.*;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -27,6 +30,9 @@ public class Main implements Services {
     public static ChordNode chordNode;
     public static ThreadPoolExecutor threadPool;
     public static ScheduledExecutorService schedulerPool;
+
+    // Stored messages ids that must not be executed again.
+    public static ArrayList<Integer> bannedReclaimMessages = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
         initThreadPool();
@@ -89,6 +95,17 @@ public class Main implements Services {
         Main.threadPool.execute(new SendRestore(sucessor.getIp(), sucessor.getPort(), filePath, chordNode.getInfoNode()));
         return "Start Restore";
     }
+
+    @Override
+    public String reclaim(String targetId, int size){
+        Main.threadPool.submit(new RequestReclaim(new BigInteger(targetId), size));
+        return "Reclaim initiated";
+    }
+
+    public static int getPort(){
+        return port;
+    }
+
 
     @Override
     public String delete(String filePath) {

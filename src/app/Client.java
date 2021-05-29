@@ -72,6 +72,14 @@ public class Client {
             delete(file);
 
         } else if (this.operation.equals("RECLAIM")) {
+            if (args.length != 4){
+                System.out.println("Usage:\n java Client <peer_ap> RECLAIM <chordId> <size>\n");
+                return;
+            }
+            String id = args[2];
+            Integer size = Integer.parseInt(args[3]);
+            reclaim(id, size);
+        } else if (this.operation.equals("STATE")) {
             // TODO
         } else {
             System.out.println("Usage:\n java Client <peer_ap> <sub_protocol> <opnd_1> <opnd_2>\n" +
@@ -108,6 +116,17 @@ public class Client {
             System.out.println(response);
         }catch (Exception e){
             Logger.ERR(this.getClass().getName(), "Error on requesting backup.");
+            e.printStackTrace();
+        }
+    }
+
+    private void reclaim(String targetId, Integer size){
+        try{
+            Services stub = (Services) this.registry.lookup(this.accessPoint);
+            String response = stub.reclaim(targetId, size);
+            System.out.println(response);
+        }catch(Exception e){
+            Logger.ERR(this.getClass().getName(), "Error on requesting reclaim.");
             e.printStackTrace();
         }
     }

@@ -1,13 +1,16 @@
 package network.etc;
 
+import network.Main;
+
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class Singleton {
     public static int REGISTER_PORT = 9999;
     public static int THREAD_SIZE = 128;
-    public static int SCHED_SIZE = 10;           // Thread pool scheduler size.
+    public static int SCHED_SIZE = 32;           // Thread pool scheduler size.
     public static long STABILIZE_TIME = 5;      // Rate of execution of stabilize in seconds.
     // TODO: calculate expected time.
     public static long FIX_FINGERS_TIME = 3;    // Rate of execution of fix fingers in seconds.
@@ -37,11 +40,28 @@ public class Singleton {
         return BigInteger.ZERO;                             // Error
     }
 
-
     public static String getIdUncoded(String ip, int port){
         return ip + ":" + port;
     }
 
+    public static String getBackupFilePath(String fileName){
+        return "peers/" + Main.chordNode.getId() + "/backup/"  + fileName + ".ser";
+    }
+    public static String getRestoreFilePath(String fileName){
+        return "peers/ " +Main.chordNode.getId()+ "/restore/" + fileName;
+    }
+
+    public static String getFileName(String filePath){
+        var splitPath = filePath.split("/");
+        String fileNameWithExt = splitPath[splitPath.length-1];
+        return fileNameWithExt.split("\\.")[0];
+    }
+
+    public static String getFileExtension(String filePath){
+        var splitPath = filePath.split("/");
+        String fileNameWithExt = splitPath[splitPath.length-1];
+        return fileNameWithExt.split("\\.")[1];
+    }
 
     /**
      * if nodeId > successorId, then it will a turn in the circle.

@@ -87,4 +87,14 @@ public class FileHandler {
             return null;
         }
     }
+
+    public static void DeleteFile(String filePath){
+        File file = new File(filePath);
+        if (file.delete()) {
+            System.out.println("file deleted");
+        }else{
+            System.out.println("file NOT deleted");
+        }
+
+    }
 }
