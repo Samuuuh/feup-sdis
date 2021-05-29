@@ -5,9 +5,6 @@ import network.etc.Logger;
 import network.server.com.*;
 import network.message.*;
 import network.node.InfoNode;
-import network.etc.FileHandler;
-
-import java.io.IOException;
 
 public class SendRestore implements Runnable {
     String ip;

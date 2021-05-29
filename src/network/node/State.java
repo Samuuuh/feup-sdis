@@ -4,6 +4,8 @@ package network.node;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class State {
+    // Blocked Delete Messages
+    private ConcurrentHashMap<String, String> blockDeleteMessages;
 
     // Files stored.
     private final ConcurrentHashMap<String, Integer> storedFiles;
@@ -11,17 +13,37 @@ public class State {
     private int occupiedSize = 0;         // Total size occupied by the program.
 
     public State() {
+        blockDeleteMessages = new ConcurrentHashMap<>();
+        backedUpFiles = new ConcurrentHashMap<>();
+        storedFiles= new ConcurrentHashMap<>();
         storedFiles = new ConcurrentHashMap<>();
     }
 
+    // Blocked Messages
+    public String getBlockDeleteMessages(String file) {
+        return blockDeleteMessages.get(file);
     public void addStoredFile(String file, int size) {
         storedFiles.put(file, size);
         occupiedSize += size;
         printStoredFiles();
     }
 
+    public void addBlockDeleteMessages(String file) {
+        blockDeleteMessages.put(file, file);
+    }
+
+    public void removeBlockDeleteMessages(String file) {
+        blockDeleteMessages.remove(file);
+    }
+
+    // Files Stored
+    public String getStoredFile(String file) {
     public Integer getStoredFile(String file) {
         return storedFiles.get(file);
+    }
+
+    public void addStoredFile(String file) {
+        storedFiles.put(file, file);
     }
 
     public void deleteStored(String file) {

@@ -12,7 +12,7 @@ public class SendMessage implements Callable {
     Message message;
 
     public SendMessage(String ip, int port, Message message) throws IOException {
-        InetAddress host = InetAddress.getByName("127.0.0.1");
+        InetAddress host = InetAddress.getByName(ip);
         this.connectionSocket = new SSLConnection(host, port);
         this.message = message;
 
