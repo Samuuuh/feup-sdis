@@ -28,9 +28,27 @@ public class State {
         return storedFiles;
     }
 
-    public void cleanState() {
-        storedFiles.clear();
-        occupiedSize = 0;
+    public int getMaxSize(){
+        return maxSize;
+    }
+
+    public int getOccupiedSize(){
+        return occupiedSize;
+    }
+
+    public void setMaxSize(int newMaxSize){
+        this.maxSize = newMaxSize;
+    }
+
+    public void setOccupiedSize(int occupiedSize){
+        this.occupiedSize = occupiedSize;
+    }
+
+    public Integer removeFile(String fileName){
+        Integer size = storedFiles.remove(fileName);
+        if (size != null)
+            occupiedSize-=size;
+        return size;
     }
 
     public void printStoredFiles() {
