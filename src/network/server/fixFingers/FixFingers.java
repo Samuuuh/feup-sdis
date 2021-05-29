@@ -14,13 +14,19 @@ import java.util.concurrent.Callable;
 public class FixFingers implements Callable {
     private final int currentNext;
 
+    /**
+     * Fix finger table
+     * @param currentNext next entry
+     */
     public FixFingers(int currentNext) {
         this.currentNext = currentNext;
     }
 
+    /**
+     * Run the Fix Fingers
+     */
     @Override
     public Boolean call() {
-
         try {
             InfoNode successor = Main.chordNode.getSuccessor();
 
@@ -39,8 +45,6 @@ public class FixFingers implements Callable {
         }
         return true;
     }
-
-
 }
 
 

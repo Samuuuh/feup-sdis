@@ -9,7 +9,6 @@ public class MessageSuccessor extends Message {
     BigInteger targetId;
     InfoNode successor;
 
-
     public MessageSuccessor(InfoNode originNode, BigInteger targetId, InfoNode successor, MessageType type){
         super(originNode, type);
         this.successor = successor;

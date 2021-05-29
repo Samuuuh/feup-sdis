@@ -18,12 +18,15 @@ import java.math.BigInteger;
  * https://pdos.csail.mit.edu/papers/ton:chord/paper-ton.pdf
  */
 public class Lookup implements Runnable {
-
     MessageLookup message;      // Message that requested the lookup.
     ChordNode chordNode;
     MessageType returnType;     // Type of message to be returned.
     MessageType forwardType;    // Type of message to be forward if necessary.
-
+    
+    /**
+    * Lookup constructor
+    * @param 
+    */
     public Lookup(MessageLookup message, MessageType returnType, MessageType forwardType) {
         this.message = message;
         this.chordNode = Main.chordNode;
@@ -31,6 +34,9 @@ public class Lookup implements Runnable {
         this.forwardType = forwardType;
     }
 
+    /*
+    * Run the chordLookup
+    */
     @Override
     public void run() {
         try {

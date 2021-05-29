@@ -11,6 +11,11 @@ public class SendMessage implements Callable {
     SSLConnection connectionSocket;
     Message message;
 
+    /**
+    * Send Message Constructor
+    * @param ip ip of the connection to be established
+    * @param port port of the connection to be established
+    */
     public SendMessage(String ip, int port, Message message) throws IOException {
         InetAddress host = InetAddress.getByName(ip);
         this.connectionSocket = new SSLConnection(host, port);
@@ -18,6 +23,9 @@ public class SendMessage implements Callable {
 
     }
 
+    /**
+     * Send the message
+     */
     @Override
     public Boolean call() throws IOException, ClassNotFoundException {
         this.connectionSocket.sendMessage(this.message);

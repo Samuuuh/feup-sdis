@@ -14,7 +14,6 @@ import java.util.Objects;
  * https://pdos.csail.mit.edu/papers/ton:chord/paper-ton.pdf
  */
 public class GetPredecessor implements Runnable {
-
     @Override
     public void run() {
         try {

@@ -17,10 +17,17 @@ import java.io.IOException;
 public class ProcessBackup implements Runnable {
     MessageBackup message;
 
+    /**
+     * Process the backup message
+     * @param messageBackup backup message received
+     */
     public ProcessBackup(MessageBackup messageBackup) {
         this.message = messageBackup;
     }
 
+    /**
+     * Run the process backup
+     */
     @Override
     public void run() {
         try {
@@ -49,6 +56,11 @@ public class ProcessBackup implements Runnable {
         }
     }
 
+    /**
+     * Save the file in filesystem
+     * @param filePath the path of the file
+     * @param message the message received
+     */
     public void saveFile(String filePath, MessageBackup message) {
         try {
             String fileName = Singleton.getFileName(filePath);
@@ -58,6 +70,10 @@ public class ProcessBackup implements Runnable {
         }
     }
 
+    /**
+    * Send message to sucessor
+    * @param actualRepDeg actual replication degree of the file
+     */
     public void sendToSuccessor(int actualRepDeg) throws IOException {
         int desiredRepDeg = message.getDesiredRepDeg();
         byte[] bytesMessage = message.getBytes();
@@ -68,12 +84,20 @@ public class ProcessBackup implements Runnable {
         Main.threadPool.submit(new SendMessage(suc.getIp(), suc.getPort(), newMessage));
     }
 
+    /**
+     * Send a message to say that the file was backup
+     * @param filePath file that was backup
+     */
     public void storedMessageOrigin(String filePath) throws IOException {
         InfoNode currentNode = Main.chordNode.getInfoNode();
         MessageStored messageStored = new MessageStored(currentNode, MessageType.STORED, filePath);
         Main.threadPool.submit(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageStored));
     }
 
+    /**
+     * Indicates that backup is already done
+     * @param filePath file that was backup
+     */
     public void sendBackupDone(String filePath) throws IOException {
         int desiredRepDeg = message.getDesiredRepDeg();
         int actualRepDeg = message.getActualRepDeg() + 1;

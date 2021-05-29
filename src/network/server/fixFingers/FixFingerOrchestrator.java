@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
  * then waits a certain amount of time to execute it again.
  */
 public class FixFingerOrchestrator implements Runnable {
-
     @Override
     public void run() {
         try {

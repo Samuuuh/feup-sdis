@@ -17,6 +17,14 @@ public class ResendBackupFile implements Runnable {
     int repDeg;
     InfoNode originNode;
 
+    /** 
+    * Resend backup file
+    * @param ip ip to send the backup
+    * @param port port to send the backup
+    * @param filePath path of the file
+    * @param originNode origin node which started the backed
+    * @param repDeg desired rep deg
+    */
     public ResendBackupFile(String ip, int port, String filePath, InfoNode originNode, int repDeg) {
         this.ip = ip;
         this.port = port;
@@ -25,6 +33,9 @@ public class ResendBackupFile implements Runnable {
         this.originNode = originNode;
     }
 
+    /**
+     * Run the resend backup message    
+     */
     @Override
     public void run() {
         try {

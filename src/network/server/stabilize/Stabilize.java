@@ -17,15 +17,20 @@ import java.util.Objects;
  * https://pdos.csail.mit.edu/papers/ton:chord/paper-ton.pdf
  */
 public class Stabilize implements Runnable {
-
     InfoNode sucPredecessor;
 
+    /**
+     * Set the sucessor
+     * @param messageInfoNode the successor node
+     */
     public Stabilize(MessageInfoNode messageInfoNode) {
         this.sucPredecessor = messageInfoNode.getInfoNode();
     }
 
-    // When the successor is himself.
-    public Stabilize(){
+    /** 
+     * When the successor is himself.
+     */
+    public Stabilize() {
         this.sucPredecessor = Main.chordNode.getPredecessor();
     }
 

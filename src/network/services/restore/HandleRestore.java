@@ -15,12 +15,20 @@ public class HandleRestore implements Runnable {
     String port;
     String filePath;
 
+    /**
+     * Handle Restore constructor
+     * @param message restore message
+     * @param port port to send the message
+     */
     public HandleRestore(MessageRestore message, int port) {
         this.message = message;
         this.filePath = message.getFileName();
         this.port = String.valueOf(port);
     }
 
+    /**
+    * Run the handle restor
+    */
     @Override
     public void run() {
         try {

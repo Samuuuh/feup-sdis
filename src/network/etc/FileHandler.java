@@ -14,6 +14,11 @@ import static java.nio.file.Files.readAllBytes;
 
 
 public class FileHandler {
+    /**
+    * Read a file from the filesystem and return the file information in bytes
+    * @param filePath Path of the file to read
+    * @return byte[] This return the bytes of the file
+    */
     public static byte[] readFile(String filePath) throws IOException {
         File file = new File(filePath);
 
@@ -27,6 +32,12 @@ public class FileHandler {
         return null;
     }
 
+    /**
+    * Save a serialize class on the filesystem
+    * @param dir Directory where the serialized class will be saved
+    * @param fileName The name that the serialized file will be saved
+    * @param serialize Serialized class to be saved on the filesystem 
+    */
     public static void saveSerialize(String dir, String fileName, MessageBackup serialize) throws IOException {
         // Create directory if not exists
         Path path = Paths.get(dir);
@@ -46,6 +57,12 @@ public class FileHandler {
         outputFile.close();
     }
 
+    /**
+    * Save a byte array on the filesystem
+    * @param dir Directory where the byte array will be saved
+    * @param fileName The name that the byte array will be saved
+    * @param bytesMessage Bytes of the file to be saved to a file
+    */
     public static void saveFile(String dir, String fileName, byte[] bytesMessage) throws IOException {
         // Create directory if not exists
         Path path = Paths.get(dir);
@@ -63,6 +80,11 @@ public class FileHandler {
         outputFile.close();
     }
 
+    /**
+    * Delete a file from the filesystem
+    * @param dir Directory where the file to be deleted is
+    * @param fileName The name of the file to be deleted
+    */
     public static void deleteFile(String dir, String fileName) {
         String filePath = dir + fileName;
         File newFile = new File(filePath);
@@ -74,6 +96,22 @@ public class FileHandler {
         }
     }
 
+    /**
+    * Delete a file from the filesystem
+    * @param filePath Path of the file to be deleted
+    */
+    public static void DeleteFile(String filePath){
+        File file = new File(filePath);
+        if (!file.delete()) {
+            Logger.INFO("network.etc.FileHandler", "Not possible delete file " + filePath);
+        }
+    }
+
+    /**
+    * Read from the filesystem the backup file, which was saved as MessageBackup serialize
+    * @param filePath Path of the MessageBackup File
+    * @return MessageBackup class with everything we should know about the backup
+    */
     public static MessageBackup ReadObjectFromFile(String filepath) {
         try {
             FileInputStream fileIn = new FileInputStream(filepath);
@@ -85,13 +123,5 @@ public class FileHandler {
             ex.printStackTrace();
             return null;
         }
-    }
-
-    public static void DeleteFile(String filePath){
-        File file = new File(filePath);
-        if (!file.delete()) {
-            Logger.INFO("network.etc.FileHandler", "Not possible delete file " + filePath);
-        }
-
     }
 }

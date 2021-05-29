@@ -9,10 +9,17 @@ import network.message.MessageRcvRestore;
 public class ProcessRestore implements Runnable {
     MessageRcvRestore message;
 
+    /**
+     * Process the restore of the message
+     * @param messageRestore restore message
+     */
     public ProcessRestore(MessageRcvRestore messageRestore) {
         this.message = messageRestore;
     }
 
+    /**
+     * Run the process restore
+     */
     @Override
     public void run() {
         Logger.ANY(this.getClass().getName(), "Start RESTORE");
@@ -21,6 +28,11 @@ public class ProcessRestore implements Runnable {
         saveFile(filePath, message);
     }
 
+    /**
+     * Save the file in filesystem
+     * @param filePath path of the file to save
+     * @param message restore message
+     */
     public void saveFile(String filePath, MessageRcvRestore message) {
         try {
             int port = Main.chordNode.getInfoNode().getPort();

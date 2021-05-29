@@ -9,6 +9,9 @@ import network.server.com.SendMessage;
  * Checks if the predecessor still exists. Case not it will set to null.
  */
 public class CheckPredecessor implements Runnable {
+    /**
+     * Run the check predecessor. Needed for chord
+     */
     @Override
     public void run() {
         try {

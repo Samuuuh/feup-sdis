@@ -15,14 +15,21 @@ public class SendDelete implements Runnable {
     String filePath;
     InfoNode originNode;
 
+    /**
+     * Send Delete Protocol constructor
+     * @param filePath Path of file to delete
+     * @param originNode origin node of delete
+     */
     public SendDelete(String filePath, InfoNode originNode) {
          this.filePath = filePath;
          this.originNode = originNode;
     }
 
+    /**
+    * Run the send selete protocol message
+    */
     @Override
     public void run() {
-
         try {
             Main.state.addBlockDeleteMessages(filePath);
             if (Main.state.getStoredFile(filePath) != null) {

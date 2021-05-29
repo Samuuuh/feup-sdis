@@ -16,6 +16,13 @@ public class SendBackup implements Runnable {
     int repDeg;
     InfoNode originNode;
 
+    /** 
+     * Send backup message
+     * @param ip ip to send the message
+     * @param port port to send the backup message 
+     * @param originNode information about the node that
+     * @param repDeg replication degree of the file
+     */
     public SendBackup(String ip, int port, String filePath, InfoNode originNode, int repDeg) {
          this.ip = ip;
          this.port = port;
@@ -24,6 +31,9 @@ public class SendBackup implements Runnable {
          this.originNode = originNode;
     }
 
+    /**
+     * Send the backup message
+     */
     @Override
     public void run() {
         try {

@@ -27,14 +27,43 @@ public class ChordServer extends Thread {
     int port;
     String ip;
 
+    /**
+    * ChordServer class constructor
+    * @param ip ip of the server
+    * @param port Port of the server
+    */
     public ChordServer(String ip, int port) {
         this.ip = ip;
         this.port = port;
     }
+    
+    /**
+    * Get the port of peer
+    * @return int Port number
+    */
+    public int getPort() {
+        return port;
+    }
 
+    /**
+     * This function prints if the replication was achieved or not.
+     * @param desiredRepDeg Desired rep deg of the file
+     * @param actualRepDeg Atual rep deg of the file
+     */
+    private void backupEndLog(int desiredRepDeg, int actualRepDeg){
+        Logger.ANY(this.getClass().getName(), "Backup finished");
+        if (desiredRepDeg == actualRepDeg) {
+            Logger.ANY(this.getClass().getName(), "Desired replication degree met. RepDeg: " + actualRepDeg);
+        } else {
+            Logger.ANY(this.getClass().getName(), "Desired replication degree not met. Expected:" + desiredRepDeg + " Met:" + actualRepDeg);
+        }
+    }
+
+    /**
+    * Run the ChordServer
+    */
     @Override
     public void run() {
-
         SSLServerConnection con = null;
 
         try {
@@ -119,24 +148,4 @@ public class ChordServer extends Thread {
 
         }
     }
-
-    /**
-     * This function prints if the replication was achieved or not.
-     */
-    private void backupEndLog(int desiredRepDeg, int actualRepDeg){
-        Logger.ANY(this.getClass().getName(), "Backup finished");
-        if (desiredRepDeg == actualRepDeg) {
-            Logger.ANY(this.getClass().getName(), "Desired replication degree met. RepDeg: " + actualRepDeg);
-        } else {
-            Logger.ANY(this.getClass().getName(), "Desired replication degree not met. Expected:" + desiredRepDeg + " Met:" + actualRepDeg);
-        }
-    }
-
-
-    public int getPort() {
-        return port;
-    }
-
-
-
 }

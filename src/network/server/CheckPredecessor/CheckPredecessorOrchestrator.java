@@ -9,11 +9,9 @@ import java.util.concurrent.*;
  * even if it leads to an error.
  */
 public class CheckPredecessorOrchestrator implements Runnable {
-
     @Override
     public void run() {
         try {
-
             ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
             while (true) {

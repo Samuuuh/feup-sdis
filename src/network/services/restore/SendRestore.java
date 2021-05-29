@@ -13,6 +13,13 @@ public class SendRestore implements Runnable {
     int repDeg;
     InfoNode originNode;
 
+    /**
+     * Send restore message constructor
+     * @param ip ip which restore will be sent
+     * @param port port which restore will be sent
+     * @param filePath path of the file
+     * @param originNode node that started the restore
+     */
     public SendRestore(String ip, int port, String filePath, InfoNode originNode) {
          this.ip = ip;
          this.port = port;
@@ -20,6 +27,9 @@ public class SendRestore implements Runnable {
          this.originNode = originNode;
     }
 
+    /**
+     * Run the send restore message
+     */
     @Override
     public void run() {
         try {

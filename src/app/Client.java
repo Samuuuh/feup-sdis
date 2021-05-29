@@ -15,6 +15,10 @@ public class Client {
     private Registry registry;
     private String operation;
 
+    /**
+    * This is the main method which invokes a protocol using the RMI interface
+    * @param args Should have following arguments: <peer_ap> <sub_protocol> <opnd_1> <opnd_2>
+    */
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
             System.out.println("Usage:\n java Client <peer_ap> <sub_protocol> <opnd_1> <opnd_2>\n" +
@@ -25,6 +29,10 @@ public class Client {
         new Client(args);
     }
 
+    /**
+     * Class constructor.
+     * @param args Program arguments passed through command Line
+     */
     private Client(String[] args) throws IOException {
         accessPoint = args[0];
         operation = args[1];
@@ -87,6 +95,11 @@ public class Client {
         }
     }
 
+    /**
+    * Starts de backup protocol through RMI
+    * @param filePath Path of the file to do backup
+    * @param replication_degree Replication degree of the file
+    */
     private void backup(String filePath, String replication_degree)  {
         try {
             Services stub = (Services) this.registry.lookup(this.accessPoint);
@@ -98,6 +111,10 @@ public class Client {
         }
     }
 
+    /**
+    * Starts the restore protocol through RMI
+    * @param filePath Path of the file to restore 
+    */
     private void restore(String filePath)  {
         try {
             Services stub = (Services) this.registry.lookup(this.accessPoint);
@@ -109,6 +126,10 @@ public class Client {
         }
     }
 
+    /**
+    * Starts the delete protocol through RMI
+    * @param filePath Path of the file to delete
+    */
     private void delete(String filePath)  {
         try {
             Services stub = (Services) this.registry.lookup(this.accessPoint);
@@ -120,6 +141,11 @@ public class Client {
         }
     }
 
+    /**
+    * Starts the reclaim protocol through RMI
+    * @param targetId id of the peer where we should use reclaim
+    * @param size Reclaim size 
+    */
     private void reclaim(String targetId, Integer size){
         try{
             Services stub = (Services) this.registry.lookup(this.accessPoint);

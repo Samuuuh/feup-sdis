@@ -30,9 +30,14 @@ public class Main implements Services {
     public static ThreadPoolExecutor threadPool;
     public static ScheduledExecutorService schedulerPool;
 
+    /**
+    * This is the main method which starts the peer
+    * @param args Should have following arguments: <machineIp> <machinePort> [<chordNodeIp> <chordNodePort>]
+    */
     public static void main(String[] args) throws IOException {
         initThreadPool();
         parseParameters(args);
+
         Main main = new Main();
         Services stub = (Services) UnicastRemoteObject.exportObject(main, 0);
         restoreState();
@@ -41,6 +46,10 @@ public class Main implements Services {
     }
 
 
+    /**
+    * Parse the parameters of passed
+    * @param args Should have following arguments <machineIp> <machinePort> [<chordNodeIp> <chordNodePort>]
+    */
     public static void parseParameters(String[] args) {
         if (args.length > 4) {
             System.out.println("Usage:\n java network.Main <machineIp> <machinePort> [<chordNodeIp> <chordNodePort>]");
@@ -61,6 +70,10 @@ public class Main implements Services {
         } else System.exit(1);
     }
 
+    /**
+    * Init RMI
+    * @param stub Stub with the UnicastRemoteObject
+    */
     public static void initRMI(Services stub) throws RemoteException {
         try {
             Registry registry = LocateRegistry.getRegistry(Singleton.REGISTER_PORT);
@@ -72,26 +85,42 @@ public class Main implements Services {
         }
     }
 
+    /**
+    * Init Thread Pools to be used
+    */
     public static void initThreadPool() {
         threadPool = (ThreadPoolExecutor) Executors.newScheduledThreadPool(Singleton.THREAD_SIZE);
         schedulerPool = Executors.newScheduledThreadPool(Singleton.SCHED_SIZE);
     }
 
-    // STATE --------------------------------------------------------------------------------------
-    public static void saveState() {
-        schedulerPool.scheduleAtFixedRate(new Runnable() {
-                                              @Override
-                                              public void run() {
-                                                  try {
-                                                      state.saveState();
-                                                  } catch (IOException e) {
-                                                      e.printStackTrace();
-                                                  }
-                                              }
-                                          }
-                , 0, Singleton.SAVE_PERIOD * 1000L, TimeUnit.MILLISECONDS);
+    /**
+    * Get the port of peer
+    * @return int Port number
+    */
+    public static int getPort() {
+        return port;
     }
 
+    // -------------------------------- STATE -------------------------------- //
+    /**
+    * Save the state of peer
+    */
+    public static void saveState() {
+        schedulerPool.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    state.saveState();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 0, Singleton.SAVE_PERIOD * 1000L, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+    * Restore the state of peer
+    */
     private static void restoreState() {
         try {
             FileInputStream fileIn = new FileInputStream(Singleton.getStatePath() + Singleton.STATE_FILENAME);
@@ -105,7 +134,13 @@ public class Main implements Services {
         }
     }
 
-    // SERVICES ------------------------------------------------------------------------------------
+    //  -------------------------------- SERVICES -------------------------------- //
+    
+    /**
+    * Backup Service
+    * @param filePath file to be backup
+    * @param repDeg Desired repdeg of the file
+    */
     @Override
     public String backup(String filePath, int repDeg) {
         InfoNode sucessor = chordNode.getSuccessor();
@@ -113,6 +148,10 @@ public class Main implements Services {
         return "Start Backup";
     }
 
+    /**
+    * Restore Service
+    * @param filePath file to be restored
+    */
     @Override
     public String restore(String filePath) {
         InfoNode sucessor = chordNode.getSuccessor();
@@ -120,22 +159,24 @@ public class Main implements Services {
         return "Start Restore";
     }
 
+    /**
+    * Reclaim Service
+    * @param targetId target id
+    * @param size Size to be reclaimed
+    */
     @Override
     public String reclaim(String targetId, int size) {
         Main.threadPool.submit(new SendReclaim(new BigInteger(targetId), size));
         return "Reclaim initiated";
     }
 
-    public static int getPort() {
-        return port;
-    }
-
-
+    /**
+    * Delete Service
+    * @param filePath file to delete 
+    */
     @Override
     public String delete(String filePath) {
         Main.threadPool.execute(new SendDelete(filePath, chordNode.getInfoNode()));
         return "Deleting " + filePath;
     }
-
-
 }

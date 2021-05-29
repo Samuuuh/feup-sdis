@@ -16,15 +16,21 @@ import java.util.concurrent.TimeUnit;
  * decide what to do with it.
  */
 public class ProcessReclaim implements Runnable{
-
-
     MessageReclaim messageReclaim;
     ArrayList<String> toDelete;          // Contains the files chosen to be deleted.
 
+    /**
+     * Process the reclaim
+     * @param messageReclaim message received
+     */
     public ProcessReclaim(MessageReclaim messageReclaim){
         this.messageReclaim = messageReclaim;
         toDelete = new ArrayList<>();
     }
+
+    /**
+     * Run the reclaim
+     */
     @Override
     public void run() {
         // Message still banned.
@@ -50,6 +56,9 @@ public class ProcessReclaim implements Runnable{
         }
     }
 
+    /**
+     * Reclaim request
+     */
     private void reclaim(){
         Main.state.setMaxSize(messageReclaim.getSize());
         chooseFilesToDelete();
@@ -83,6 +92,7 @@ public class ProcessReclaim implements Runnable{
         });
     }
 
+    // TODO: vai ser eliminado???
     static class DeleteBackupFile implements Runnable{
         String filePath;
         public DeleteBackupFile(String filePath){
