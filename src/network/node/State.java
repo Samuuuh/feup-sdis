@@ -1,11 +1,13 @@
 package network.node;
 
 
+import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class State {
+public class State implements Serializable {
     // Blocked Delete Messages
-    private ConcurrentHashMap<String, String> blockDeleteMessages;
+    private ConcurrentHashMap<String, String> blockedDeleteMessages;
+    private ConcurrentHashMap<Integer, Integer> blockedReclaimMessages;
 
     // Files stored.
     private final ConcurrentHashMap<String, Integer> storedFiles;
@@ -13,42 +15,27 @@ public class State {
     private int occupiedSize = 0;         // Total size occupied by the program.
 
     public State() {
-        blockDeleteMessages = new ConcurrentHashMap<>();
-        backedUpFiles = new ConcurrentHashMap<>();
-        storedFiles= new ConcurrentHashMap<>();
+        blockedDeleteMessages = new ConcurrentHashMap<>();
         storedFiles = new ConcurrentHashMap<>();
+        blockedReclaimMessages = new ConcurrentHashMap<>();
     }
 
-    // Blocked Messages
-    public String getBlockDeleteMessages(String file) {
-        return blockDeleteMessages.get(file);
     public void addStoredFile(String file, int size) {
+        Integer previousSize = storedFiles.get(file);
+
+        // Only stores if the file hasn't been previously stored.
+        if (previousSize == null)
+            occupiedSize += size;
+
         storedFiles.put(file, size);
-        occupiedSize += size;
+
         printStoredFiles();
     }
 
-    public void addBlockDeleteMessages(String file) {
-        blockDeleteMessages.put(file, file);
-    }
-
-    public void removeBlockDeleteMessages(String file) {
-        blockDeleteMessages.remove(file);
-    }
-
-    // Files Stored
-    public String getStoredFile(String file) {
     public Integer getStoredFile(String file) {
         return storedFiles.get(file);
     }
 
-    public void addStoredFile(String file) {
-        storedFiles.put(file, file);
-    }
-
-    public void deleteStored(String file) {
-        storedFiles.remove(file);
-    }
     public ConcurrentHashMap<String, Integer> getStoredFiles() {
         return storedFiles;
     }
@@ -65,9 +52,6 @@ public class State {
         this.maxSize = newMaxSize;
     }
 
-    public void setOccupiedSize(int occupiedSize){
-        this.occupiedSize = occupiedSize;
-    }
 
     public Integer removeFile(String fileName){
         Integer size = storedFiles.remove(fileName);
@@ -82,5 +66,34 @@ public class State {
         storedFiles.forEach((key, value) -> {
             System.out.println("-- FILE " + key + " :: SIZE " + value);
         });
+    }
+
+
+    // BLOCKED DELETE  ----------------------------------------------------
+
+    public void addBlockDeleteMessages(String file) {
+        blockedDeleteMessages.put(file, file);
+    }
+
+    public void removeBlockDeleteMessages(String file) {
+        blockedDeleteMessages.remove(file);
+    }
+
+    public String getBlockDeleteMessages(String file) {
+        return blockedDeleteMessages.get(file);
+    }
+
+    // BLOCKED RECLAIM --------------------------------------------------
+
+    public void addBlockReclaimMessages(Integer id) {
+        blockedReclaimMessages.put(id, id);
+    }
+
+    public void removeBlockReclaimMessages(Integer id) {
+        blockedReclaimMessages.remove(id);
+    }
+
+    public Integer getBlockReclaimMessages(Integer id) {
+        return blockedReclaimMessages.get(id);
     }
 }

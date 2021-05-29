@@ -10,7 +10,7 @@ import network.server.fixFingers.PutOnFinger;
 import network.server.stabilize.Stabilize;
 import network.services.Lookup;
 import network.services.backup.ProcessBackup;
-import network.services.reclaim.Reclaim;
+import network.services.reclaim.ProcessReclaim;
 import network.services.delete.ProcessDelete;
 import network.services.restore.HandleRestore;
 import network.services.restore.ProcessRestore;
@@ -81,7 +81,6 @@ public class ChordServer extends Thread {
                         Main.threadPool.execute(new ProcessRestore((MessageRcvRestore) message));
                         break;
                     case DELETE:
-                        Logger.ANY(this.getClass().getName(), "Received DELETE.");
                         Main.threadPool.execute(new ProcessDelete((MessageDelete) message, port));
                         break;
                     case LOOKUP:
@@ -107,7 +106,7 @@ public class ChordServer extends Thread {
                         Main.threadPool.execute(new PutOnFinger((MessageSuccessor) message));
                         break;
                     case RECLAIM:
-                        Main.threadPool.execute(new Reclaim((MessageReclaim) message));
+                        Main.threadPool.execute(new ProcessReclaim((MessageReclaim) message));
                     case OK:
                         break;
                     default:

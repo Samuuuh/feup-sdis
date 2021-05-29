@@ -1,7 +1,6 @@
 package network.services.reclaim;
 
 import network.Main;
-import network.etc.Logger;
 
 /**
  * This class remove the banned message from the hash.
@@ -18,7 +17,7 @@ public class UnbanReclaim implements Runnable{
     @Override
     public void run() {
         try {
-            Main.bannedReclaimMessages.remove(id);
+            Main.state.removeBlockReclaimMessages(id);
         }catch(Exception e){
             e.printStackTrace();
         }

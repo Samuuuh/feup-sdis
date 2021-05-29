@@ -68,7 +68,7 @@ public class FileHandler {
         String filePath = dir + fileName;
         File newFile = new File(filePath);
         if(newFile.delete()) {
-            System.out.println("File deleted successfully");
+            System.out.println("File" + Singleton.getFileName(filePath) + "deleted successfully");
         }
         else {
             System.out.println("Failed to delete the file");

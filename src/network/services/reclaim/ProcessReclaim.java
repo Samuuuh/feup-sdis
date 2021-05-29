@@ -15,30 +15,38 @@ import java.util.concurrent.TimeUnit;
  * After receiving the reclaim message this class will
  * decide what to do with it.
  */
-public class Reclaim implements Runnable{
+public class ProcessReclaim implements Runnable{
 
 
     MessageReclaim messageReclaim;
     ArrayList<String> toDelete;          // Contains the files chosen to be deleted.
 
-    public Reclaim(MessageReclaim messageReclaim){
+    public ProcessReclaim(MessageReclaim messageReclaim){
         this.messageReclaim = messageReclaim;
         toDelete = new ArrayList<>();
     }
     @Override
     public void run() {
         // Message still banned.
-        if (Main.bannedReclaimMessages.contains(messageReclaim.getMessageId())) {
-            return;
-        }
-        else if (Main.chordNode.getId().equals(messageReclaim.getTargetId())){
-            Main.bannedReclaimMessages.add(messageReclaim.getMessageId());
-            Main.schedulerPool.schedule(new UnbanReclaim(messageReclaim.getMessageId()), 3 * 1000L, TimeUnit.MILLISECONDS);
-            reclaim();
-        }else{
-            Main.bannedReclaimMessages.add(messageReclaim.getMessageId());
-            Main.schedulerPool.schedule(new UnbanReclaim(messageReclaim.getMessageId()), 3 * 1000L, TimeUnit.MILLISECONDS);
-            Main.threadPool.submit(new RequestReclaim(this.messageReclaim));
+        System.out.println(messageReclaim.getTargetId());
+        Logger.INFO(this.getClass().getName(), "Received reclaim");
+        try {
+            if (Main.state.getBlockReclaimMessages(messageReclaim.getMessageId()) != null) {
+                System.out.println("here1");
+                return;
+            } else if (Main.chordNode.getId().equals(messageReclaim.getTargetId())) {
+                System.out.println("here2");
+                Main.state.addBlockReclaimMessages(messageReclaim.getMessageId());
+                Main.schedulerPool.schedule(new UnbanReclaim(messageReclaim.getMessageId()), 3 * 1000L, TimeUnit.MILLISECONDS);
+                reclaim();
+            } else {
+                System.out.println("here3");
+                Main.state.addBlockReclaimMessages(messageReclaim.getMessageId());
+                Main.schedulerPool.schedule(new UnbanReclaim(messageReclaim.getMessageId()), 3 * 1000L, TimeUnit.MILLISECONDS);
+                Main.threadPool.submit(new SendReclaim(this.messageReclaim));
+            }
+        }catch(Exception e){
+            e.printStackTrace();
         }
     }
 

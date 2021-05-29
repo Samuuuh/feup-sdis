@@ -4,14 +4,14 @@ import network.etc.MessageType;
 import network.node.InfoNode;
 
 public class MessageDelete extends Message {
-    String fileName;
+    String filePath;
     
-    public MessageDelete(InfoNode originNode, String fileName) {
+    public MessageDelete(InfoNode originNode, String filePath) {
         super(originNode, MessageType.DELETE);
-        this.fileName = fileName;
+        this.filePath = filePath;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getFilePath() {
+        return filePath;
     }
 }
