@@ -5,14 +5,10 @@ import network.message.OK;
 import network.node.InfoNode;
 import network.server.com.SendMessage;
 
-import java.util.concurrent.Callable;
-
 /**
  * Checks if the predecessor still exists. Case not it will set to null.
  */
-public class CheckPredecessor implements Runnable{
-
-
+public class CheckPredecessor implements Runnable {
     @Override
     public void run() {
         try {
