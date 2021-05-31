@@ -38,7 +38,6 @@ public class FixFingers implements Callable<Boolean> {
             MessageLookup messageLookup = new MessageLookup(Main.chordNode.getInfoNode(), targetId, MessageType.FIX_FINGERS);
             new SendMessage(successor.getIp(), successor.getPort(), messageLookup).call();
         } catch (Exception e) {
-            e.printStackTrace();
             Logger.ERR(this.getClass().getName(), "Error on fix fingers.");
             Main.chordNode.fixSuccessor();
         }

@@ -3,6 +3,7 @@ package network.services.backup;
 import network.Main;
 import network.etc.FileHandler;
 import network.etc.Logger;
+import network.etc.Singleton;
 import network.message.MessageBackup;
 import network.node.InfoNode;
 import network.server.com.SendMessage;
@@ -11,25 +12,26 @@ import java.io.IOException;
 
 public class ResendBackupFile implements Runnable {
     String ip;
-    String filePath;
+    String fileName;
     int port;
     int repDeg;
     InfoNode originNode;
+    String hash;
 
     /** 
     * Resend backup file
     * @param ip ip to send the backup
     * @param port port to send the backup
-    * @param filePath path of the file
     * @param originNode origin node which started the backed
     * @param repDeg desired rep deg
+    * @param hash Hash of the file.
     */
-    public ResendBackupFile(String ip, int port, String filePath, InfoNode originNode, int repDeg) {
+    public ResendBackupFile(String ip, int port, String hash, InfoNode originNode, int repDeg) {
         this.ip = ip;
         this.port = port;
-        this.filePath = filePath;
         this.repDeg = repDeg;
         this.originNode = originNode;
+        this.hash = hash;
     }
 
     /**
@@ -38,7 +40,7 @@ public class ResendBackupFile implements Runnable {
     @Override
     public void run() {
         try {
-            MessageBackup oldMessage = FileHandler.ReadObjectFromFile(this.filePath);
+            MessageBackup oldMessage = FileHandler.ReadObjectFromFile(Singleton.getBackupFilePath(hash));
             if (oldMessage == null) return;
             MessageBackup newMessage = new MessageBackup(Main.chordNode.getInfoNode(), oldMessage.getFileName(), oldMessage.getBytes(), 1,0);
             Logger.REQUEST(this.getClass().getName(), "Sent message backup");

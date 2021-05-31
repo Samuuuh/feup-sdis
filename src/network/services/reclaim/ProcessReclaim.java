@@ -34,19 +34,15 @@ public class ProcessReclaim implements Runnable{
     @Override
     public void run() {
         // Message still banned.
-        System.out.println(messageReclaim.getTargetId());
-        Logger.INFO(this.getClass().getName(), "Received reclaim");
         try {
             if (Main.state.getBlockReclaimMessages(messageReclaim.getMessageId()) != null) {
-                System.out.println("here1");
                 return;
             } else if (Main.chordNode.getId().equals(messageReclaim.getTargetId())) {
-                System.out.println("here2");
+                Logger.INFO(this.getClass().getName(), "Received reclaim");
                 Main.state.addBlockReclaimMessages(messageReclaim.getMessageId());
                 Main.schedulerPool.schedule(new UnbanReclaim(messageReclaim.getMessageId()), 3 * 1000L, TimeUnit.MILLISECONDS);
                 reclaim();
             } else {
-                System.out.println("here3");
                 Main.state.addBlockReclaimMessages(messageReclaim.getMessageId());
                 Main.schedulerPool.schedule(new UnbanReclaim(messageReclaim.getMessageId()), 3 * 1000L, TimeUnit.MILLISECONDS);
                 Main.threadPool.submit(new SendReclaim(this.messageReclaim));
@@ -66,9 +62,9 @@ public class ProcessReclaim implements Runnable{
         String successorIp = Main.chordNode.getSuccessor().getIp();
         int successorPort = Main.chordNode.getSuccessor().getPort();
         InfoNode infoNode = Main.chordNode.getInfoNode();
-        for (var filePath: toDelete){
-            Main.threadPool.submit(new ResendBackupFile(successorIp, successorPort, filePath, infoNode, 1));
-            Main.schedulerPool.schedule(new DeleteBackupFile(filePath), 500, TimeUnit.MILLISECONDS);
+        for (var hash: toDelete){
+            Main.threadPool.submit(new ResendBackupFile(successorIp, successorPort, hash, infoNode, 1));
+            Main.schedulerPool.schedule(new DeleteBackupFile(hash), 2000, TimeUnit.MILLISECONDS);
         }
 
         Logger.ANY(this.getClass().getName(), "Reclaim done with success.");
@@ -78,33 +74,27 @@ public class ProcessReclaim implements Runnable{
      * The chosen files need to be backed up to another peer.
      */
     private void chooseFilesToDelete(){
-        Main.state.getStoredFiles().forEach((filePath, size)->{
+        Main.state.getStoredFiles().forEach((hash, size)->{
             int occupiedSize = Main.state.getOccupiedSize();
             if (occupiedSize <= Main.state.getMaxSize())
                 return;
 
-            Integer fileSize = Main.state.removeFile(filePath);
-            if (fileSize != null) {
-                String fileName = Singleton.getFileName(filePath);
-                String filePathBackup = Singleton.getBackupFilePath(fileName);
-                toDelete.add(filePathBackup);
-            }
+            Integer fileSize = Main.state.removeFile(hash);
+            if (fileSize != null)
+                toDelete.add(hash);
         });
     }
 
-    // TODO: vai ser eliminado???
     static class DeleteBackupFile implements Runnable{
-        String filePath;
-        public DeleteBackupFile(String filePath){
-            this.filePath = filePath;
+        String hash;
+        public DeleteBackupFile(String hash){
+            this.hash= hash;
         }
 
         @Override
         public void run() {
-            String fileName = Singleton.getFileName(filePath);
-            String filePathBackup = Singleton.getBackupFilePath(fileName);
-            System.out.println(filePathBackup);
-            FileHandler.DeleteFile(filePathBackup);
+
+            FileHandler.DeleteFile(Singleton.getBackupFilePath(hash));
         }
     }
 }

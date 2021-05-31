@@ -39,12 +39,10 @@ public class SendReclaim implements Callable<Object> {
      */
     @Override
     public Object call() throws Exception {
-
         var fingerTableOrder = Main.chordNode.getFingerTableOrder();
         var fingerTable = Main.chordNode.getFingerTable();
 
         var iterator = fingerTableOrder.descendingIterator();
-        Main.chordNode.printHashTable();
         while(iterator.hasNext()){
             BigInteger next = iterator.next();
             InfoNode infoNext = fingerTable.get(next);
