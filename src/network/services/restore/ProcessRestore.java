@@ -3,7 +3,6 @@ package network.services.restore;
 import network.Main;
 import network.etc.FileHandler;
 import network.etc.Logger;
-import network.etc.Singleton;
 import network.message.MessageRcvRestore;
 
 public class ProcessRestore implements Runnable {
@@ -23,23 +22,21 @@ public class ProcessRestore implements Runnable {
     @Override
     public void run() {
         Logger.ANY(this.getClass().getName(), "Start RESTORE");
-        String filePath = message.getFileName();
+        String fileName = message.getFileName();
 
-        saveFile(filePath, message);
+        saveFile(fileName, message);
     }
 
     /**
      * Save the file in filesystem
-     * @param filePath path of the file to save
+     * @param fileName path of the file to save
      * @param message restore message
      */
-    public void saveFile(String filePath, MessageRcvRestore message) {
+    public void saveFile(String fileName, MessageRcvRestore message) {
         try {
-            String fileName = Singleton.getFileName(filePath);
-            String fileExtension = Singleton.getFileExtension(filePath);
-            FileHandler.saveFile("peers/" + Main.chordNode.getId() + "/restore/", fileName + "." + fileExtension, message.getBytes());
+            FileHandler.saveFile("peers/" + Main.chordNode.getId() + "/restore/", fileName, message.getBytes());
         }catch(Exception e) {
-            Logger.ERR(this.getClass().getName(), "Not possible to save file " + filePath);
+            Logger.ERR(this.getClass().getName(), "Not possible to save file " + fileName);
         }
     }
 }

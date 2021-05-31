@@ -7,7 +7,7 @@ import network.message.MessageDelete;
 
 public class ProcessDelete implements Runnable {
     MessageDelete message;
-    String filePath;
+    String hash;
     int port;
 
     /**
@@ -17,7 +17,7 @@ public class ProcessDelete implements Runnable {
      */
     public ProcessDelete(MessageDelete message, int port) {
         this.message = message;
-        this.filePath = message.getFilePath();
+        this.hash = message.getHash();
         this.port = port;
     }
 
@@ -27,10 +27,10 @@ public class ProcessDelete implements Runnable {
     @Override
     public void run() {
         try {
-            if (Main.state.getBlockDeleteMessages(filePath) == null) {
+            if (Main.state.getBlockDeleteMessages(hash) == null) {
                 Logger.ANY(this.getClass().getName(), "Received DELETE.");
 
-                Main.threadPool.execute(new SendDelete(filePath, message.getOriginNode()));
+                Main.threadPool.execute(new SendDelete(hash, message.getOriginNode()));
             }
         } catch (Exception e) {
             Logger.ERR(this.getClass().getName(), "Not possible to send restore message");

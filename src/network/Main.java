@@ -176,7 +176,8 @@ public class Main implements Services {
     */
     @Override
     public String delete(String filePath) {
-        Main.threadPool.execute(new SendDelete(filePath, chordNode.getInfoNode()));
+        String fileName = Singleton.getFileName(filePath) + '.' + Singleton.getFileExtension(filePath);
+        Main.threadPool.execute(new SendDelete(Singleton.hash(fileName), chordNode.getInfoNode()));
         return "Deleting " + filePath;
     }
 }

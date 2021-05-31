@@ -96,6 +96,7 @@ public class ChordServer extends Thread {
                         Logger.ANY(this.getClass().getName(), "Received stored from peer " + message.getOriginNode().getId());
                         break;
                     case DONE_BACKUP:
+                        Main.state.printStoredFiles();
                         var messageDoneBackup = (MessageDoneBackup) message;
                         backupEndLog(messageDoneBackup.getDesiredRepDeg(), messageDoneBackup.getActualRepDeg());
                         break;

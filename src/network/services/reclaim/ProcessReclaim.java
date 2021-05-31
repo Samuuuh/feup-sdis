@@ -38,12 +38,15 @@ public class ProcessReclaim implements Runnable{
         Logger.INFO(this.getClass().getName(), "Received reclaim");
         try {
             if (Main.state.getBlockReclaimMessages(messageReclaim.getMessageId()) != null) {
+                System.out.println("here1");
                 return;
             } else if (Main.chordNode.getId().equals(messageReclaim.getTargetId())) {
+                System.out.println("here2");
                 Main.state.addBlockReclaimMessages(messageReclaim.getMessageId());
                 Main.schedulerPool.schedule(new UnbanReclaim(messageReclaim.getMessageId()), 3 * 1000L, TimeUnit.MILLISECONDS);
                 reclaim();
             } else {
+                System.out.println("here3");
                 Main.state.addBlockReclaimMessages(messageReclaim.getMessageId());
                 Main.schedulerPool.schedule(new UnbanReclaim(messageReclaim.getMessageId()), 3 * 1000L, TimeUnit.MILLISECONDS);
                 Main.threadPool.submit(new SendReclaim(this.messageReclaim));

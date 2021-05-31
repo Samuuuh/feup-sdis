@@ -6,22 +6,22 @@ import java.util.concurrent.TimeUnit;
 import network.Main;
 import network.etc.FileHandler;
 import network.etc.Logger;
-import network.etc.Singleton;
 import network.server.com.*;
 import network.message.*;
 import network.node.InfoNode;
 
 public class SendDelete implements Runnable {
-    String filePath;
+    String fileName;
+    String hash;
     InfoNode originNode;
 
     /**
      * Send Delete Protocol constructor
-     * @param filePath Path of file to delete
+     * @param fileName Path of file to delete
      * @param originNode origin node of delete
      */
-    public SendDelete(String filePath, InfoNode originNode) {
-         this.filePath = filePath;
+    public SendDelete(String hash, InfoNode originNode) {
+         this.hash = hash;
          this.originNode = originNode;
     }
 
@@ -31,14 +31,14 @@ public class SendDelete implements Runnable {
     @Override
     public void run() {
         try {
-            Main.state.addBlockDeleteMessages(filePath);
-            if (Main.state.getStoredFile(filePath) != null) {
-                Main.state.removeFile(filePath);
-                FileHandler.deleteFile("peers/" + Main.chordNode.getId() + "/backup/", Singleton.getFileName(filePath) + ".ser");
+            Main.state.addBlockDeleteMessages(hash);
+            if (Main.state.getStoredFile(hash) != null) {
+                Main.state.removeFile(hash);
+                FileHandler.deleteFile("peers/" + Main.chordNode.getId() + "/backup/", hash + ".ser");
             }
 
-            Main.schedulerPool.schedule(new RemoveBlockDelete(filePath), 3 * 1000L, TimeUnit.MILLISECONDS);
-            MessageDelete message = new MessageDelete(originNode, filePath);
+            Main.schedulerPool.schedule(new RemoveBlockDelete(hash), 3 * 1000L, TimeUnit.MILLISECONDS);
+            MessageDelete message = new MessageDelete(originNode, hash);
 
             var fingerTableOrder = Main.chordNode.getFingerTableOrder();
             var fingerTable = Main.chordNode.getFingerTable();

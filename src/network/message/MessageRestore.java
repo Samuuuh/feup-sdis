@@ -8,7 +8,6 @@ public class MessageRestore extends Message {
 
     public MessageRestore(InfoNode originNode, String fileName) {
       super(originNode, MessageType.RESTORE);
-
       this.fileName = fileName;
     }
 

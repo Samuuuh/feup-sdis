@@ -14,7 +14,8 @@ import java.io.IOException;
 public class HandleRestore implements Runnable {
     MessageRestore message;
     String port;
-    String filePath;
+    String fileName;
+    String hash;
 
     /**
      * Handle Restore constructor
@@ -23,7 +24,8 @@ public class HandleRestore implements Runnable {
      */
     public HandleRestore(MessageRestore message, int port) {
         this.message = message;
-        this.filePath = message.getFileName();
+        this.fileName = message.getFileName();
+        this.hash = Singleton.hash(fileName);
         this.port = String.valueOf(port);
     }
 
@@ -35,9 +37,8 @@ public class HandleRestore implements Runnable {
         try {
             InfoNode suc = Main.chordNode.getSuccessor();
             
-            if (Main.state.getStoredFile(filePath) != null) {
-                String fileName = Singleton.getFileName(this.filePath);
-                MessageBackup mess = FileHandler.ReadObjectFromFile( Singleton.getBackupFilePath(fileName));
+            if (Main.state.getStoredFile(hash) != null) {
+                MessageBackup mess = FileHandler.ReadObjectFromFile(Singleton.getBackupFilePath(hash));
                 MessageRcvRestore messageRcvRestore = new MessageRcvRestore(message.getOriginNode(), mess.getBytes(), mess.getFileName());
                 Main.threadPool.submit(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageRcvRestore));
             } else {
