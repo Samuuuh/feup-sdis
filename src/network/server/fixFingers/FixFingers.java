@@ -11,7 +11,7 @@ import network.server.com.SendMessage;
 import java.math.BigInteger;
 import java.util.concurrent.Callable;
 
-public class FixFingers implements Callable {
+public class FixFingers implements Callable<Boolean> {
     private final int currentNext;
 
     /**

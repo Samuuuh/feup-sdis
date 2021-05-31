@@ -101,8 +101,12 @@ public class ChordServer extends Thread {
                         break;
                     // Check if it has the file, otherwise pass the message to the successor.
                     case RESTORE:
-                        Logger.ANY(this.getClass().getName(), "Received RESTORE.");
-                        Main.threadPool.execute(new HandleRestore((MessageRestore) message, port));
+                        if (message.getPortOrigin() == port) {
+                            Logger.ANY(this.getClass().getName(), "Can't restore the file");
+                        } else {
+                            Logger.ANY(this.getClass().getName(), "Received RESTORE.");
+                            Main.threadPool.execute(new HandleRestore((MessageRestore) message, port));
+                        }
                         break;
                     // Confirmation.
                     case RCV_RESTORE:

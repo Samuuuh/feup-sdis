@@ -1,13 +1,12 @@
 package network.server.com;
 
-import network.etc.*;
 import network.message.*;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.concurrent.Callable;
 
-public class SendMessage implements Callable {
+public class SendMessage implements Callable<Boolean> {
     SSLConnection connectionSocket;
     Message message;
 
