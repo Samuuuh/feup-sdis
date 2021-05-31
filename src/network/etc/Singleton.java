@@ -5,7 +5,6 @@ import network.Main;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class Singleton {
     public static long m = 4;                   // TODO: change later

@@ -12,7 +12,7 @@ import java.util.concurrent.Callable;
 /**
  * This file is responsible for finding the peer of which the reclaim was requested.
  */
-public class SendReclaim implements Callable {
+public class SendReclaim implements Callable<Object> {
     int reclaimSize;
     MessageReclaim messageReclaim;
 

@@ -1,7 +1,6 @@
 package network.message;
 
 import network.etc.MessageType;
-import network.message.Message;
 import network.node.InfoNode;
 
 public class MessageBackup extends Message {

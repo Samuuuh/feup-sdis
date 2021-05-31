@@ -1,6 +1,5 @@
 package network.server.fixFingers;
 
-import network.Main;
 import network.etc.Singleton;
 
 import java.util.concurrent.ExecutorService;

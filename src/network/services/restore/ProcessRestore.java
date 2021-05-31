@@ -35,7 +35,6 @@ public class ProcessRestore implements Runnable {
      */
     public void saveFile(String filePath, MessageRcvRestore message) {
         try {
-            int port = Main.chordNode.getInfoNode().getPort();
             String fileName = Singleton.getFileName(filePath);
             String fileExtension = Singleton.getFileExtension(filePath);
             FileHandler.saveFile("peers/" + Main.chordNode.getId() + "/restore/", fileName + "." + fileExtension, message.getBytes());

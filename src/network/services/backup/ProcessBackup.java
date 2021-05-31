@@ -11,7 +11,6 @@ import network.message.MessageDoneBackup;
 import network.node.InfoNode;
 import network.server.com.SendMessage;
 
-import java.io.File;
 import java.io.IOException;
 
 public class ProcessBackup implements Runnable {

@@ -3,7 +3,6 @@ package network.services.backup;
 import network.Main;
 import network.etc.FileHandler;
 import network.etc.Logger;
-import network.etc.Singleton;
 import network.message.MessageBackup;
 import network.node.InfoNode;
 import network.server.com.SendMessage;

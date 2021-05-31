@@ -3,7 +3,6 @@ package network.server.fixFingers;
 import network.Main;
 import network.etc.Logger;
 import network.etc.MessageType;
-import network.etc.Singleton;
 import network.message.MessageLookup;
 import network.node.InfoNode;
 import network.server.com.SendMessage;
