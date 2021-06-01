@@ -23,7 +23,7 @@ public class FileHandler {
         File file = new File(filePath);
 
         if (file.length() > Integer.MAX_VALUE)
-            Logger.ERR("network.etc.FileHandler","File too large to be read");
+            Logger.ERR("network.etc.FileHandler", "File too large to be read");
         try {
             return readAllBytes(file.toPath());
         } catch (Exception e) {
@@ -86,12 +86,11 @@ public class FileHandler {
     * @param fileName The name of the file to be deleted
     */
     public static void deleteFile(String dir, String fileName) {
-        String filePath = dir + fileName;
-        File newFile = new File(filePath);
-        if(newFile.delete()) {
+        Path filePath = Paths.get(dir + fileName);
+        try {
+            Files.delete(filePath);
             Logger.SUC("network.etc.FileHandler", "File" + fileName + "deleted");
-        }
-        else {
+        } catch(IOException ioException) {
             Logger.INFO("network.etc.FileHandler", "Not possible delete file " + fileName);
         }
     }
@@ -100,9 +99,12 @@ public class FileHandler {
     * Delete a file from the filesystem
     * @param filePath Path of the file to be deleted
     */
-    public static void DeleteFile(String filePath){
-        File file = new File(filePath);
-        if (!file.delete()) {
+    public static void DeleteFile(String filePathREMOVE){
+        Path filePath = Paths.get(filePathREMOVE);
+        try {
+            Files.delete(filePath);
+            Logger.SUC("network.etc.FileHandler", "File" + filePath + "deleted");
+        } catch(IOException ioException) {
             Logger.INFO("network.etc.FileHandler", "Not possible delete file " + filePath);
         }
     }

@@ -87,8 +87,6 @@ public class Client {
             String id = args[3];
             Integer size = Integer.parseInt(args[4]);
             reclaim(id, size);
-        } else if (this.operation.equals("STATE")) {
-            // TODO
         } else {
             System.out.println("Usage:\n java Client <peer_ap> <sub_protocol> <opnd_1> <opnd_2>\n" +
                     "Where <sub_protocol can be one of the following: BACKUP RESTORE DELETE RECLAIM STATE");
