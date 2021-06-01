@@ -89,20 +89,6 @@ public class FileHandler {
     }
 
     /**
-    * Delete a file from the filesystem
-    * @param filePath Path of the file to be deleted
-    */
-    public static void DeleteFile(String filePathREMOVE){
-        Path filePath = Paths.get(filePathREMOVE);
-        try {
-            Files.delete(filePath);
-            Logger.SUC("network.etc.FileHandler", "File" + filePath + "deleted");
-        } catch(IOException ioException) {
-            Logger.INFO("network.etc.FileHandler", "Not possible delete file " + filePath);
-        }
-    }
-
-    /**
     * Read from the filesystem the backup file, which was saved as MessageBackup serialize
     * @param filePath Path of the MessageBackup File
     * @return MessageBackup class with everything we should know about the backup

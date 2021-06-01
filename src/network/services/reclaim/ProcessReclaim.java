@@ -94,7 +94,7 @@ public class ProcessReclaim implements Runnable{
         @Override
         public void run() {
 
-            FileHandler.DeleteFile(Singleton.getBackupFilePath(hash));
+            FileHandler.deleteFile("peers/" + Main.chordNode.getId() + "/backup/" ,hash + ".ser");
         }
     }
 }
