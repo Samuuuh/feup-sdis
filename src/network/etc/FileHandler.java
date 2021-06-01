@@ -68,16 +68,9 @@ public class FileHandler {
         Path path = Paths.get(dir);
         Files.createDirectories(path);
 
-        File directory = new File(dir);
-        if (!directory.exists()) {
-            directory.mkdir();
-        }
-        
         // SaveFile
-        String filePath = dir + fileName;
-        FileOutputStream outputFile = new FileOutputStream(filePath, true);
-        if (bytesMessage != null) outputFile.write(bytesMessage);
-        outputFile.close();
+        Path filePath = Paths.get(dir + fileName);
+        if (bytesMessage != null) Files.write(filePath, bytesMessage);
     }
 
     /**
