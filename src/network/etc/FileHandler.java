@@ -1,9 +1,8 @@
 package network.etc;
 
-import java.io.File;
+import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.*;
@@ -20,12 +19,12 @@ public class FileHandler {
     * @return byte[] This return the bytes of the file
     */
     public static byte[] readFile(String filePath) throws IOException {
-        File file = new File(filePath);
+        Path path = Paths.get(filePath);
 
-        if (file.length() > Integer.MAX_VALUE)
+        if (Files.size(path) > Integer.MAX_VALUE)
             Logger.ERR("network.etc.FileHandler", "File too large to be read");
         try {
-            return readAllBytes(file.toPath());
+            return readAllBytes(path);
         } catch (Exception e) {
             Logger.INFO("network.etc.FileHandler", "File does not exist, skiping...");
         }
@@ -42,11 +41,6 @@ public class FileHandler {
         // Create directory if not exists
         Path path = Paths.get(dir);
         Files.createDirectories(path);
-
-        File directory = new File(dir);
-        if (!directory.exists()) {
-            directory.mkdir();
-        }
         
         // SaveFile
         String filePath = dir + fileName;
