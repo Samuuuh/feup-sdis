@@ -75,15 +75,17 @@ public class Main implements Services {
     * @param stub Stub with the UnicastRemoteObject
     */
     public static void initRMI(Services stub) throws RemoteException {
+        String accessPoint = ip + ':' + String.valueOf(port);
         try {
             Registry registry = LocateRegistry.getRegistry(Singleton.REGISTER_PORT);
-            registry.rebind(String.valueOf(port), stub);
+            registry.rebind(accessPoint, stub);
         } catch (Exception e) {
             Logger.ANY("App.Main", "Registry does not exist. Creating a new one...");
             Registry registry = LocateRegistry.createRegistry(Singleton.REGISTER_PORT);
-            registry.rebind(String.valueOf(port), stub);
+            registry.rebind(accessPoint, stub);
         }
     }
+
 
     /**
     * Init Thread Pools to be used

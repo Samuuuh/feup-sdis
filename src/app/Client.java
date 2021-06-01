@@ -21,7 +21,7 @@ public class Client {
     */
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
-            System.out.println("Usage:\n java Client <peer_ap> <sub_protocol> <opnd_1> <opnd_2>\n" +
+            System.out.println("Usage:\n java Client <local_ip> <local_port> <sub_protocol> <opnd_1> <opnd_2>\n" +
                     "Where <sub_protocol can be one of the following: BACKUP RESTORE DELETE RECLAIM STATE");
             return;
         }
@@ -34,8 +34,8 @@ public class Client {
      * @param args Program arguments passed through command Line
      */
     private Client(String[] args) throws IOException {
-        accessPoint = args[0];
-        operation = args[1];
+        accessPoint = args[0] + ':' + args[1];
+        operation = args[2];
 
         try {
             this.registry = LocateRegistry.getRegistry(Singleton.REGISTER_PORT);
@@ -45,13 +45,13 @@ public class Client {
         }
 
         if (operation.equals("BACKUP")) {
-            if (args.length != 4) {
+            if (args.length != 5) {
                 System.out.println("Usage:\n java Client <peer_ap> BACKUP <file> <replication_degree>\n");
                 return;
             }
             
-            String file = args[2];
-            String replication_degree = args[3];
+            String file = args[3];
+            String replication_degree = args[4];
             boolean isNumber = replication_degree.matches("\\d+");
 
             if (!isNumber) {
@@ -62,30 +62,30 @@ public class Client {
             backup(file, replication_degree);
 
         } else if (this.operation.equals("RESTORE")) {
-            if (args.length != 3) {
+            if (args.length != 4) {
                 System.out.println("Usage:\n java Client <peer_ap> RESTORE <file>\n");
                 return;
             }
 
-            String file = args[2];
+            String file = args[3];
             restore(file);
 
         } else if (this.operation.equals("DELETE")) {
-            if (args.length != 3) {
+            if (args.length != 4) {
                 System.out.println("Usage:\n java Client <peer_ap> RESTORE <file>\n");
                 return;
             }
 
-            String file = args[2];
+            String file = args[3];
             delete(file);
 
         } else if (this.operation.equals("RECLAIM")) {
-            if (args.length != 4){
+            if (args.length != 5){
                 System.out.println("Usage:\n java Client <peer_ap> RECLAIM <chordId> <size>\n");
                 return;
             }
-            String id = args[2];
-            Integer size = Integer.parseInt(args[3]);
+            String id = args[3];
+            Integer size = Integer.parseInt(args[4]);
             reclaim(id, size);
         } else if (this.operation.equals("STATE")) {
             // TODO
@@ -102,11 +102,11 @@ public class Client {
     */
     private void backup(String filePath, String replication_degree)  {
         try {
-            Services stub = (Services) this.registry.lookup(this.accessPoint);
+            Services stub = (Services) this.registry.lookup(accessPoint);
             int replication = Integer.parseInt(replication_degree);
             String response = stub.backup(filePath, replication);
             System.out.println(response);
-        }catch (Exception e){
+        } catch (Exception e) {
             Logger.ERR(this.getClass().getName(), "Error on requesting backup.");
             e.printStackTrace();
         }
@@ -118,7 +118,8 @@ public class Client {
     */
     private void restore(String filePath)  {
         try {
-            Services stub = (Services) this.registry.lookup(this.accessPoint);
+            System.out.println(accessPoint);
+            Services stub = (Services) this.registry.lookup(accessPoint);
             String response = stub.restore(filePath);
             System.out.println(response);
         }catch (Exception e){
@@ -133,7 +134,7 @@ public class Client {
     */
     private void delete(String filePath)  {
         try {
-            Services stub = (Services) this.registry.lookup(this.accessPoint);
+            Services stub = (Services) this.registry.lookup(accessPoint);
             String response = stub.delete(filePath);
             System.out.println(response);
         }catch (Exception e){
@@ -149,7 +150,7 @@ public class Client {
     */
     private void reclaim(String targetId, Integer size){
         try{
-            Services stub = (Services) this.registry.lookup(this.accessPoint);
+            Services stub = (Services) this.registry.lookup(accessPoint);
             String response = stub.reclaim(targetId, size);
             System.out.println(response);
         }catch(Exception e){
