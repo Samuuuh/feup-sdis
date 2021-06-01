@@ -118,7 +118,6 @@ public class Client {
     */
     private void restore(String filePath)  {
         try {
-            System.out.println(accessPoint);
             Services stub = (Services) this.registry.lookup(accessPoint);
             String response = stub.restore(filePath);
             System.out.println(response);
