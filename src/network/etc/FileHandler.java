@@ -95,7 +95,7 @@ public class FileHandler {
             objectIn.close();
             return obj;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Logger.ERR("FileHandler", "No such file " + filepath);
             return null;
         }
     }

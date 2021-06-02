@@ -46,7 +46,7 @@ public class Client {
 
         if (operation.equals("BACKUP")) {
             if (args.length != 5) {
-                System.out.println("Usage:\n java Client <peer_ap> BACKUP <file> <replication_degree>\n");
+                System.out.println("Usage:\n java Client <ip> <port> BACKUP <file> <replication_degree>\n");
                 return;
             }
             
@@ -63,7 +63,7 @@ public class Client {
 
         } else if (this.operation.equals("RESTORE")) {
             if (args.length != 4) {
-                System.out.println("Usage:\n java Client <peer_ap> RESTORE <file>\n");
+                System.out.println("Usage:\n java Client <ip> <port> RESTORE <file>\n");
                 return;
             }
 
@@ -72,7 +72,7 @@ public class Client {
 
         } else if (this.operation.equals("DELETE")) {
             if (args.length != 4) {
-                System.out.println("Usage:\n java Client <peer_ap> RESTORE <file>\n");
+                System.out.println("Usage:\n java Client <ip> <port> DELETE <file>\n");
                 return;
             }
 
@@ -81,7 +81,7 @@ public class Client {
 
         } else if (this.operation.equals("RECLAIM")) {
             if (args.length != 5){
-                System.out.println("Usage:\n java Client <peer_ap> RECLAIM <chordId> <size>\n");
+                System.out.println("Usage:\n java Client <ip> <port> RECLAIM <chordId> <size>\n");
                 return;
             }
             String id = args[3];
