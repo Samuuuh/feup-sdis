@@ -20,7 +20,7 @@ public class State implements Serializable {
 
     // Files stored.
     private final ConcurrentHashMap<String, Integer> storedFiles;
-    private int maxSize = 1000000;        // Total size that the program can occupy.
+    private int maxSize = 10000000;        // Total size that the program can occupy.
     private int occupiedSize = 0;         // Total size occupied by the program.
 
     /**

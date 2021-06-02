@@ -112,7 +112,10 @@ public class Singleton {
     public static String getFileExtension(String filePath){
         var splitPath = filePath.split("/");
         String fileNameWithExt = splitPath[splitPath.length-1];
-        return fileNameWithExt.split("\\.")[1];
+        String[] fileNameArray = fileNameWithExt.split("\\.");
+        if (fileNameArray.length == 1)
+            return "";
+        return fileNameArray[fileNameArray.length-1];
     }
 
     /**

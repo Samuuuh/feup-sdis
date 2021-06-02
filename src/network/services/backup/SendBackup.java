@@ -38,13 +38,15 @@ public class SendBackup implements Runnable {
     public void run() {
         try {
             byte[] byteArr = FileHandler.readFile(filePath);
-            if (byteArr == null) return;
+            if (byteArr == null) {
+                Logger.ERR(this.getClass().getName(), "Not possible to read file");
+                return;
+            }
             Logger.REQUEST(this.getClass().getName(), "Sent message backup");
             MessageBackup message = new MessageBackup(originNode, filePath, byteArr, repDeg, 0);
             Main.threadPool.submit(new SendMessage(ip, port, message));
         } catch (IOException e) {
             Logger.ERR(this.getClass().getName(), "Not possible to send backup message");
-            e.printStackTrace();
         }
     }
 }

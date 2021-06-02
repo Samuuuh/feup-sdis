@@ -38,6 +38,7 @@ public class ProcessBackup implements Runnable {
             if (Main.state.getOccupiedSize() + message.getBytes().length > Main.state.getMaxSize()){
                 Logger.INFO(this.getClass().getName(), "Not enough space to save " + fileName + "... Parsing to successor.");
                 sendToSuccessor(message.getActualRepDeg());
+                return;
             }
             if (Main.state.getStoredFile(hash) != null) {
                 sendToSuccessor(message.getActualRepDeg());
