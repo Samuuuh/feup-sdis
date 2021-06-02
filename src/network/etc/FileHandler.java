@@ -53,7 +53,7 @@ public class FileHandler {
             objectOut.writeObject(serialize);
             outputFile.close();
         } catch (Exception e) {
-            Logger.SUC("network.etc.FileHandler", "No such file " + fileName);
+            Logger.ERR("network.etc.FileHandler", "No such file " + fileName);
         }
     }
 
@@ -66,15 +66,18 @@ public class FileHandler {
      */
     public static void saveFile(String dir, String fileName, byte[] bytesMessage) {
         try {
+
             // Create directory if not exists
             Path path = Paths.get(dir);
+            Files.createDirectories(path);
+            
             // SaveFile
             Path filePath = Paths.get(dir + fileName);
             if (bytesMessage != null) Files.write(filePath, bytesMessage);
             Files.createDirectories(path);
 
         } catch (IOException e) {
-            Logger.SUC("network.etc.FileHandler", "No such file " + fileName);
+            Logger.ERR("network.etc.FileHandler", "Not possible to save file " + fileName);
         }
 
     }
