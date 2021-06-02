@@ -10,7 +10,7 @@ then
     port=$2
     
     # Execute the program
-    sudo java -Djavax.net.ssl.keyStore=../keystore -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStore=../truststore -Djavax.net.ssl.trustStorePassword=123456 network/Main ${ip} ${port}
+    java -Djavax.net.ssl.keyStore=../keystore -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStore=../truststore -Djavax.net.ssl.trustStorePassword=123456 network/Main ${ip} ${port}
 fi
 
 if (( argc == 4 )) 
@@ -22,5 +22,5 @@ then
     chord_port=$4
 
     # Execute the program
-    sudo java -Djavax.net.ssl.keyStore=../keystore -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStore=../truststore -Djavax.net.ssl.trustStorePassword=123456 network/Main ${ip} ${port} ${chord_ip} ${chord_port}
+    java -Djavax.net.ssl.keyStore=../keystore -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStore=../truststore -Djavax.net.ssl.trustStorePassword=123456 network/Main ${ip} ${port} ${chord_ip} ${chord_port}
 fi

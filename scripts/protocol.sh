@@ -56,6 +56,5 @@ RECLAIM)
 	;;
 esac
 
-
-sudo java -Djavax.net.ssl.keyStore=../keystore -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStore=../truststore -Djavax.net.ssl.trustStorePassword=123456 app/Client ${peer_ip} ${peer_port} ${oper} ${opernd_1} ${opernd_2}
+java -Djavax.net.ssl.keyStore=../keystore -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStore=../truststore -Djavax.net.ssl.trustStorePassword=123456 app/Client ${peer_ip} ${peer_port} ${oper} ${opernd_1} ${opernd_2}
 
