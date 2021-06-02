@@ -10,7 +10,15 @@ then
     port=$2
     
     # Execute the program
-    sudo java -Djavax.net.ssl.keyStore=../keystore -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStore=../truststore -Djavax.net.ssl.trustStorePassword=123456 network/Main ${ip} ${port}
+   
+	if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+		sudo java -Djavax.net.ssl.keyStore=../keystore -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStore=../truststore -Djavax.net.ssl.trustStorePassword=123456 network/Main ${ip} ${port}
+	elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
+		java -Djavax.net.ssl.keyStore=../keystore -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStore=../truststore -Djavax.net.ssl.trustStorePassword=123456 network/Main ${ip} ${port}
+	elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
+		java -Djavax.net.ssl.keyStore=../keystore -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStore=../truststore -Djavax.net.ssl.trustStorePassword=123456 network/Main ${ip} ${port}
+	fi
+    
 fi
 
 if (( argc == 4 )) 
@@ -20,7 +28,14 @@ then
     port=$2
     chord_ip=$3
     chord_port=$4
-
+	
+	if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+		sudo java -Djavax.net.ssl.keyStore=../keystore -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStore=../truststore -Djavax.net.ssl.trustStorePassword=123456 network/Main ${ip} ${port} ${chord_ip} ${chord_port}
+	elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
+		java -Djavax.net.ssl.keyStore=../keystore -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStore=../truststore -Djavax.net.ssl.trustStorePassword=123456 network/Main ${ip} ${port} ${chord_ip} ${chord_port}
+	elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
+		java -Djavax.net.ssl.keyStore=../keystore -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStore=../truststore -Djavax.net.ssl.trustStorePassword=123456 network/Main ${ip} ${port} ${chord_ip} ${chord_port}
+	fi
     # Execute the program
-    sudo java -Djavax.net.ssl.keyStore=../keystore -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStore=../truststore -Djavax.net.ssl.trustStorePassword=123456 network/Main ${ip} ${port} ${chord_ip} ${chord_port}
+    
 fi

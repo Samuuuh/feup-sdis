@@ -57,5 +57,13 @@ RECLAIM)
 esac
 
 
-sudo java -Djavax.net.ssl.keyStore=../keystore -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStore=../truststore -Djavax.net.ssl.trustStorePassword=123456 app/Client ${peer_ip} ${peer_port} ${oper} ${opernd_1} ${opernd_2}
+	if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+		sudo java -Djavax.net.ssl.keyStore=../keystore -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStore=../truststore -Djavax.net.ssl.trustStorePassword=123456 app/Client ${peer_ip} ${peer_port} ${oper} ${opernd_1} ${opernd_2}
+	elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
+		java -Djavax.net.ssl.keyStore=../keystore -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStore=../truststore -Djavax.net.ssl.trustStorePassword=123456 app/Client ${peer_ip} ${peer_port} ${oper} ${opernd_1} ${opernd_2}
+	elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
+		java -Djavax.net.ssl.keyStore=../keystore -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStore=../truststore -Djavax.net.ssl.trustStorePassword=123456 app/Client ${peer_ip} ${peer_port} ${oper} ${opernd_1} ${opernd_2}
+	fi
+    
+
 

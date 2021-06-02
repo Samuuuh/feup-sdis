@@ -14,10 +14,11 @@ import static java.nio.file.Files.readAllBytes;
 
 public class FileHandler {
     /**
-    * Read a file from the filesystem and return the file information in bytes
-    * @param filePath Path of the file to read
-    * @return byte[] This return the bytes of the file
-    */
+     * Read a file from the filesystem and return the file information in bytes
+     *
+     * @param filePath Path of the file to read
+     * @return byte[] This return the bytes of the file
+     */
     public static byte[] readFile(String filePath) throws IOException {
         Path path = Paths.get(filePath);
 
@@ -32,61 +33,74 @@ public class FileHandler {
     }
 
     /**
-    * Save a serialize class on the filesystem
-    * @param dir Directory where the serialized class will be saved
-    * @param fileName The name that the serialized file will be saved
-    * @param serialize Serialized class to be saved on the filesystem 
-    */
-    public static void saveSerialize(String dir, String fileName, MessageBackup serialize) throws IOException {
-        // Create directory if not exists
-        Path path = Paths.get(dir);
-        Files.createDirectories(path);
-        
-        // SaveFile
-        String filePath = dir + fileName;
-        FileOutputStream outputFile = new FileOutputStream(filePath, true);
-        ObjectOutputStream objectOut = new ObjectOutputStream(outputFile);
-        
-        objectOut.writeObject(serialize);
-        outputFile.close();
+     * Save a serialize class on the filesystem
+     *
+     * @param dir       Directory where the serialized class will be saved
+     * @param fileName  The name that the serialized file will be saved
+     * @param serialize Serialized class to be saved on the filesystem
+     */
+    public static void saveSerialize(String dir, String fileName, MessageBackup serialize) {
+        try {
+            // Create directory if not exists
+            Path path = Paths.get(dir);
+            Files.createDirectories(path);
+
+            // SaveFile
+            String filePath = dir + fileName;
+            FileOutputStream outputFile = new FileOutputStream(filePath, true);
+            ObjectOutputStream objectOut = new ObjectOutputStream(outputFile);
+
+            objectOut.writeObject(serialize);
+            outputFile.close();
+        } catch (Exception e) {
+            Logger.SUC("network.etc.FileHandler", "No such file " + fileName);
+        }
     }
 
     /**
-    * Save a byte array on the filesystem
-    * @param dir Directory where the byte array will be saved
-    * @param fileName The name that the byte array will be saved
-    * @param bytesMessage Bytes of the file to be saved to a file
-    */
-    public static void saveFile(String dir, String fileName, byte[] bytesMessage) throws IOException {
-        // Create directory if not exists
-        Path path = Paths.get(dir);
-        Files.createDirectories(path);
+     * Save a byte array on the filesystem
+     *
+     * @param dir          Directory where the byte array will be saved
+     * @param fileName     The name that the byte array will be saved
+     * @param bytesMessage Bytes of the file to be saved to a file
+     */
+    public static void saveFile(String dir, String fileName, byte[] bytesMessage) {
+        try {
+            // Create directory if not exists
+            Path path = Paths.get(dir);
+            // SaveFile
+            Path filePath = Paths.get(dir + fileName);
+            if (bytesMessage != null) Files.write(filePath, bytesMessage);
+            Files.createDirectories(path);
 
-        // SaveFile
-        Path filePath = Paths.get(dir + fileName);
-        if (bytesMessage != null) Files.write(filePath, bytesMessage);
+        } catch (IOException e) {
+            Logger.SUC("network.etc.FileHandler", "No such file " + fileName);
+        }
+
     }
 
     /**
-    * Delete a file from the filesystem
-    * @param dir Directory where the file to be deleted is
-    * @param fileName The name of the file to be deleted
-    */
+     * Delete a file from the filesystem
+     *
+     * @param dir      Directory where the file to be deleted is
+     * @param fileName The name of the file to be deleted
+     */
     public static void deleteFile(String dir, String fileName) {
         Path filePath = Paths.get(dir + fileName);
         try {
             Files.delete(filePath);
             Logger.SUC("network.etc.FileHandler", "File" + fileName + "deleted");
-        } catch(IOException ioException) {
+        } catch (IOException ioException) {
             Logger.INFO("network.etc.FileHandler", "Not possible delete file " + fileName);
         }
     }
 
     /**
-    * Read from the filesystem the backup file, which was saved as MessageBackup serialize
-    * @param filePath Path of the MessageBackup File
-    * @return MessageBackup class with everything we should know about the backup
-    */
+     * Read from the filesystem the backup file, which was saved as MessageBackup serialize
+     *
+     * @param filePath Path of the MessageBackup File
+     * @return MessageBackup class with everything we should know about the backup
+     */
     public static MessageBackup ReadObjectFromFile(String filepath) {
         try {
             FileInputStream fileIn = new FileInputStream(filepath);
@@ -95,7 +109,7 @@ public class FileHandler {
             objectIn.close();
             return obj;
         } catch (Exception ex) {
-            Logger.ERR("FileHandler", "No such file " + filepath);
+            Logger.ERR("network.etc.FileHandler", "No such file " + filepath);
             return null;
         }
     }

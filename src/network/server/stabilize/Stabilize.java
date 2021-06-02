@@ -10,6 +10,7 @@ import network.server.com.SendMessage;
 
 import java.math.BigInteger;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Once the successor predecessor was found, the stabilize will check if it's
@@ -39,8 +40,11 @@ public class Stabilize implements Runnable {
         try {
             BigInteger currentId = Main.chordNode.getInfoNode().getId();
 
-            if (Objects.isNull(sucPredecessor))
+            if (Objects.isNull(sucPredecessor)) {
+                MessageInfoNode message = new MessageInfoNode(Main.chordNode.getInfoNode(), MessageType.NOTIFY, Main.chordNode.getInfoNode());
+                new SendMessage(Main.chordNode.getSuccessor().getIp(), Main.chordNode.getSuccessor().getPort(), message).call();
                 return;
+            }
 
             if (Singleton.betweenPredecessor(sucPredecessor.getId(), currentId, Main.chordNode.getSuccessor().getId())) {
                 Main.chordNode.setSuccessor(sucPredecessor);
@@ -50,8 +54,9 @@ public class Stabilize implements Runnable {
             new SendMessage(Main.chordNode.getSuccessor().getIp(), Main.chordNode.getSuccessor().getPort(), message).call();
 
         } catch (Exception e) {
-            e.printStackTrace();
             Logger.ERR(this.getClass().getName(), "Error on stabilizing.");
+            Main.chordNode.setSuccessor(Main.chordNode.getInfoNode());
+            Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 100, Singleton.STABILIZE_TIME * 1000L, TimeUnit.MILLISECONDS);
         }
     }
 }

@@ -2,11 +2,13 @@ package network.server.stabilize;
 
 import network.Main;
 import network.etc.Logger;
+import network.etc.Singleton;
 import network.message.MessageGetPredecessor;
 import network.node.InfoNode;
 import network.server.com.SendMessage;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class is the beginning of the stabilize process where it tries to find
@@ -32,8 +34,9 @@ public class GetPredecessor implements Runnable {
             Main.threadPool.submit(new SendMessage(successor.getIp(), successor.getPort(), messageGetPredecessor));
 
         }catch(Exception e){
-            e.printStackTrace();
-            Logger.ERR(this.getClass().getName(), "Not possible to get predecessor.");
+            Logger.ERR(this.getClass().getName(), "Error on GetPredecessor.");
+            Main.chordNode.setSuccessor(Main.chordNode.getInfoNode());
+            Main.schedulerPool.scheduleWithFixedDelay(new GetPredecessor(), 100, Singleton.STABILIZE_TIME * 1000L, TimeUnit.MILLISECONDS);
         }
 
     }
