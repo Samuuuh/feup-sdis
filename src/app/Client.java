@@ -136,7 +136,6 @@ public class Client {
             System.out.println(response);
         }catch (Exception e){
             Logger.ERR(this.getClass().getName(), "Error on requesting backup.");
-            e.printStackTrace();
         }
     }
 

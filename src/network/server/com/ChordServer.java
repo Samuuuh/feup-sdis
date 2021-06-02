@@ -86,7 +86,7 @@ public class ChordServer extends Thread {
                 switch (type) {
                     case BACKUP:
                         var messageBackup = ((MessageBackup) message);
-                        if ((message.getPortOrigin() == port) && (message.getIpOrigin() == ip)) {
+                        if ((message.getPortOrigin() == port) && (message.getIpOrigin().equals(ip))) {
                             backupEndLog(messageBackup.getDesiredRepDeg(), messageBackup.getActualRepDeg());
                         } else {
                             Main.threadPool.execute(new ProcessBackup(messageBackup));
@@ -102,7 +102,7 @@ public class ChordServer extends Thread {
                         break;
                     // Check if it has the file, otherwise pass the message to the successor.
                     case RESTORE:
-                        if ((message.getPortOrigin() == port) && (message.getIpOrigin() == ip)) {
+                        if ((message.getPortOrigin() == port) && (message.getIpOrigin().equals(ip))) {
                             Logger.ANY(this.getClass().getName(), "Can't restore the file");
                         } else {
                             Logger.ANY(this.getClass().getName(), "Received RESTORE.");

@@ -19,7 +19,6 @@ public class SendMessage implements Callable<Boolean> {
         InetAddress host = InetAddress.getByName(ip);
         this.connectionSocket = new SSLConnection(host, port);
         this.message = message;
-
     }
 
     /**
