@@ -40,7 +40,6 @@ public class HandleRestore implements Runnable {
             if (Main.state.getStoredFile(hash) != null) {
                 MessageBackup mess = FileHandler.ReadObjectFromFile(Singleton.getBackupFilePath(hash));
                 MessageRcvRestore messageRcvRestore = new MessageRcvRestore(message.getOriginNode(), this.hash, mess.getBytes(), mess.getFileName());
-                System.out.println("read file and sending to origin");
                 Main.threadPool.submit(new SendMessage(message.getIpOrigin(), message.getPortOrigin(), messageRcvRestore));
             } else {
                 Main.threadPool.submit(new SendMessage(suc.getIp(), suc.getPort(), message));

@@ -70,7 +70,7 @@ public class FileHandler {
             // Create directory if not exists
             Path path = Paths.get(dir);
             Files.createDirectories(path);
-            
+
             // SaveFile
             Path filePath = Paths.get(dir + fileName);
             if (bytesMessage != null) Files.write(filePath, bytesMessage);
