@@ -1,9 +1,8 @@
 package network.etc;
 
-import java.io.File;
+import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.*;
@@ -20,12 +19,12 @@ public class FileHandler {
     * @return byte[] This return the bytes of the file
     */
     public static byte[] readFile(String filePath) throws IOException {
-        File file = new File(filePath);
+        Path path = Paths.get(filePath);
 
-        if (file.length() > Integer.MAX_VALUE)
-            Logger.ERR("network.etc.FileHandler","File too large to be read");
+        if (Files.size(path) > Integer.MAX_VALUE)
+            Logger.ERR("network.etc.FileHandler", "File too large to be read");
         try {
-            return readAllBytes(file.toPath());
+            return readAllBytes(path);
         } catch (Exception e) {
             Logger.INFO("network.etc.FileHandler", "File does not exist, skiping...");
         }
@@ -42,11 +41,6 @@ public class FileHandler {
         // Create directory if not exists
         Path path = Paths.get(dir);
         Files.createDirectories(path);
-
-        File directory = new File(dir);
-        if (!directory.exists()) {
-            directory.mkdir();
-        }
         
         // SaveFile
         String filePath = dir + fileName;
@@ -68,16 +62,9 @@ public class FileHandler {
         Path path = Paths.get(dir);
         Files.createDirectories(path);
 
-        File directory = new File(dir);
-        if (!directory.exists()) {
-            directory.mkdir();
-        }
-        
         // SaveFile
-        String filePath = dir + fileName;
-        FileOutputStream outputFile = new FileOutputStream(filePath, true);
-        if (bytesMessage != null) outputFile.write(bytesMessage);
-        outputFile.close();
+        Path filePath = Paths.get(dir + fileName);
+        if (bytesMessage != null) Files.write(filePath, bytesMessage);
     }
 
     /**
@@ -86,24 +73,12 @@ public class FileHandler {
     * @param fileName The name of the file to be deleted
     */
     public static void deleteFile(String dir, String fileName) {
-        String filePath = dir + fileName;
-        File newFile = new File(filePath);
-        if(newFile.delete()) {
+        Path filePath = Paths.get(dir + fileName);
+        try {
+            Files.delete(filePath);
             Logger.SUC("network.etc.FileHandler", "File" + fileName + "deleted");
-        }
-        else {
+        } catch(IOException ioException) {
             Logger.INFO("network.etc.FileHandler", "Not possible delete file " + fileName);
-        }
-    }
-
-    /**
-    * Delete a file from the filesystem
-    * @param filePath Path of the file to be deleted
-    */
-    public static void DeleteFile(String filePath){
-        File file = new File(filePath);
-        if (!file.delete()) {
-            Logger.INFO("network.etc.FileHandler", "Not possible delete file " + filePath);
         }
     }
 
@@ -120,7 +95,7 @@ public class FileHandler {
             objectIn.close();
             return obj;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Logger.ERR("FileHandler", "No such file " + filepath);
             return null;
         }
     }
