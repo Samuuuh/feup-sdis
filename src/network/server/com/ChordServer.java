@@ -100,6 +100,7 @@ public class ChordServer extends Thread {
                         var messageDoneBackup = (MessageDoneBackup) message;
                         backupEndLog(messageDoneBackup.getDesiredRepDeg(), messageDoneBackup.getActualRepDeg());
                         break;
+
                     // Check if it has the file, otherwise pass the message to the successor.
                     case RESTORE:
                         if ((message.getPortOrigin() == port) && (message.getIpOrigin().equals(ip))) {

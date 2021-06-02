@@ -34,7 +34,7 @@ public class ProcessRestore implements Runnable {
      */
     public void saveFile(String fileName, MessageRcvRestore message) {
         try {
-            FileHandler.saveFile("peers/" + Main.chordNode.getId() + "/restore/", fileName, message.getBytes());
+            FileHandler.saveFile("peers/" + Main.chordNode.getId() + "/restore/", message.getHash(), message.getBytes());
         }catch(Exception e) {
             Logger.ERR(this.getClass().getName(), "Not possible to save file " + fileName);
         }
