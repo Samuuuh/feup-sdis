@@ -1,6 +1,6 @@
 # SDIS Project
 
-SDIS Project for group T&lt;n&gt;G&lt;p&gt;&lt;q&gt;.
+SDIS Project for group T7G23.
 
 Group members:
 
