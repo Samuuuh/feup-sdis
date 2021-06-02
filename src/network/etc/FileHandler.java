@@ -66,7 +66,6 @@ public class FileHandler {
      */
     public static void saveFile(String dir, String fileName, byte[] bytesMessage) {
         try {
-
             // Create directory if not exists
             Path path = Paths.get(dir);
             Files.createDirectories(path);

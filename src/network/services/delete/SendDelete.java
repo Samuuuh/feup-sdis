@@ -35,6 +35,7 @@ public class SendDelete implements Runnable {
             if (Main.state.getStoredFile(hash) != null) {
                 Main.state.removeFile(hash);
                 FileHandler.deleteFile("peers/" + Main.chordNode.getId() + "/backup/", hash + ".ser");
+                Main.state.removeFile(hash);
             }
 
             Main.schedulerPool.schedule(new RemoveBlockDelete(hash), 3 * 1000L, TimeUnit.MILLISECONDS);
